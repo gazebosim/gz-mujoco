@@ -184,5 +184,26 @@ class CollisionTest(unittest.TestCase):
         self.assertEqual(geometry_conv.COLLISION_GEOM_GROUP, mj_geom.group)
 
 
+class VisualTest(unittest.TestCase):
+    def test_basic_visual_attributes(self):
+        visual = sdf.Visual()
+        visual.set_name("v1")
+        visual.set_raw_pose(Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4))
+
+        geometry = sdf.Geometry()
+        geometry.set_box_shape(sdf.Box())
+        geometry.set_type(GeometryType.BOX)
+        visual.set_geometry(geometry)
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        mj_geom = geometry_conv.add_visual(
+            body, visual, helpers.nonthrowing_pose_resolver)
+        self.assertEqual("v1", mj_geom.name)
+        assert_allclose([1., 2., 3.], mj_geom.pos)
+        assert_allclose([90., 60., 45.], mj_geom.euler)
+        self.assertEqual(geometry_conv.VISUAL_GEOM_GROUP, mj_geom.group)
+
+
 if __name__ == "__main__":
     unittest.main()

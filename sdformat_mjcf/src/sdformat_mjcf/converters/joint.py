@@ -73,8 +73,27 @@ def add_joint(body,
     if joint is None:
         return body.add("freejoint", name="freejoint")
     elif joint.type() == JointType.FIXED:
+        # Geoms added to bodies attached to the worldbody without a
+        # joint (a fixed joint in SDFormat) are treated as belonging to
+        # worldbody. This means that the collision filtering rule that
+        # applies to geoms in bodies connected by a joint may not apply to
+        # these geoms. For example, let body A be a child of worldbody
+        # without a joint and B be a child of A with a revolute joint. Even
+        # though A and B are connected by a joint, by default, their geoms
+        # will collide with eachother since the geoms of A are considered
+        # to belong to worldbody. To avoid this problem, we create a revolute
+        # joint with limits set 0.
+        # TODO (azeey) Make this configurable.
+        if body.parent and body.parent.tag == "worldbody":
+            return body.add("joint",
+                            name=joint.name(),
+                            type="hinge",
+                            limited=True,
+                            range=[0, 1e-9])
         return None
-    elif joint.type() in [JointType.REVOLUTE, JointType.PRISMATIC]:
+    elif joint.type() in [
+            JointType.CONTINUOUS, JointType.REVOLUTE, JointType.PRISMATIC
+    ]:
         pose = pose_resolver(joint.semantic_pose())
         mjcf_joint = body.add("joint", name=joint.name())
         mjcf_joint.pos = su.vec3d_to_list(pose.pos())
@@ -108,10 +127,11 @@ def add_joint(body,
                 mjcf_joint.springref = convert_value(
                     joint_axis.spring_reference())
 
-        if joint.type() == JointType.REVOLUTE:
+        if joint.type() in [JointType.CONTINUOUS, JointType.REVOLUTE]:
             mjcf_joint.type = "hinge"
-            add_limits(math.degrees)
             add_dynamics(math.degrees)
+            if joint.type() == JointType.REVOLUTE:
+                add_limits(math.degrees)
         else:
             mjcf_joint.type = "slide"
             add_limits()
