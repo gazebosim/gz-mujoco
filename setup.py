@@ -3,16 +3,14 @@
 from setuptools import setup, find_packages
 import pathlib
 
-
 here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
 license_content = (here / "LICENSE").read_text(encoding="utf-8")
-version = (here / "gz_mujoco" / "__version__.py").read_text(encoding="utf-8")
 
 
 setup(
     name='gz_mujoco',
-    version=version,
+    version='0.0.1',
     description='Tool to convert SDF file to MJCF',
     long_description=long_description,
     long_description_content_type="text/markdown",
