@@ -5,14 +5,14 @@ import pathlib
 
 
 here = pathlib.Path(__file__).parent.resolve()
-# Get the long description from the README file
 long_description = (here / "README.md").read_text(encoding="utf-8")
-# Get the long description from the README file
 license_content = (here / "LICENSE").read_text(encoding="utf-8")
+version = (here / "gz_mujoco" / "__version__.py").read_text(encoding="utf-8")
+
 
 setup(
     name='gz_mujoco',
-    version='0.0.1',
+    version=version,
     description='Tool to convert SDF file to MJCF',
     long_description=long_description,
     long_description_content_type="text/markdown",
