@@ -22,6 +22,9 @@ from ignition.math import Pose3d
 def vec3d_to_list(vec):
     """Convert a Vector3d object to a list.
     :param ignition.math.Vector3d vec: Vector3d object to be converted
+    :return: List of values of the x, y, and z components of `vec`
+    respectively.
+    :rtype: list[float]
     """
     return [vec.x(), vec.y(), vec.z()]
 
@@ -29,7 +32,9 @@ def vec3d_to_list(vec):
 def vec2d_to_list(vec):
     """
     Convert a Vector2d object to a list.
-    :param ignition.math.Vector2d vec: Vector2d object to be converted
+    :param ignition.math.Vector2d vec: Vector2d object to be converted.
+    :return: List of values of the x, and y components of `vec` respectively.
+    :rtype: list[float]
     """
     return [vec.x(), vec.y()]
 
@@ -37,15 +42,19 @@ def vec2d_to_list(vec):
 def quat_to_list(quat):
     """
     Convert a Quaterniond object to a list in the order expected by MJCF.
-    :param ignition.math.Quaterniond quat: Quaterniond object to be converted
+    :param ignition.math.Quaterniond quat: Quaterniond object to be converted.
+    :return: List of values of the quaternion in wxyz order.
+    :rtype: list[float]
     """
     return [quat.w(), quat.x(), quat.y(), quat.z()]
 
 
 def quat_to_euler_list(quat):
     """
-    Convert a Quaterniond object to a list of Euler angles in degrees
-    :param ignition.math.Quaterniond quat: Quaterniond object to be converted
+    Convert a Quaterniond object to a list of Euler angles in degrees.
+    :param ignition.math.Quaterniond quat: Quaterniond object to be converted.
+    :return: List of values of the euler angles.
+    :rtype: list[float]
     """
     return [math.degrees(val) for val in vec3d_to_list(quat.euler())]
 
@@ -57,7 +66,7 @@ def pose_resolver(sem_pose):
     resolved.
     :return: The resolved pose.
     :rtype: ignition.math.Pose3d
-    raises RuntimeError: if an error is encountered when resolving the pose.
+    :raises RuntimeError: if an error is encountered when resolving the pose.
     """
     pose = Pose3d()
     errors = sem_pose.resolve(pose)

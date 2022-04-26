@@ -27,12 +27,13 @@ def add_geometry(body, name, pose, sdf_geom):
     """
     Converts an SDFormat geometry to an MJCF geom and add it to the given body.
 
-    :param mjcf.Element body: The MJCF body to which the geom is added
+    :param mjcf.Element body: The MJCF body to which the geom is added.
     :param str name: Name of the geom (obtained from the name of the SDFormat
-            Collision or Visual)
+            Collision or Visual).
     :param sdformat.Pose3d pose: Resolved pose of the geom (obtained from the
-            pose of the SDFormat Collision or Visual)
-    :return: The newly created MJCF geom
+            pose of the SDFormat Collision or Visual).
+    :return: The newly created MJCF geom.
+    :rtype: mjcf.Element
     """
 
     if sdf_geom is None:
@@ -75,12 +76,25 @@ def add_geometry(body, name, pose, sdf_geom):
     elif sdf_geom.mesh_shape():
         raise RuntimeError("Meshes are not yet supported")
     else:
-        raise RuntimeError(f"Encountered unsupported shape type {sdf_geom.type()}")
+        raise RuntimeError(
+            f"Encountered unsupported shape type {sdf_geom.type()}")
 
     return geom
 
 
 def add_collision(body, col, pose_resolver=su.pose_resolver):
+    """
+    Converts an SDFormat collision to an MJCF geom and add it to the given
+    body. To differentiate Collision geoms from Visual geoms, we assign
+    Collision geoms group `COLLISION_GEOM_GROUP`.
+
+    :param mjcf.Element body: The MJCF body to which the geom is added.
+    :param sdformat.Collision col: Collision object to be converted.
+    :param pose_resolver: Function to resolve the pose of a
+    sdformat.SemanticPose object.
+    :return: The newly created MJCF geom.
+    :rtype: mjcf.Element
+    """
     sem_pose = col.semantic_pose()
     pose = pose_resolver(sem_pose)
     geom = add_geometry(body, col.name(), pose, col.geometry())
