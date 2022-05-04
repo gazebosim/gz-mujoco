@@ -1,6 +1,6 @@
 import unittest
 
-from gz_mujoco.gz_mujoco import execute
+from sdformat_mjcf.sdformat_mjcf import execute
 
 
 class TestExample(unittest.TestCase):

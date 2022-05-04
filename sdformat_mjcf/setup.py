@@ -9,7 +9,7 @@ license_content = (here / "LICENSE").read_text(encoding="utf-8")
 
 
 setup(
-    name='gz_mujoco',
+    name='sdformat_mjcf',
     version='0.0.1',
     description='Tool to convert SDF file to MJCF',
     long_description=long_description,
@@ -22,7 +22,7 @@ setup(
     test_suite='tests',
     entry_points={
         'console_scripts': [
-            'gz-mujoco = gz_mujoco.gz_mujoco:execute',
+            'sdformat-mjcf = sdformat_mjcf.sdformat_mjcf:execute',
         ],
     },
 )

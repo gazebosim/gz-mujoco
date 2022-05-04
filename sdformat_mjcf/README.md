@@ -1,4 +1,4 @@
-# gz-mujoco converter tool
+# sdformat-mjcf converter tool
 
 ## Development
 
@@ -19,7 +19,7 @@ A tox (environment manager) run of tests with multiple python versions:
 
 ### Run the application
 
-After the editable install in the first point of this section, the gz-mujoco
+After the editable install in the first point of this section, the sdformat-mjcf
 script defined in `setup.py` entrypoints:
 
-    gz-mujoco
+    sdformat-mjcf
