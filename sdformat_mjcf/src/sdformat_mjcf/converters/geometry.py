@@ -1,11 +1,11 @@
 # Copyright (C) 2022 Open Source Robotics Foundation
-
+#
 # Licensed under the Apache License, version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #       http://www.apache.org/licenses/LICENSE-2.0
-
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -99,4 +99,24 @@ def add_collision(body, col, pose_resolver=su.pose_resolver):
     pose = pose_resolver(sem_pose)
     geom = add_geometry(body, col.name(), pose, col.geometry())
     geom.group = COLLISION_GEOM_GROUP
+    return geom
+
+
+def add_visual(body, col, pose_resolver=su.pose_resolver):
+    """
+    Converts an SDFormat collision to an MJCF geom and add it to the given
+    body. To differentiate Collision geoms from Visual geoms, we assign
+    Collision geoms group `COLLISION_GEOM_GROUP`.
+
+    :param mjcf.Element body: The MJCF body to which the geom is added.
+    :param sdformat.Collision col: Collision object to be converted.
+    :param pose_resolver: Function to resolve the pose of a
+    sdformat.SemanticPose object.
+    :return: The newly created MJCF geom.
+    :rtype: mjcf.Element
+    """
+    sem_pose = col.semantic_pose()
+    pose = pose_resolver(sem_pose)
+    geom = add_geometry(body, col.name(), pose, col.geometry())
+    geom.group = VISUAL_GEOM_GROUP
     return geom
