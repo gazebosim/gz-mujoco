@@ -11,7 +11,7 @@ license_content = (here / "LICENSE").read_text(encoding="utf-8")
 setup(
     name='sdformat_mjcf',
     version='0.0.1',
-    description='Tool to convert SDF file to MJCF',
+    description='Tool to convert SDFormat file to MJCF',
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Open Robotics',
