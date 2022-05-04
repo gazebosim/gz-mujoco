@@ -19,4 +19,6 @@ jobs:
     - name: Install test dependencies
       run: python3 -m pip install -U tox
     - name: Test
-      run: python3 -m tox -e py
+      run: |
+        cd sdformat_mjcf
+        python3 -m tox -e py
