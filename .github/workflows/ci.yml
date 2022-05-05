@@ -21,7 +21,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y git
         git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
-        pip3 install -r /tmp/gzdev/requirements.txt
+        sudo pip3 install -r /tmp/gzdev/requirements.txt
         sudo /tmp/gzdev/gzdev.py repository enable osrf stable
         sudo /tmp/gzdev/gzdev.py repository enable osrf nightly
         sudo apt-get update
