@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         python: ['3.8', '3.9', '3.10']
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Checkout
@@ -16,6 +16,16 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python }}
+    - name: Install dependencies
+      run: |
+        apt-get update
+        apt-get install -y git
+        git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
+        pip3 install -r /tmp/gzdev/requirements.txt
+        /tmp/gzdev/gzdev.py repository enable osrf stable
+        /tmp/gzdev/gzdev.py repository enable osrf nightly
+        apt-get update
+        apt-get install -y libsdformat13-dev python3-ignition-math7
     - name: Install test dependencies
       run: python3 -m pip install -U tox
     - name: Test
