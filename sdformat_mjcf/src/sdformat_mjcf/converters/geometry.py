@@ -14,6 +14,10 @@
 
 """Module to convert SDFormat Collision/Visual geometries to MJCF geoms"""
 
+from dm_control import mjcf
+
+import os
+
 import sdformat as sdf
 import sdformat_mjcf.sdf_utils as su
 
@@ -22,8 +26,10 @@ GeometryType = sdf.Geometry.GeometryType
 COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
 
+NUMBER_MESH = 0
 
-def add_geometry(body, name, pose, sdf_geom):
+
+def add_geometry(body, name, pose, sdf_geom, assets):
     """
     Converts an SDFormat geometry to an MJCF geom and add it to the given body.
 
@@ -32,6 +38,7 @@ def add_geometry(body, name, pose, sdf_geom):
             Collision or Visual).
     :param sdformat.Pose3d pose: Resolved pose of the geom (obtained from the
             pose of the SDFormat Collision or Visual).
+    :param mjcf.Assets assets: Access to assets
     :return: The newly created MJCF geom.
     :rtype: mjcf.Element
     """
@@ -74,7 +81,54 @@ def add_geometry(body, name, pose, sdf_geom):
         geom.type = "sphere"
         geom.size = [sphere_shape.radius()]
     elif sdf_geom.mesh_shape():
-        raise RuntimeError("Meshes are not yet supported")
+        mesh_shape = sdf_geom.mesh_shape()
+        uri = mesh_shape.uri()
+        dirname = os.path.dirname(mesh_shape.file_path())
+        extension_tokens = os.path.basename(mesh_shape.uri()).split(".")
+        if (len(extension_tokens) > 1):
+            extension = extension_tokens[1]
+        else:
+            raise RuntimeError("Unable to find the mesh extension {}"
+                               .format(uri))
+        if 'http://' in uri or 'https://' in uri:
+            raise RuntimeError("Fuel meshes are not yet supported")
+        geom.type = "mesh"
+        if "obj" in extension or "stl" in extension:
+            # SDF doesn't define a name for the mesh, we are going to create
+            # the name of the meshes like: mesh_X
+            # X is a number that will increase with every new mesh
+            global NUMBER_MESH
+            # Create the asset and the file with the proper hashname
+            # we look for the asset based on the has, if it's already added
+            # we use this asset instead of adding a new one
+            found_same_mesh = False
+            mesh_name = ""
+            with open(os.path.join(dirname, uri), mode='rb') as f:
+                asset_to_memory = mjcf.Asset(contents=f.read(),
+                                           extension="." + extension)
+                for v in assets.find_all('mesh'):
+                    if (
+                      asset_to_memory.get_vfs_filename() ==
+                      v.file.get_vfs_filename()):
+                        found_same_mesh = True
+                        mesh_name = v.name
+                        break
+                if not found_same_mesh:
+                    # There is no asset with this hash, we add the mesh
+                    f.seek(0)
+                    foutput = open(asset_to_memory.get_vfs_filename(), "wb")
+                    foutput.write(f.read())
+                    foutput.close()
+                    # Add the mesh to list of assets
+                    mesh_name = "mesh" + str(NUMBER_MESH)
+                    NUMBER_MESH = NUMBER_MESH + 1
+                    assets.add('mesh',
+                          name=mesh_name,
+                          file=asset_to_memory)
+            geom.mesh = mesh_name
+        else:
+            raise RuntimeError("This kind of mesh format is not yet supported {}"
+                               .format(mesh_shape.uri()))
     else:
         raise RuntimeError(
             f"Encountered unsupported shape type {sdf_geom.type()}")
@@ -82,7 +136,7 @@ def add_geometry(body, name, pose, sdf_geom):
     return geom
 
 
-def add_collision(body, col, pose_resolver=su.pose_resolver):
+def add_collision(body, col, pose_resolver=su.pose_resolver, assets=None):
     """
     Converts an SDFormat collision to an MJCF geom and add it to the given
     body. To differentiate Collision geoms from Visual geoms, we assign
@@ -92,17 +146,18 @@ def add_collision(body, col, pose_resolver=su.pose_resolver):
     :param sdformat.Collision col: Collision object to be converted.
     :param pose_resolver: Function to resolve the pose of a
     sdformat.SemanticPose object.
+    :param mjcf.Assets assets: Access to assets
     :return: The newly created MJCF geom.
     :rtype: mjcf.Element
     """
     sem_pose = col.semantic_pose()
     pose = pose_resolver(sem_pose)
-    geom = add_geometry(body, col.name(), pose, col.geometry())
+    geom = add_geometry(body, col.name(), pose, col.geometry(), assets)
     geom.group = COLLISION_GEOM_GROUP
     return geom
 
 
-def add_visual(body, col, pose_resolver=su.pose_resolver):
+def add_visual(body, col, pose_resolver=su.pose_resolver, assets=None):
     """
     Converts an SDFormat collision to an MJCF geom and add it to the given
     body. To differentiate Collision geoms from Visual geoms, we assign
@@ -112,11 +167,12 @@ def add_visual(body, col, pose_resolver=su.pose_resolver):
     :param sdformat.Collision col: Collision object to be converted.
     :param pose_resolver: Function to resolve the pose of a
     sdformat.SemanticPose object.
+    :param mjcf.Assets assets: Access to assets
     :return: The newly created MJCF geom.
     :rtype: mjcf.Element
     """
     sem_pose = col.semantic_pose()
     pose = pose_resolver(sem_pose)
-    geom = add_geometry(body, col.name(), pose, col.geometry())
+    geom = add_geometry(body, col.name(), pose, col.geometry(), assets)
     geom.group = VISUAL_GEOM_GROUP
     return geom

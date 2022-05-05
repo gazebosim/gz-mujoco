@@ -24,6 +24,8 @@ from dm_control import mjcf
 import helpers
 from sdformat_mjcf.converters import geometry as geometry_conv
 
+import os
+
 GeometryType = sdf.Geometry.GeometryType
 
 
@@ -44,7 +46,7 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "box_shape", self.test_pose,
-                                             geometry)
+                                             geometry, mujoco.asset)
         self.assertEqual("box_shape", mj_geom.name)
         self.assertEqual("box", mj_geom.type)
         assert_allclose([x_size / 2., y_size / 2., z_size / 2.], mj_geom.size)
@@ -65,7 +67,8 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "capsule_shape",
-                                             self.test_pose, geometry)
+                                             self.test_pose, geometry,
+                                             mujoco.asset)
         self.assertEqual("capsule_shape", mj_geom.name)
         self.assertEqual("capsule", mj_geom.type)
         assert_allclose([radius, length / 2.], mj_geom.size)
@@ -86,7 +89,8 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "cylinder_shape",
-                                             self.test_pose, geometry)
+                                             self.test_pose, geometry,
+                                             mujoco.asset)
         self.assertEqual("cylinder_shape", mj_geom.name)
         self.assertEqual("cylinder", mj_geom.type)
         assert_allclose([radius, length / 2.], mj_geom.size)
@@ -107,7 +111,8 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "ellipsoid_shape",
-                                             self.test_pose, geometry)
+                                             self.test_pose, geometry,
+                                             mujoco.asset)
         self.assertEqual("ellipsoid_shape", mj_geom.name)
         self.assertEqual("ellipsoid", mj_geom.type)
         assert_allclose([x_radius, y_radius, z_radius], mj_geom.size)
@@ -118,7 +123,25 @@ class GeometryTest(unittest.TestCase):
         pass
 
     def test_mesh(self):
-        pass
+        mesh = sdf.Mesh()
+        mesh.set_uri("meshes/box.obj")
+        mesh.set_file_path(os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "resources/box_obj/model.sdf"))
+
+        geometry = sdf.Geometry()
+        geometry.set_mesh_shape(mesh)
+        geometry.set_type(GeometryType.MESH)
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        mj_geom = geometry_conv.add_geometry(body, "mesh_shape",
+                                             self.test_pose, geometry,
+                                             mujoco.asset)
+        self.assertEqual("mesh_shape", mj_geom.name)
+        self.assertEqual("mesh", mj_geom.type)
+        self.assertEqual(1, len(mujoco.asset.find_all('mesh')))
+
 
     def test_plane(self):
         plane = sdf.Plane()
@@ -136,7 +159,8 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "plane_shape",
-                                             self.test_pose, geometry)
+                                             self.test_pose, geometry,
+                                             mujoco.asset)
         self.assertEqual("plane_shape", mj_geom.name)
         self.assertEqual("plane", mj_geom.type)
         assert_allclose([x_size / 2., y_size / 2., 0.], mj_geom.size)
@@ -155,7 +179,8 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "sphere_shape",
-                                             self.test_pose, geometry)
+                                             self.test_pose, geometry,
+                                             mujoco.asset)
         self.assertEqual("sphere_shape", mj_geom.name)
         self.assertEqual("sphere", mj_geom.type)
         assert_allclose(radius, mj_geom.size)
