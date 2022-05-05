@@ -21,7 +21,7 @@ import sdformat as sdf
 from ignition.math import Pose3d, Vector2d, Vector3d
 from dm_control import mjcf
 
-import helpers
+from tests import helpers
 from sdformat_mjcf.converters import geometry as geometry_conv
 
 GeometryType = sdf.Geometry.GeometryType

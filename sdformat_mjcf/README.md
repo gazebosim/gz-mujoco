@@ -31,8 +31,21 @@ Install the `sdformat_mjcf` packages in "editable" mode
 pip install -e path/to/sdformat_mjcf
 ```
 
-This should be sufficient to run the tests. e.g.:
+### Running tests
+
+Simple run of test can be done by using:
 
 ```
-python tests/test_add_geometry.py
+python -m unittest
 ```
+
+A tox (environment manager) run of tests with multiple python versions:
+
+    python3 -m tox
+
+### Run the application
+
+After the editable install in the first point of this section, the sdformat-mjcf
+script defined in `setup.py` entrypoints:
+
+    sdformat-mjcf
