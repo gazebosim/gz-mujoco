@@ -94,38 +94,8 @@ def add_geometry(body, name, pose, sdf_geom, assets):
             raise RuntimeError("Fuel meshes are not yet supported")
         geom.type = "mesh"
         if "obj" in extension or "stl" in extension:
-            # SDF doesn't define a name for the mesh, we are going to create
-            # the name of the meshes like: mesh_X
-            # X is a number that will increase with every new mesh
-            global NUMBER_MESH
-            # Create the asset and the file with the proper hashname
-            # we look for the asset based on the has, if it's already added
-            # we use this asset instead of adding a new one
-            found_same_mesh = False
-            mesh_name = ""
-            with open(os.path.join(dirname, uri), mode='rb') as f:
-                asset_to_memory = mjcf.Asset(contents=f.read(),
-                                           extension="." + extension)
-                for v in assets.find_all('mesh'):
-                    if (
-                      asset_to_memory.get_vfs_filename() ==
-                      v.file.get_vfs_filename()):
-                        found_same_mesh = True
-                        mesh_name = v.name
-                        break
-                if not found_same_mesh:
-                    # There is no asset with this hash, we add the mesh
-                    f.seek(0)
-                    foutput = open(asset_to_memory.get_vfs_filename(), "wb")
-                    foutput.write(f.read())
-                    foutput.close()
-                    # Add the mesh to list of assets
-                    mesh_name = "mesh" + str(NUMBER_MESH)
-                    NUMBER_MESH = NUMBER_MESH + 1
-                    assets.add('mesh',
-                          name=mesh_name,
-                          file=asset_to_memory)
-            geom.mesh = mesh_name
+            mesh_file_path = os.path.join(dirname, uri)
+            geom.mesh = geom.root.asset.add('mesh', file=mesh_file_path)
         else:
             raise RuntimeError("This kind of mesh format is not yet supported {}"
                                .format(mesh_shape.uri()))
