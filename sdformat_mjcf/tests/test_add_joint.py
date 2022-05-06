@@ -80,13 +80,6 @@ class JointTest(unittest.TestCase):
         self.assertEqual("freejoint", mj_joint.name)
         self.assertEqual("freejoint", mj_joint.tag)
 
-    def test_fixed_joint_to_world(self):
-        joint = self.create_sdf_joint("joint1", JointType.FIXED, Pose3d())
-        mj_joint = add_joint(self.body, joint)
-        self.assertIsNotNone(mj_joint)
-        self.assertEqual("hinge", mj_joint.type)
-        assert_allclose([0, 1e-9], mj_joint.range)
-
     def test_fixed_joint(self):
         joint = self.create_sdf_joint("joint1", JointType.FIXED, Pose3d())
         child_body = self.body.add("body")

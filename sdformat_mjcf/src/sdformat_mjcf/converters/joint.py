@@ -73,23 +73,6 @@ def add_joint(body,
     if joint is None:
         return body.add("freejoint", name="freejoint")
     elif joint.type() == JointType.FIXED:
-        # Geoms added to bodies attached to the worldbody without a
-        # joint (a fixed joint in SDFormat) are treated as belonging to
-        # worldbody. This means that the collision filtering rule that
-        # applies to geoms in bodies connected by a joint may not apply to
-        # these geoms. For example, let body A be a child of worldbody
-        # without a joint and B be a child of A with a revolute joint. Even
-        # though A and B are connected by a joint, by default, their geoms
-        # will collide with eachother since the geoms of A are considered
-        # to belong to worldbody. To avoid this problem, we create a revolute
-        # joint with limits set 0.
-        # TODO (azeey) Make this configurable.
-        if body.parent and body.parent.tag == "worldbody":
-            return body.add("joint",
-                            name=joint.name(),
-                            type="hinge",
-                            limited=True,
-                            range=[0, 1e-9])
         return None
     elif joint.type() in [
             JointType.CONTINUOUS, JointType.REVOLUTE, JointType.PRISMATIC
