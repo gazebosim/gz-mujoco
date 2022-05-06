@@ -46,7 +46,7 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "box_shape", self.test_pose,
-                                             geometry, mujoco.asset)
+                                             geometry)
         self.assertEqual("box_shape", mj_geom.name)
         self.assertEqual("box", mj_geom.type)
         assert_allclose([x_size / 2., y_size / 2., z_size / 2.], mj_geom.size)
@@ -67,8 +67,7 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "capsule_shape",
-                                             self.test_pose, geometry,
-                                             mujoco.asset)
+                                             self.test_pose, geometry)
         self.assertEqual("capsule_shape", mj_geom.name)
         self.assertEqual("capsule", mj_geom.type)
         assert_allclose([radius, length / 2.], mj_geom.size)
@@ -89,8 +88,7 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "cylinder_shape",
-                                             self.test_pose, geometry,
-                                             mujoco.asset)
+                                             self.test_pose, geometry)
         self.assertEqual("cylinder_shape", mj_geom.name)
         self.assertEqual("cylinder", mj_geom.type)
         assert_allclose([radius, length / 2.], mj_geom.size)
@@ -111,8 +109,7 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "ellipsoid_shape",
-                                             self.test_pose, geometry,
-                                             mujoco.asset)
+                                             self.test_pose, geometry)
         self.assertEqual("ellipsoid_shape", mj_geom.name)
         self.assertEqual("ellipsoid", mj_geom.type)
         assert_allclose([x_radius, y_radius, z_radius], mj_geom.size)
@@ -136,8 +133,7 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "mesh_shape",
-                                             self.test_pose, geometry,
-                                             mujoco.asset)
+                                             self.test_pose, geometry)
         self.assertEqual("mesh_shape", mj_geom.name)
         self.assertEqual("mesh", mj_geom.type)
         self.assertEqual(1, len(mujoco.asset.find_all('mesh')))
@@ -159,8 +155,7 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "plane_shape",
-                                             self.test_pose, geometry,
-                                             mujoco.asset)
+                                             self.test_pose, geometry)
         self.assertEqual("plane_shape", mj_geom.name)
         self.assertEqual("plane", mj_geom.type)
         assert_allclose([x_size / 2., y_size / 2., 0.], mj_geom.size)
@@ -179,8 +174,7 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_geometry(body, "sphere_shape",
-                                             self.test_pose, geometry,
-                                             mujoco.asset)
+                                             self.test_pose, geometry)
         self.assertEqual("sphere_shape", mj_geom.name)
         self.assertEqual("sphere", mj_geom.type)
         assert_allclose(radius, mj_geom.size)
