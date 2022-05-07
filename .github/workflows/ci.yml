@@ -29,6 +29,8 @@ jobs:
     - name: Install test dependencies
       run: python3 -m pip install -U tox
     - name: Test
+      env:
+        PYTHONPATH: /usr/lib/python3/dist-packages:$PYTHONPATH
       run: |
         cd sdformat_mjcf
         python3 -m tox -e py
