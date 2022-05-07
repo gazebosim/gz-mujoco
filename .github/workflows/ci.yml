@@ -19,9 +19,9 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y git
+        sudo apt-get install -y git python3-pip
         git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
-        sudo pip3 install -r /tmp/gzdev/requirements.txt
+        sudo python3 -m pip install -r /tmp/gzdev/requirements.txt
         sudo /tmp/gzdev/gzdev.py repository enable osrf stable
         sudo /tmp/gzdev/gzdev.py repository enable osrf nightly
         sudo apt-get update
@@ -30,7 +30,7 @@ jobs:
       run: python3 -m pip install -U tox
     - name: Test
       env:
-        PYTHONPATH: /usr/lib/python3/dist-packages:$PYTHONPATH
+        PYTHONPATH: ${{ env.pythonLocation }}/lib/python${{ matrix.python }}/site-packages:/usr/lib/python3/dist-packages
       run: |
         cd sdformat_mjcf
         python3 -m tox -e py
