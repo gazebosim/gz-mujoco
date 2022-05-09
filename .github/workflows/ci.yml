@@ -31,7 +31,7 @@ jobs:
       run: python3 -m pip install -U tox build[virtualenv]
     - name: Test
       env:
-        PYTHONPATH: $PYTHONPATH:/usr/lib/python3/dist-packages
+        PYTHONPATH: ${{ env.pythonLocation }}/lib/python${{ matrix.python }}/site-packages:/usr/lib/python3/dist-packages
       run: |
         cd sdformat_mjcf
         python3 -c "import sys;print(sys.path)"
