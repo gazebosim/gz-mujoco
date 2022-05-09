@@ -21,8 +21,10 @@ import sdformat as sdf
 from ignition.math import Pose3d, Vector2d, Vector3d
 from dm_control import mjcf
 
-import helpers
+from tests import helpers
 from sdformat_mjcf.converters import geometry as geometry_conv
+
+import os
 
 GeometryType = sdf.Geometry.GeometryType
 
@@ -118,14 +120,31 @@ class GeometryTest(unittest.TestCase):
         pass
 
     def test_mesh(self):
-        pass
+        mesh = sdf.Mesh()
+        mesh.set_uri("meshes/box.obj")
+        mesh.set_file_path(os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "resources/box_obj/model.sdf"))
+
+        geometry = sdf.Geometry()
+        geometry.set_mesh_shape(mesh)
+        geometry.set_type(GeometryType.MESH)
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        mj_geom = geometry_conv.add_geometry(body, "mesh_shape",
+                                             self.test_pose, geometry)
+        self.assertEqual("mesh_shape", mj_geom.name)
+        self.assertEqual("mesh", mj_geom.type)
+        self.assertEqual(1, len(mujoco.asset.find_all('mesh')))
+
 
     def test_plane(self):
         plane = sdf.Plane()
         x_size = 5.
         y_size = 10.
         normal = np.array([1, 2, 3])
-        normal_unit = normal/np.linalg.norm(normal)
+        normal_unit = normal / np.linalg.norm(normal)
         plane.set_size(Vector2d(x_size, y_size))
         plane.set_normal(Vector3d(*normal_unit))
 

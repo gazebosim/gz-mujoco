@@ -37,7 +37,7 @@ To convert an SDFormat file to mjcf:
 python -m sdformat_mjcf.sdformat2mjcf path/to/file.sdf | tee new_file.xml
 ```
 
-To run the mjcf file in Mujco, download a Mujco release from https://github.com/deepmind/mujoco/releases, 
+To run the mjcf file in Mujco, download a Mujco release from https://github.com/deepmind/mujoco/releases,
 extract the contents and run
 
 ```
@@ -47,8 +47,16 @@ extract the contents and run
 To run tests, either run the test files individually, eg:
 
 ```
-python tests/test_add_geometry.py
+python -m unittest
 ```
 
-or run `pytest` from the root directory.
+A tox (environment manager) run of tests with multiple python versions:
 
+    python3 -m tox
+
+### Run the application
+
+After the editable install in the first point of this section, the sdformat-mjcf
+script defined in `setup.py` entrypoints:
+
+    sdformat-mjcf
