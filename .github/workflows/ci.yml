@@ -35,5 +35,6 @@ jobs:
       run: |
         cd sdformat_mjcf
         sudo python3 -m pip uninstall numpy
+        sudo python3 -m pip uninstall --user numpy
         sudo python3 -m pip install --upgrade numpy
         python3 -m tox -e py
