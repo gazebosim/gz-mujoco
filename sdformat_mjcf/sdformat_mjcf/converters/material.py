@@ -1,0 +1,92 @@
+# Copyright (C) 2022 Open Source Robotics Foundation
+#
+# Licensed under the Apache License, version 2.0 (the "License")
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Module to convert SDFormat MAterials to MJCF"""
+
+from ignition.math import Vector3d
+
+from sdformat import Pbr, PbrWorkflow, Material
+import sdformat
+
+import sdformat_mjcf.sdf_utils as su
+
+import os
+
+TEXTURE_NUMBER = 0
+
+def add_material(body, material):
+    pbr = material.pbr_material()
+    specular = (material.specular().r() +
+                material.specular().g() +
+                material.specular().b()) / 3.0
+    emissive = (material.emissive().r() +
+                material.emissive().g() +
+                material.emissive().b()) / 3.0
+    if pbr is not None:
+        workflow = pbr.workflow(PbrWorkflow.PbrWorkflowType.METAL)
+        if workflow is not None:
+            if workflow.albedo_map():
+                extension_tokens = os.path.basename(
+                    workflow.albedo_map()).split(".")
+                if (len(extension_tokens) > 1):
+                    extension = extension_tokens[1]
+                else:
+                    raise RuntimeError("Unable to find the texture extension {}"
+                                       .format(workflow.albedo_map()))
+                file_without_extension = os.path.splitext(
+                    os.path.basename(workflow.albedo_map()))[0]
+                texture_loaded = body.root.asset.find('texture',
+                                                      file_without_extension)
+                if texture_loaded == None:
+                    texture = body.root.asset.add('texture',
+                                                  name=file_without_extension,
+                                                  type='2d',
+                                                  file=workflow.albedo_map(),
+                                                  gridsize='1 1')
+                    return body.root.asset.add("material",
+                                     name="material_" + file_without_extension,
+                                     texture=texture,
+                                     texrepeat="1 1",
+                                     texuniform=True,
+                                     specular=specular,
+                                     emission=emissive)
+                else:
+                    return body.root.asset.find('material',
+                                           "material_" + file_without_extension)
+    else:
+        global TEXTURE_NUMBER
+        texture = body.root.asset.add('texture',
+                                      name="texture_" + str(TEXTURE_NUMBER),
+                                      rgb1=su.vec3d_to_list(
+                                        Vector3d(material.diffuse().r(),
+                                                 material.diffuse().g(),
+                                                 material.diffuse().b())),
+                                      rgb2=su.vec3d_to_list(
+                                        Vector3d(material.ambient().r(),
+                                                 material.ambient().g(),
+                                                 material.ambient().b())),
+                                      type='2d',
+                                      builtin="checker",
+                                      width=512,
+                                      height=512,
+                                      gridsize='1 1')
+        TEXTURE_NUMBER = TEXTURE_NUMBER + 1
+        return body.root.asset.add("material",
+                         name="material_" + str(TEXTURE_NUMBER),
+                         texture=texture,
+                         texrepeat="1 1",
+                         texuniform=True,
+                         specular=specular,
+                         emission=emissive)
+    return None
