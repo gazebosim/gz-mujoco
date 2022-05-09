@@ -34,6 +34,5 @@ jobs:
         PYTHONPATH: ${{ env.pythonLocation }}/lib/python${{ matrix.python }}/site-packages:/usr/lib/python3/dist-packages
       run: |
         cd sdformat_mjcf
-        sudo python3 -m pip uninstall numpy
-        sudo python3 -m pip install --upgrade numpy
+        python3 -c "import sys;print(sys.path)"
         python3 -m tox -e py
