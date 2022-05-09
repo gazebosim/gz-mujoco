@@ -26,6 +26,15 @@ import os
 TEXTURE_NUMBER = 0
 
 def add_material(body, material):
+    """
+    Converts an SDFormat material to an MJCF material and add it to the given
+    body.
+
+    :param mjcf.Element body: The MJCF body to which the geom is added.
+    :param sdf.Material material: The SDF material to convert
+    :return: The newly created MJCF material.
+    :rtype: mjcf.Element
+    """
     pbr = material.pbr_material()
     specular = (material.specular().r() +
                 material.specular().g() +
