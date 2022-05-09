@@ -19,6 +19,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
+        sudo apt-get upgrade
         sudo apt-get install -y git python3-pip
         git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
         sudo python3 -m pip install -r /tmp/gzdev/requirements.txt
@@ -27,7 +28,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y libsdformat13-dev python3-ignition-math7 python3-sdformat13
     - name: Install test dependencies
-      run: python3 -m pip install -U tox
+      run: python3 -m pip install -U tox build[virtualenv]
     - name: Test
       env:
         PYTHONPATH: ${{ env.pythonLocation }}/lib/python${{ matrix.python }}/site-packages:/usr/lib/python3/dist-packages
