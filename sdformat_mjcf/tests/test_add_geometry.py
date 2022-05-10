@@ -123,8 +123,8 @@ class GeometryTest(unittest.TestCase):
         mesh = sdf.Mesh()
         mesh.set_uri("meshes/box.obj")
         mesh.set_file_path(os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    "resources/box_obj/model.sdf"))
+                           os.path.dirname(os.path.abspath(__file__)),
+                           "resources/box_obj/model.sdf"))
 
         geometry = sdf.Geometry()
         geometry.set_mesh_shape(mesh)
@@ -137,7 +137,6 @@ class GeometryTest(unittest.TestCase):
         self.assertEqual("mesh_shape", mj_geom.name)
         self.assertEqual("mesh", mj_geom.type)
         self.assertEqual(1, len(mujoco.asset.find_all('mesh')))
-
 
     def test_plane(self):
         plane = sdf.Plane()
