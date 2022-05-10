@@ -16,7 +16,7 @@
 
 from ignition.math import Vector3d
 
-from sdformat import Pbr, PbrWorkflow, Material
+from sdformat import Pbr, PbrWorkflow, Material  # noqa: F401
 
 import sdformat_mjcf.sdf_utils as su
 
@@ -36,12 +36,10 @@ def add_material(body, material):
     :rtype: mjcf.Element
     """
     pbr = material.pbr_material()
-    specular = (material.specular().r() +
-                material.specular().g() +
-                material.specular().b()) / 3.0
-    emissive = (material.emissive().r() +
-                material.emissive().g() +
-                material.emissive().b()) / 3.0
+    sp_color = material.specular()
+    em_color = material.emissive()
+    specular = (sp_color.r() + sp_color.g() + sp_color.b()) / 3.0
+    emissive = (em_color.r() + em_color.g() + em_color.b()) / 3.0
     asset = body.root.asset
     if pbr is not None:
         workflow = pbr.workflow(PbrWorkflow.PbrWorkflowType.METAL)
@@ -52,7 +50,7 @@ def add_material(body, material):
                 if (len(extension_tokens) == 0):
                     raise RuntimeError("Unable to find the extension {}"
                                        .format(workflow.albedo_map()))
-                file_without_extension = os.path.splitext(
+                file_without_extension = os.path.splitext( \
                     os.path.basename(workflow.albedo_map()))[0]
 
                 texture_loaded = asset.find('texture',
