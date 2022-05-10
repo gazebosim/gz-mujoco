@@ -12,5 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from sdformat_mjcf.converters.light import add_light
+from sdformat_mjcf.converters.model import add_model
+
+import sdformat_mjcf.sdf_utils as su
+
+
 def add_world(mjcf_out, world):
-    pass
+    for mo in range(world.model_count()):
+        model = world.model_by_index(mo)
+        add_model(mjcf_out, model)
+    for li in range(world.light_count()):
+        light = world.light_by_index(li)
+        sem_pose = light.semantic_pose()
+        pose = su.pose_resolver(sem_pose)
+        add_light(mjcf_out.worldbody, light, pose)
+    return mjcf_out

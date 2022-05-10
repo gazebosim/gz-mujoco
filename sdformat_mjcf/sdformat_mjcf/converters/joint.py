@@ -53,6 +53,7 @@ def _compute_joint_axis(joint_axis, joint_pose, axis_xyz_resolver):
     xyz_vec_in_child_link = joint_pose.rot().rotate_vector(xyz_vec)
     return su.vec3d_to_list(xyz_vec_in_child_link)
 
+FREE_JOINT_NUMBER = 0
 
 def add_joint(body,
               joint,
@@ -71,7 +72,10 @@ def add_joint(body,
     :rtype: mjcf.Element
     """
     if joint is None:
-        return body.add("freejoint", name="freejoint")
+        global FREE_JOINT_NUMBER
+        joint  = body.add("freejoint", name="freejoint_" + str(FREE_JOINT_NUMBER))
+        FREE_JOINT_NUMBER = FREE_JOINT_NUMBER + 1
+        return joint
     elif joint.type() == JointType.FIXED:
         # Geoms added to bodies attached to the worldbody without a
         # joint (a fixed joint in SDFormat) are treated as belonging to

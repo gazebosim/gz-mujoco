@@ -15,15 +15,20 @@
 from sdformat_mjcf.sdf_kinematics import KinematicHierarchy
 from sdformat_mjcf.converters.link import add_link
 from sdformat_mjcf.converters.joint import add_joint
+from sdformat_mjcf.converters.light import add_light
 
 
 def add_model(mjcf_out, model):
     kin_hierarchy = KinematicHierarchy(model)
-    mjcf_out.model = model.name()
 
     def convert_node(body, node):
-        child_body = add_link(body, node.link, node.parent_node.link.name())
-        add_joint(child_body, node.joint)
+        pose = model.raw_pose()
+        child_body = add_link(body,
+                              node.link,
+                              node.parent_node.link.name(),
+                              pose=pose)
+        if child_body.geom[0].type != "plane":
+            add_joint(child_body, node.joint)
 
         for cn in node.child_nodes:
             convert_node(child_body, cn)

@@ -14,16 +14,24 @@
 
 import argparse
 
+from dm_control.mjcf.export_with_assets import export_with_assets
+
 import sdformat as sdf
 from dm_control import mjcf
 from sdformat_mjcf.converters.model import add_model
 from sdformat_mjcf.converters.world import add_world
+from sdformat_mjcf.converters.light import add_light
 
 
 def sdformat_root_to_mjcf(root):
     mjcf_root = mjcf.RootElement()
     mjcf_root.compiler.eulerseq = 'XYZ'
-    mjcf_root.model = root.model().name()
+    if root.model():
+        mjcf_root.model = root.model().name()
+    elif root.world_count() > 0:
+        mjcf_root.model = root.world_by_index(0).name()
+    else:
+        raise RuntimeError("Only one model is supported for now {}")
     asset = mjcf_root.asset
     asset.add("texture",
               name="grid",
@@ -49,7 +57,8 @@ def sdformat_root_to_mjcf(root):
                             condim=3)
 
     if root.model():
-        return add_model(mjcf_root, root.model())
+        if root.model() is not None:
+            return add_model(mjcf_root, root.model())
     elif root.world_count() > 0:
         # Does not support multiple worlds
         return add_world(mjcf_root, root.world_by_index(0))
@@ -60,9 +69,11 @@ def sdformat_file_to_mjcf(model_file):
     errors = root.load(model_file)
     if errors:
         print(errors)
+        return
     else:
         mjcf_root = sdformat_root_to_mjcf(root)
         print(mjcf_root.to_xml_string())
+        export_with_assets(mjcf_root, ".", 'output.xml')
 
 
 if __name__ == "__main__":

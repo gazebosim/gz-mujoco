@@ -13,10 +13,13 @@
 # limitations under the License.
 
 from sdformat_mjcf.converters.geometry import add_collision, add_visual
+from sdformat_mjcf.converters.material import add_material
+from sdformat_mjcf.converters.light import add_light
 import sdformat_mjcf.sdf_utils as su
 
 
-def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver):
+def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver,
+             pose=None):
     """
     Converts a link from SDFormat to MJCF and add it to the given
     body/worldbody.
@@ -44,10 +47,11 @@ def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver):
     #     - light (TODO (azeey))
     #     - particle_emitter
     sem_pose = link.semantic_pose()
-    if parent_name == 'world':
-        pose = pose_resolver(sem_pose)
-    else:
-        pose = pose_resolver(sem_pose, parent_name)
+    if pose is None:
+        if parent_name == 'world':
+            pose = pose_resolver(sem_pose)
+        else:
+            pose = pose_resolver(sem_pose, parent_name)
     body = body.add("body",
                     name=link.name(),
                     pos=su.vec3d_to_list(pose.pos()),
@@ -73,15 +77,38 @@ def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver):
                  mass=mass,
                  pos=su.vec3d_to_list(link.inertial().pose().pos()),
                  fullinertia=fullinertia)
-
+    else:
+        fullinertia = [
+            moi(0, 0),
+            moi(1, 1),
+            moi(2, 2),
+            moi(0, 1),
+            moi(0, 2),
+            moi(1, 2)
+        ]
+        body.add("inertial",
+                 mass=1.0,
+                 pos=su.vec3d_to_list(link.inertial().pose().pos()),
+                 fullinertia=fullinertia)
     for ci in range(link.collision_count()):
         col = link.collision_by_index(ci)
         if col.geometry() is not None:
             add_collision(body, col, pose_resolver=pose_resolver)
 
     for vi in range(link.visual_count()):
-        col = link.visual_by_index(vi)
-        if col.geometry() is not None:
-            add_visual(body, col, pose_resolver=pose_resolver)
+        visual = link.visual_by_index(vi)
+        material = None
+        if visual.material() is not None:
+            material = add_material(body, visual.material())
+        if visual.geometry() is not None:
+            add_visual(body, visual, pose_resolver=pose_resolver, material=material)
+    for li in range(link.light_count()):
+        light = link.light_by_index(li)
+        sem_pose = light.semantic_pose()
+        if parent_name == 'world':
+            pose = pose_resolver(sem_pose)
+        else:
+            pose = pose_resolver(sem_pose, parent_name)
+        add_light(body, light, pose, pose_resolver=pose_resolver)
 
     return body
