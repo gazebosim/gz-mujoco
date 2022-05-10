@@ -78,11 +78,8 @@ def add_geometry(body, name, pose, sdf_geom):
     elif sdf_geom.mesh_shape():
         mesh_shape = sdf_geom.mesh_shape()
         uri = mesh_shape.uri()
-        dirname = os.path.dirname(mesh_shape.file_path())
         extension_tokens = os.path.basename(mesh_shape.uri()).split(".")
-        if (len(extension_tokens) > 1):
-            extension = extension_tokens[1]
-        else:
+        if (len(extension_tokens) == 1):
             raise RuntimeError("Unable to find the mesh extension {}"
                                .format(uri))
         file_without_extension = os.path.splitext(
