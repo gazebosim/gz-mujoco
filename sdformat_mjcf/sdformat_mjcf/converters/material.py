@@ -45,22 +45,22 @@ def add_material(geom, material):
         workflow = pbr.workflow(PbrWorkflow.PbrWorkflowType.METAL)
         if workflow is not None:
             if workflow.albedo_map():
-                file_without_extension, extension = os.path.splitext(
+                f_without_extension, extension = os.path.splitext(
                     os.path.basename(workflow.albedo_map()))
                 if not extension:
                     raise RuntimeError("Unable to find the extension {}"
                                        .format(workflow.albedo_map()))
 
                 texture_loaded = asset.find('texture',
-                                            file_without_extension)
+                                            f_without_extension)
                 if texture_loaded is None:
                     texture = asset.add('texture',
-                                        name=file_without_extension,
+                                        name=f_without_extension,
                                         type='2d',
                                         file=workflow.albedo_map(),
                                         gridsize='1 1')
                     r_mat = asset.add("material",
-                                      name="material_" + file_without_extension,
+                                      name="material_" + f_without_extension,
                                       texture=texture,
                                       texrepeat="1 1",
                                       texuniform=True,
@@ -68,19 +68,19 @@ def add_material(geom, material):
                                       emission=emissive)
                 else:
                     r_mat = asset.find('material',
-                                       'material_' + file_without_extension)
+                                       'material_' + f_without_extension)
     else:
         global TEXTURE_NUMBER
         diffuse = material.diffuse()
         ambient = material.ambient()
         texture = asset.add('texture',
                             name="texture_" + str(TEXTURE_NUMBER),
-                            # rgb1=su.vec3d_to_list(Vector3d(diffuse.r(),
-                            #                                diffuse.g(),
-                            #                                diffuse.b())),
-                            # rgb2=su.vec3d_to_list(Vector3d(ambient.r(),
-                            #                                ambient.g(),
-                            #                                ambient.b())),
+                            rgb1=su.vec3d_to_list(Vector3d(diffuse.r(),
+                                                           diffuse.g(),
+                                                           diffuse.b())),
+                            rgb2=su.vec3d_to_list(Vector3d(ambient.r(),
+                                                           ambient.g(),
+                                                           ambient.b())),
                             type='2d',
                             builtin="checker",
                             width=512,
@@ -95,8 +95,8 @@ def add_material(geom, material):
                           specular=specular,
                           emission=emissive,
                           rgba=[diffuse.r(),
-                             diffuse.g(),
-                             diffuse.b(),
-                             diffuse.a()])
+                                diffuse.g(),
+                                diffuse.b(),
+                                diffuse.a()])
     geom.material = r_mat
     return r_mat
