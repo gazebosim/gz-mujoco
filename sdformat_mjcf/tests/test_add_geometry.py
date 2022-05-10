@@ -16,6 +16,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_allclose
 from math import pi
+import os
 
 import sdformat as sdf
 from ignition.math import Pose3d, Vector2d, Vector3d
@@ -24,7 +25,6 @@ from dm_control import mjcf
 from tests import helpers
 from sdformat_mjcf.converters import geometry as geometry_conv
 
-import os
 
 GeometryType = sdf.Geometry.GeometryType
 
