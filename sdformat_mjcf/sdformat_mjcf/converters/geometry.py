@@ -14,8 +14,6 @@
 
 """Module to convert SDFormat Collision/Visual geometries to MJCF geoms"""
 
-from dm_control import mjcf
-
 import os
 
 import sdformat as sdf
@@ -95,12 +93,12 @@ def add_geometry(body, name, pose, sdf_geom):
         if "obj" in extension or "stl" in extension:
             mesh_file_path = os.path.join(dirname, uri)
             asset_loaded = geom.root.asset.find('mesh', file_without_extension)
-            if asset_loaded == None:
+            if asset_loaded is None:
                 geom.mesh = geom.root.asset.add('mesh', file=mesh_file_path)
             else:
                 geom.mesh = asset_loaded
         else:
-            raise RuntimeError("This kind of mesh format is not yet supported {}"
+            raise RuntimeError("This kind of format is not yet supported {}"
                                .format(mesh_shape.uri()))
     else:
         raise RuntimeError(
