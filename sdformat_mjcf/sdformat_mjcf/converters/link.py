@@ -80,8 +80,8 @@ def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver):
             add_collision(body, col, pose_resolver=pose_resolver)
 
     for vi in range(link.visual_count()):
-        col = link.visual_by_index(vi)
-        if col.geometry() is not None:
-            add_visual(body, col, pose_resolver=pose_resolver)
+        vis = link.visual_by_index(vi)
+        if vis.geometry() is not None:
+            add_visual(body, vis, pose_resolver=pose_resolver)
 
     return body
