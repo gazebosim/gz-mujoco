@@ -16,7 +16,7 @@
 Python"""
 
 import math
-from ignition.math import Pose3d
+from ignition.math import Pose3d, Vector3d
 
 
 def vec3d_to_list(vec):
@@ -78,3 +78,18 @@ def pose_resolver(sem_pose, relative_to=None):
     if errors:
         raise RuntimeError("\n".join(str(err) for err in errors))
     return pose
+
+
+def axis_xyz_resolver(joint_axis):
+    """
+    Resolves the xyz unit vector of SDFormat Joint axes.
+    :param sdformat.JointAxis joint_axis: The JointAxis object to be resolved.
+    :return: The resolved xyz vector.
+    :rtype: ignition.math.Vector3d
+    :raises RuntimeError: if an error is encountered when resolving the vector.
+    """
+    xyz_vec = Vector3d()
+    errors = joint_axis.resolve_xyz(xyz_vec)
+    if errors:
+        raise RuntimeError("\n".join(str(err) for err in errors))
+    return xyz_vec
