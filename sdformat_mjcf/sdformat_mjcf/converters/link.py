@@ -98,10 +98,10 @@ def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver,
     for vi in range(link.visual_count()):
         visual = link.visual_by_index(vi)
         material = None
-        if visual.material() is not None:
-            material = add_material(body, visual.material())
         if visual.geometry() is not None:
-            add_visual(body, visual, pose_resolver=pose_resolver, material=material)
+            visual_geom = add_visual(body, visual, pose_resolver=pose_resolver)
+            if visual.material() is not None:
+                material = add_material(visual_geom, visual.material())
     for li in range(link.light_count()):
         light = link.light_by_index(li)
         sem_pose = light.semantic_pose()
