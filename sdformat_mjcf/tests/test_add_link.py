@@ -21,7 +21,7 @@ from ignition.math import Inertiald, Pose3d, MassMatrix3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_mjcf.converters.link import add_link
-import helpers
+from tests import helpers
 
 
 class LinkTest(unittest.TestCase):
