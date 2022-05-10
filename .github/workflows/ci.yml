@@ -6,7 +6,7 @@ jobs:
   test:
     strategy:
       matrix:
-        python: ['3.8', '3.9', '3.10']
+        python: ['3.8']
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
@@ -19,16 +19,18 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y git
+        sudo apt-get install -y git python3-pip
         git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
-        sudo pip3 install -r /tmp/gzdev/requirements.txt
+        sudo python3 -m pip install -r /tmp/gzdev/requirements.txt
         sudo /tmp/gzdev/gzdev.py repository enable osrf stable
         sudo /tmp/gzdev/gzdev.py repository enable osrf nightly
         sudo apt-get update
-        sudo apt-get install -y libsdformat13-dev python3-ignition-math7
+        sudo apt-get install -y libsdformat13-dev python3-ignition-math7 python3-sdformat13
     - name: Install test dependencies
       run: python3 -m pip install -U tox
     - name: Test
+      env:
+        PYTHONPATH: ${{ env.pythonLocation }}/lib/python${{ matrix.python }}/site-packages:/usr/lib/python3/dist-packages
       run: |
         cd sdformat_mjcf
         python3 -m tox -e py
