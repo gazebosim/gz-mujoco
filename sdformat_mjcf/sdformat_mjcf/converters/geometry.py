@@ -25,7 +25,7 @@ COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
 
 
-def add_geometry(body, name, pose, sdf_geom, material=None):
+def add_geometry(body, name, pose, sdf_geom):
     """
     Converts an SDFormat geometry to an MJCF geom and add it to the given body.
 
@@ -34,8 +34,6 @@ def add_geometry(body, name, pose, sdf_geom, material=None):
             Collision or Visual).
     :param sdformat.Pose3d pose: Resolved pose of the geom (obtained from the
             pose of the SDFormat Collision or Visual).
-    :param sdf.Material Material: Material to assign to the geometry.
-           if material is None then there is no material assigned to the geom.
     :return: The newly created MJCF geom.
     :rtype: mjcf.Element
     """
@@ -49,9 +47,6 @@ def add_geometry(body, name, pose, sdf_geom, material=None):
         pos=su.vec3d_to_list(pose.pos()),
         euler=su.quat_to_euler_list(pose.rot()),
     )
-
-    if material is not None:
-        geom.material = material
 
     if sdf_geom.box_shape():
         box_shape = sdf_geom.box_shape()
@@ -132,7 +127,7 @@ def add_collision(body, col, pose_resolver=su.pose_resolver):
     return geom
 
 
-def add_visual(body, vis, pose_resolver=su.pose_resolver, material=None):
+def add_visual(body, vis, pose_resolver=su.pose_resolver):
     """
     Converts an SDFormat visual to an MJCF geom and add it to the given
     body. To differentiate Visual geoms from Collision geoms, we assign
@@ -147,6 +142,6 @@ def add_visual(body, vis, pose_resolver=su.pose_resolver, material=None):
     """
     sem_pose = vis.semantic_pose()
     pose = pose_resolver(sem_pose)
-    geom = add_geometry(body, vis.name(), pose, vis.geometry(), material)
+    geom = add_geometry(body, vis.name(), pose, vis.geometry())
     geom.group = VISUAL_GEOM_GROUP
     return geom

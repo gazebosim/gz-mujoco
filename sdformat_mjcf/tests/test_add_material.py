@@ -40,8 +40,11 @@ class MaterialTest(unittest.TestCase):
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
+        geom = body.add(
+            "geom",
+            name="geometry_test")
 
-        material = add_material(body, material)
+        material = add_material(geom, material)
         self.assertNotEqual(material, None)
 
     def test_material_color(self):
@@ -53,22 +56,19 @@ class MaterialTest(unittest.TestCase):
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
+        geom = body.add(
+            "geom",
+            name="geometry_test")
 
-        material = add_material(body, material)
+        material = add_material(geom, material)
         self.assertNotEqual(material, None)
-
-        texture = body.root.asset.find("texture", "texture_0")
-        self.assertEqual(1, texture.rgb1[0])
-        self.assertEqual(0, texture.rgb1[1])
-        self.assertEqual(0, texture.rgb1[2])
-
-        self.assertEqual(0, texture.rgb2[0])
-        self.assertEqual(1, texture.rgb2[1])
-        self.assertEqual(0, texture.rgb2[2])
 
         self.assertAlmostEqual(0.8, material.specular)
         self.assertAlmostEqual(0.7, material.emission)
-
+        self.assertEqual(1, material.rgba[0])
+        self.assertEqual(0, material.rgba[1])
+        self.assertEqual(0, material.rgba[2])
+        self.assertEqual(1, material.rgba[3])
 
 if __name__ == "__main__":
     unittest.main()
