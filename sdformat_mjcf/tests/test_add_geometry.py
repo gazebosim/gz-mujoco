@@ -21,7 +21,7 @@ import sdformat as sdf
 from ignition.math import Pose3d, Vector2d, Vector3d
 from dm_control import mjcf
 
-import helpers
+from tests import helpers
 from sdformat_mjcf.converters import geometry as geometry_conv
 
 GeometryType = sdf.Geometry.GeometryType
@@ -125,7 +125,7 @@ class GeometryTest(unittest.TestCase):
         x_size = 5.
         y_size = 10.
         normal = np.array([1, 2, 3])
-        normal_unit = normal/np.linalg.norm(normal)
+        normal_unit = normal / np.linalg.norm(normal)
         plane.set_size(Vector2d(x_size, y_size))
         plane.set_normal(Vector3d(*normal_unit))
 
