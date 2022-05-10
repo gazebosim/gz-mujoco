@@ -50,11 +50,11 @@ def add_material(body, material):
                 if (len(extension_tokens) == 0):
                     raise RuntimeError("Unable to find the extension {}"
                                        .format(workflow.albedo_map()))
-                file_without_extension = os.path.splitext( \
+                file_without_extension = os.path.splitext(
                     os.path.basename(workflow.albedo_map()))[0]
 
                 texture_loaded = asset.find('texture',
-                                                      file_without_extension)
+                                            file_without_extension)
                 if texture_loaded is None:
                     texture = asset.add('texture',
                                         name=file_without_extension,
