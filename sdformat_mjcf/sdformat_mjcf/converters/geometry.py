@@ -91,10 +91,10 @@ def add_geometry(body, name, pose, sdf_geom):
             raise RuntimeError("Fuel meshes are not yet supported")
         geom.type = "mesh"
         if "obj" in extension or "stl" in extension:
-            mesh_file_path = os.path.join(dirname, uri)
             asset_loaded = geom.root.asset.find('mesh', file_without_extension)
             if asset_loaded is None:
-                geom.mesh = geom.root.asset.add('mesh', file=mesh_file_path)
+                geom.mesh = geom.root.asset.add('mesh',
+                                                file=mesh_shape.file_path())
             else:
                 geom.mesh = asset_loaded
         else:
