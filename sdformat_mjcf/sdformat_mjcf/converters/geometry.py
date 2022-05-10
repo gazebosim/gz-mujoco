@@ -90,7 +90,7 @@ def add_geometry(body, name, pose, sdf_geom):
         asset_loaded = geom.root.asset.find('mesh', file_without_extension)
         if asset_loaded is None:
             geom.mesh = geom.root.asset.add('mesh',
-                                            file=mesh_shape.file_path())
+                                            file=mesh_shape.uri())
         else:
             geom.mesh = asset_loaded
     else:
