@@ -17,7 +17,6 @@
 import math
 
 import sdformat as sdf
-from ignition.math import Pose3d
 
 import sdformat_mjcf.sdf_utils as su
 
@@ -33,13 +32,14 @@ JOINT_DEFAULT_SPRING_STIFFNESS = 0.0
 
 def _compute_joint_axis(joint_axis, joint_pose, axis_xyz_resolver):
     """
-    Compute the joint axis taking into account the pose of the joint.
+    Compute the joint axis unit vector taking into account the pose of the
+    joint.
 
     :param sdformat.JointAxis: The input joint axis
     :param ignition.math.Pose3d joint_pose: The pose of the joint that contains
     the joint axis.
     :param axis_xyz_resolver: Function to resolve the unit vector a joint axis.
-    :return: The computer axis unit vector.
+    :return: The computed axis unit vector.
     :rtype: list[float]
     """
     xyz_vec = axis_xyz_resolver(joint_axis)
