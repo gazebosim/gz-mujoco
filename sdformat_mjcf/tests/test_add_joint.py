@@ -23,7 +23,7 @@ from dm_control import mjcf
 from sdformat_mjcf.converters.joint import JointType
 from sdformat_mjcf.converters.joint import add_joint as add_joint_impl
 import sdformat_mjcf.sdf_utils as su
-import helpers
+from tests import helpers
 
 
 def add_joint(*args, **kwargs):
