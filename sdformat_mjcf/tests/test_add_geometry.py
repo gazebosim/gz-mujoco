@@ -21,7 +21,7 @@ import sdformat as sdf
 from ignition.math import Pose3d, Vector2d, Vector3d
 from dm_control import mjcf
 
-import helpers
+from tests import helpers
 from sdformat_mjcf.converters import geometry as geometry_conv
 
 GeometryType = sdf.Geometry.GeometryType
@@ -125,7 +125,7 @@ class GeometryTest(unittest.TestCase):
         x_size = 5.
         y_size = 10.
         normal = np.array([1, 2, 3])
-        normal_unit = normal/np.linalg.norm(normal)
+        normal_unit = normal / np.linalg.norm(normal)
         plane.set_size(Vector2d(x_size, y_size))
         plane.set_normal(Vector3d(*normal_unit))
 
@@ -182,6 +182,27 @@ class CollisionTest(unittest.TestCase):
         assert_allclose([1., 2., 3.], mj_geom.pos)
         assert_allclose([90., 60., 45.], mj_geom.euler)
         self.assertEqual(geometry_conv.COLLISION_GEOM_GROUP, mj_geom.group)
+
+
+class VisualTest(unittest.TestCase):
+    def test_basic_visual_attributes(self):
+        visual = sdf.Visual()
+        visual.set_name("v1")
+        visual.set_raw_pose(Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4))
+
+        geometry = sdf.Geometry()
+        geometry.set_box_shape(sdf.Box())
+        geometry.set_type(GeometryType.BOX)
+        visual.set_geometry(geometry)
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        mj_geom = geometry_conv.add_visual(
+            body, visual, helpers.nonthrowing_pose_resolver)
+        self.assertEqual("v1", mj_geom.name)
+        assert_allclose([1., 2., 3.], mj_geom.pos)
+        assert_allclose([90., 60., 45.], mj_geom.euler)
+        self.assertEqual(geometry_conv.VISUAL_GEOM_GROUP, mj_geom.group)
 
 
 if __name__ == "__main__":
