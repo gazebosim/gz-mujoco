@@ -22,18 +22,17 @@ from ignition.math import Color
 import sdformat as sdf
 
 from sdformat_mjcf.converters.material import add_material
-import sdformat_mjcf.sdf_utils as su
+
 
 class MaterialTest(unittest.TestCase):
-
 
     def test_material_pbr(self):
         pbr = sdf.Pbr()
         workflow = sdf.PbrWorkflow()
         workflow.set_type(sdf.PbrWorkflow.PbrWorkflowType.METAL)
         workflow.set_albedo_map(os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    "resources/box_obj/textures/albedo_map.png"))
+                                os.path.dirname(os.path.abspath(__file__)),
+                                "resources/box_obj/textures/albedo_map.png"))
         pbr.set_workflow(workflow.type(), workflow)
 
         material = sdf.Material()
@@ -44,7 +43,6 @@ class MaterialTest(unittest.TestCase):
 
         material = add_material(body, material)
         self.assertNotEqual(material, None)
-
 
     def test_material_color(self):
         material = sdf.Material()
