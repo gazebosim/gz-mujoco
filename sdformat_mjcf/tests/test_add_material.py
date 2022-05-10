@@ -70,5 +70,6 @@ class MaterialTest(unittest.TestCase):
         self.assertEqual(0, material.rgba[2])
         self.assertEqual(1, material.rgba[3])
 
+
 if __name__ == "__main__":
     unittest.main()
