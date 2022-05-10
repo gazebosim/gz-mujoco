@@ -90,16 +90,12 @@ def add_geometry(body, name, pose, sdf_geom):
         if 'http://' in uri or 'https://' in uri:
             raise RuntimeError("Fuel meshes are not yet supported")
         geom.type = "mesh"
-        if "obj" in extension or "stl" in extension:
-            asset_loaded = geom.root.asset.find('mesh', file_without_extension)
-            if asset_loaded is None:
-                geom.mesh = geom.root.asset.add('mesh',
-                                                file=mesh_shape.file_path())
-            else:
-                geom.mesh = asset_loaded
+        asset_loaded = geom.root.asset.find('mesh', file_without_extension)
+        if asset_loaded is None:
+            geom.mesh = geom.root.asset.add('mesh',
+                                            file=mesh_shape.file_path())
         else:
-            raise RuntimeError("This kind of format is not yet supported {}"
-                               .format(mesh_shape.uri()))
+            geom.mesh = asset_loaded
     else:
         raise RuntimeError(
             f"Encountered unsupported shape type {sdf_geom.type()}")
