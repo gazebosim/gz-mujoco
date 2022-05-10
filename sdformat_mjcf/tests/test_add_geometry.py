@@ -16,6 +16,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_allclose
 from math import pi
+import os
 
 import sdformat as sdf
 from ignition.math import Pose3d, Vector2d, Vector3d
@@ -23,8 +24,6 @@ from dm_control import mjcf
 
 from tests import helpers
 from sdformat_mjcf.converters import geometry as geometry_conv
-
-import os
 
 GeometryType = sdf.Geometry.GeometryType
 
@@ -123,8 +122,8 @@ class GeometryTest(unittest.TestCase):
         mesh = sdf.Mesh()
         mesh.set_uri("meshes/box.obj")
         mesh.set_file_path(os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    "resources/box_obj/model.sdf"))
+                           os.path.dirname(os.path.abspath(__file__)),
+                           "resources/box_obj/model.sdf"))
 
         geometry = sdf.Geometry()
         geometry.set_mesh_shape(mesh)
@@ -137,7 +136,6 @@ class GeometryTest(unittest.TestCase):
         self.assertEqual("mesh_shape", mj_geom.name)
         self.assertEqual("mesh", mj_geom.type)
         self.assertEqual(1, len(mujoco.asset.find_all('mesh')))
-
 
     def test_plane(self):
         plane = sdf.Plane()

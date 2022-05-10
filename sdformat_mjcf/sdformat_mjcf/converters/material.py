@@ -16,8 +16,7 @@
 
 from ignition.math import Vector3d
 
-from sdformat import Pbr, PbrWorkflow, Material
-import sdformat
+from sdformat import Pbr, PbrWorkflow, Material  # noqa: F401
 
 import sdformat_mjcf.sdf_utils as su
 
@@ -25,68 +24,79 @@ import os
 
 TEXTURE_NUMBER = 0
 
-def add_material(body, material):
+
+def add_material(geom, material):
+    """
+    Converts an SDFormat material to an MJCF material.
+
+    :param mjcf.Element geom: The MJCF geom to add the material
+    :param sdf.Material material: The SDF material to convert
+    :return: The newly created MJCF material.
+    :rtype: mjcf.Element
+    """
     pbr = material.pbr_material()
-    specular = (material.specular().r() +
-                material.specular().g() +
-                material.specular().b()) / 3.0
-    emissive = (material.emissive().r() +
-                material.emissive().g() +
-                material.emissive().b()) / 3.0
+    sp_color = material.specular()
+    em_color = material.emissive()
+    specular = (sp_color.r() + sp_color.g() + sp_color.b()) / 3.0
+    emissive = (em_color.r() + em_color.g() + em_color.b()) / 3.0
+    asset = geom.root.asset
+    r_mat = None
     if pbr is not None:
         workflow = pbr.workflow(PbrWorkflow.PbrWorkflowType.METAL)
         if workflow is not None:
             if workflow.albedo_map():
-                extension_tokens = os.path.basename(
-                    workflow.albedo_map()).split(".")
-                if (len(extension_tokens) > 1):
-                    extension = extension_tokens[1]
-                else:
-                    raise RuntimeError("Unable to find the texture extension {}"
+                file_without_extension, extension = os.path.splitext(
+                    os.path.basename(workflow.albedo_map()))
+                if not extension:
+                    raise RuntimeError("Unable to find the extension {}"
                                        .format(workflow.albedo_map()))
-                file_without_extension = os.path.splitext(
-                    os.path.basename(workflow.albedo_map()))[0]
-                texture_loaded = body.root.asset.find('texture',
-                                                      file_without_extension)
-                if texture_loaded == None:
-                    texture = body.root.asset.add('texture',
-                                                  name=file_without_extension,
-                                                  type='2d',
-                                                  file=workflow.albedo_map(),
-                                                  gridsize='1 1')
-                    return body.root.asset.add("material",
-                                     name="material_" + file_without_extension,
-                                     texture=texture,
-                                     texrepeat="1 1",
-                                     texuniform=True,
-                                     specular=specular,
-                                     emission=emissive)
+
+                texture_loaded = asset.find('texture',
+                                            file_without_extension)
+                if texture_loaded is None:
+                    texture = asset.add('texture',
+                                        name=file_without_extension,
+                                        type='2d',
+                                        file=workflow.albedo_map(),
+                                        gridsize='1 1')
+                    r_mat = asset.add("material",
+                                      name="material_" + file_without_extension,
+                                      texture=texture,
+                                      texrepeat="1 1",
+                                      texuniform=True,
+                                      specular=specular,
+                                      emission=emissive)
                 else:
-                    return body.root.asset.find('material',
-                                           "material_" + file_without_extension)
+                    r_mat = asset.find('material',
+                                       'material_' + file_without_extension)
     else:
         global TEXTURE_NUMBER
-        texture = body.root.asset.add('texture',
-                                      name="texture_" + str(TEXTURE_NUMBER),
-                                      rgb1=su.vec3d_to_list(
-                                        Vector3d(material.diffuse().r(),
-                                                 material.diffuse().g(),
-                                                 material.diffuse().b())),
-                                      rgb2=su.vec3d_to_list(
-                                        Vector3d(material.ambient().r(),
-                                                 material.ambient().g(),
-                                                 material.ambient().b())),
-                                      type='2d',
-                                      builtin="checker",
-                                      width=512,
-                                      height=512,
-                                      gridsize='1 1')
+        diffuse = material.diffuse()
+        ambient = material.ambient()
+        texture = asset.add('texture',
+                            name="texture_" + str(TEXTURE_NUMBER),
+                            # rgb1=su.vec3d_to_list(Vector3d(diffuse.r(),
+                            #                                diffuse.g(),
+                            #                                diffuse.b())),
+                            # rgb2=su.vec3d_to_list(Vector3d(ambient.r(),
+                            #                                ambient.g(),
+                            #                                ambient.b())),
+                            type='2d',
+                            builtin="checker",
+                            width=512,
+                            height=512,
+                            gridsize='1 1')
         TEXTURE_NUMBER = TEXTURE_NUMBER + 1
-        return body.root.asset.add("material",
-                         name="material_" + str(TEXTURE_NUMBER),
-                         texture=texture,
-                         texrepeat="1 1",
-                         texuniform=True,
-                         specular=specular,
-                         emission=emissive)
-    return None
+        r_mat = asset.add("material",
+                          name="material_" + str(TEXTURE_NUMBER),
+                          texture=texture,
+                          texrepeat="1 1",
+                          texuniform=True,
+                          specular=specular,
+                          emission=emissive,
+                          rgba=[diffuse.r(),
+                             diffuse.g(),
+                             diffuse.b(),
+                             diffuse.a()])
+    geom.material = r_mat
+    return r_mat

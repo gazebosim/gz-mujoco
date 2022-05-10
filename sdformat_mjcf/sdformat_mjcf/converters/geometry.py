@@ -14,8 +14,6 @@
 
 """Module to convert SDFormat Collision/Visual geometries to MJCF geoms"""
 
-from dm_control import mjcf
-
 import os
 
 import sdformat as sdf
@@ -98,12 +96,12 @@ def add_geometry(body, name, pose, sdf_geom, material=None):
         if "obj" in extension or "stl" in extension:
             mesh_file_path = os.path.join(dirname, uri)
             asset_loaded = geom.root.asset.find('mesh', file_without_extension)
-            if asset_loaded == None:
+            if asset_loaded is None:
                 geom.mesh = geom.root.asset.add('mesh', file=mesh_file_path)
             else:
                 geom.mesh = asset_loaded
         else:
-            raise RuntimeError("This kind of mesh format is not yet supported {}"
+            raise RuntimeError("This kind of format is not yet supported {}"
                                .format(mesh_shape.uri()))
     else:
         raise RuntimeError(
@@ -132,7 +130,7 @@ def add_collision(body, col, pose_resolver=su.pose_resolver):
     return geom
 
 
-def add_visual(body, vis, pose_resolver=su.pose_resolver, material=None):
+def add_visual(body, vis, pose_resolver=su.pose_resolver):
     """
     Converts an SDFormat visual to an MJCF geom and add it to the given
     body. To differentiate Visual geoms from Collision geoms, we assign
@@ -147,6 +145,6 @@ def add_visual(body, vis, pose_resolver=su.pose_resolver, material=None):
     """
     sem_pose = vis.semantic_pose()
     pose = pose_resolver(sem_pose)
-    geom = add_geometry(body, vis.name(), pose, vis.geometry(), material)
+    geom = add_geometry(body, vis.name(), pose, vis.geometry())
     geom.group = VISUAL_GEOM_GROUP
     return geom
