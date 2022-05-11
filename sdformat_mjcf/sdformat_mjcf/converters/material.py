@@ -20,7 +20,7 @@ from sdformat import Pbr, PbrWorkflow, Material  # noqa: F401
 
 import os
 
-TEXTURE_NUMBER = 0
+MATERIAL_NUMBER = 0
 
 
 def add_material(geom, material):
@@ -68,12 +68,12 @@ def add_material(geom, material):
                     r_mat = asset.find('material',
                                        'material_' + f_without_extension)
     else:
-        global TEXTURE_NUMBER
+        global MATERIAL_NUMBER
         diff = material.diffuse()
         amb = material.ambient()
-        TEXTURE_NUMBER = TEXTURE_NUMBER + 1
+        MATERIAL_NUMBER = MATERIAL_NUMBER + 1
         r_mat = asset.add("material",
-                          name="material_" + str(TEXTURE_NUMBER),
+                          name="material_" + str(MATERIAL_NUMBER),
                           specular=specular,
                           emission=emissive,
                           rgba=[clamp(diff.r() * 0.8 + amb.r() * 0.4, 0, 1),

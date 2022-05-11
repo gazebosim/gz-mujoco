@@ -44,8 +44,18 @@ class MaterialTest(unittest.TestCase):
             "geom",
             name="geometry_test")
 
-        material = add_material(geom, material)
-        self.assertNotEqual(material, None)
+        material_mjcf = add_material(geom, material)
+        self.assertNotEqual(None, material_mjcf)
+        self.assertEqual("material_albedo_map", material_mjcf.name)
+        self.assertEqual("albedo_map", material_mjcf.texture.name)
+        self.assertEqual("2d", material_mjcf.texture.type)
+        self.assertEqual(1, material_mjcf.texture.gridsize[0])
+        self.assertEqual(1, material_mjcf.texture.gridsize[1])
+        self.assertEqual(1, material_mjcf.texrepeat[0])
+        self.assertEqual(1, material_mjcf.texrepeat[1])
+        self.assertEqual("true", material_mjcf.texuniform)
+        self.assertEqual(0.0, material_mjcf.emission)
+        self.assertEqual(0.0, material_mjcf.specular)
 
     def test_material_color(self):
         material = sdf.Material()
@@ -60,15 +70,15 @@ class MaterialTest(unittest.TestCase):
             "geom",
             name="geometry_test")
 
-        material = add_material(geom, material)
-        self.assertNotEqual(material, None)
+        material_mjcf = add_material(geom, material)
+        self.assertNotEqual(material_mjcf, None)
 
-        self.assertAlmostEqual(0.8, material.specular)
-        self.assertAlmostEqual(0.7, material.emission)
-        self.assertAlmostEqual(0.8, material.rgba[0])
-        self.assertAlmostEqual(0.4, material.rgba[1])
-        self.assertAlmostEqual(0, material.rgba[2])
-        self.assertAlmostEqual(1, material.rgba[3])
+        self.assertAlmostEqual(0.8, material_mjcf.specular)
+        self.assertAlmostEqual(0.7, material_mjcf.emission)
+        self.assertAlmostEqual(0.8, material_mjcf.rgba[0])
+        self.assertAlmostEqual(0.4, material_mjcf.rgba[1])
+        self.assertAlmostEqual(0, material_mjcf.rgba[2])
+        self.assertAlmostEqual(1, material_mjcf.rgba[3])
 
 
 if __name__ == "__main__":
