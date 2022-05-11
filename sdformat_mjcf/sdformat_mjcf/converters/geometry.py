@@ -81,11 +81,8 @@ def add_geometry(body, name, pose, sdf_geom, material=None):
     elif sdf_geom.mesh_shape():
         mesh_shape = sdf_geom.mesh_shape()
         uri = mesh_shape.uri()
-        dirname = os.path.dirname(mesh_shape.file_path())
         extension_tokens = os.path.basename(mesh_shape.uri()).split(".")
-        if (len(extension_tokens) > 1):
-            extension = extension_tokens[1]
-        else:
+        if (len(extension_tokens) == 1):
             raise RuntimeError("Unable to find the mesh extension {}"
                                .format(uri))
         file_without_extension = os.path.splitext(
@@ -93,16 +90,14 @@ def add_geometry(body, name, pose, sdf_geom, material=None):
         if 'http://' in uri or 'https://' in uri:
             raise RuntimeError("Fuel meshes are not yet supported")
         geom.type = "mesh"
-        if "obj" in extension or "stl" in extension:
-            mesh_file_path = os.path.join(dirname, uri)
-            asset_loaded = geom.root.asset.find('mesh', file_without_extension)
-            if asset_loaded is None:
-                geom.mesh = geom.root.asset.add('mesh', file=mesh_file_path)
-            else:
-                geom.mesh = asset_loaded
+        asset_loaded = geom.root.asset.find('mesh', file_without_extension)
+        dirname = os.path.dirname(mesh_shape.file_path())
+        mesh_file_path = os.path.join(dirname, uri)
+        if asset_loaded is None:
+            geom.mesh = geom.root.asset.add('mesh',
+                                            file=mesh_file_path)
         else:
-            raise RuntimeError("This kind of format is not yet supported {}"
-                               .format(mesh_shape.uri()))
+            geom.mesh = asset_loaded
     else:
         raise RuntimeError(
             f"Encountered unsupported shape type {sdf_geom.type()}")

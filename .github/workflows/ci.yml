@@ -32,3 +32,5 @@ jobs:
       run: |
         cd sdformat_mjcf
         python3 -m tox -e py
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v2
