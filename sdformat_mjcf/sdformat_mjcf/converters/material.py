@@ -14,11 +14,9 @@
 
 """Module to convert SDFormat MAterials to MJCF"""
 
-from ignition.math import Vector3d, clamp
+from ignition.math import clamp
 
 from sdformat import Pbr, PbrWorkflow, Material  # noqa: F401
-
-import sdformat_mjcf.sdf_utils as su
 
 import os
 
