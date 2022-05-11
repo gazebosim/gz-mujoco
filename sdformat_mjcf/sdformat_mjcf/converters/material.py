@@ -14,7 +14,7 @@
 
 """Module to convert SDFormat MAterials to MJCF"""
 
-from ignition.math import Vector3d
+from ignition.math import Vector3d, clamp
 
 from sdformat import Pbr, PbrWorkflow, Material  # noqa: F401
 
@@ -71,32 +71,16 @@ def add_material(geom, material):
                                        'material_' + f_without_extension)
     else:
         global TEXTURE_NUMBER
-        diffuse = material.diffuse()
-        ambient = material.ambient()
-        texture = asset.add('texture',
-                            name="texture_" + str(TEXTURE_NUMBER),
-                            rgb1=su.vec3d_to_list(Vector3d(diffuse.r(),
-                                                           diffuse.g(),
-                                                           diffuse.b())),
-                            rgb2=su.vec3d_to_list(Vector3d(ambient.r(),
-                                                           ambient.g(),
-                                                           ambient.b())),
-                            type='2d',
-                            builtin="checker",
-                            width=512,
-                            height=512,
-                            gridsize='1 1')
+        diff = material.diffuse()
+        amb = material.ambient()
         TEXTURE_NUMBER = TEXTURE_NUMBER + 1
         r_mat = asset.add("material",
                           name="material_" + str(TEXTURE_NUMBER),
-                          texture=texture,
-                          texrepeat="1 1",
-                          texuniform=True,
                           specular=specular,
                           emission=emissive,
-                          rgba=[diffuse.r(),
-                                diffuse.g(),
-                                diffuse.b(),
-                                diffuse.a()])
+                          rgba=[clamp(diff.r() * 0.8 + amb.r() * 0.4, 0, 1),
+                                clamp(diff.g() * 0.8 + amb.g() * 0.4, 0, 1),
+                                clamp(diff.b() * 0.8 + amb.b() * 0.4, 0, 1),
+                                clamp(diff.a() * 0.8 + amb.a() * 0.4, 0, 1)])
     geom.material = r_mat
     return r_mat

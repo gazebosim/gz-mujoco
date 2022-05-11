@@ -65,10 +65,10 @@ class MaterialTest(unittest.TestCase):
 
         self.assertAlmostEqual(0.8, material.specular)
         self.assertAlmostEqual(0.7, material.emission)
-        self.assertEqual(1, material.rgba[0])
-        self.assertEqual(0, material.rgba[1])
-        self.assertEqual(0, material.rgba[2])
-        self.assertEqual(1, material.rgba[3])
+        self.assertAlmostEqual(0.8, material.rgba[0])
+        self.assertAlmostEqual(0.4, material.rgba[1])
+        self.assertAlmostEqual(0, material.rgba[2])
+        self.assertAlmostEqual(1, material.rgba[3])
 
 
 if __name__ == "__main__":
