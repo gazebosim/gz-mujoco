@@ -14,7 +14,7 @@
 
 import unittest
 from numpy.testing import assert_allclose
-from math import pi
+from math import pi, sqrt
 
 import sdformat as sdf
 from ignition.math import Inertiald, Pose3d, MassMatrix3d, Vector3d
@@ -61,23 +61,25 @@ class LinkTest(unittest.TestCase):
         # <link name="base_link">
         #   <inertial>
         #       <pose degrees="true">1 2 3   90 60 45</pose>
-        #       <mass>10</mass>
+        #       <mass>384</mass>
         #       <inertia>
-        #           <ixx>2.0</ixx>
-        #           <iyy>3.0</iyy>
-        #           <izz>4.0</izz>
+        #           <ixx>544.0</ixx>
+        #           <iyy>2624.0</iyy>
+        #           <izz>3104.0</izz>
         #       </inertia>
         #   </inertial>
         link = sdf.Link()
         link.set_name("base_link")
         inertial = Inertiald(
-            MassMatrix3d(10, Vector3d(2.0, 3.0, 4.0), Vector3d.ZERO),
+            MassMatrix3d(384, Vector3d(544, 2624, 3104), Vector3d.ZERO),
             self.test_pose)
         link.set_inertial(inertial)
         mj_body = add_link(self.body,
                            link,
                            pose_resolver=helpers.nonthrowing_pose_resolver)
         self.assertIsNotNone(mj_body)
+        assert_allclose((2604, 2604, 1064, -500, 260*sqrt(6), 260*sqrt(6)),
+                        mj_body.inertial.fullinertia)
         assert_allclose(self.moi_to_list(inertial.moi()),
                         mj_body.inertial.fullinertia)
         self.assertIsNone(mj_body.inertial.euler)
