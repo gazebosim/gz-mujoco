@@ -14,7 +14,7 @@
 
 """Test helpers"""
 
-from ignition.math import Pose3d
+from ignition.math import Pose3d, Vector3d
 
 
 def nonthrowing_pose_resolver(sem_pose):
@@ -35,3 +35,21 @@ def nonthrowing_pose_resolver(sem_pose):
     if errors:
         return sem_pose.raw_pose()
     return pose
+
+
+def nonthrowing_axis_xyz_resolver(joint_axis):
+    """
+    Resolves the xyz unit vector of SDFormat Joint axes. If an error is
+    encountered, this simply returns the raw value of the xyz vector.
+    :param sdformat.JointAxis joint_axis: The JointAxis object to be resolved.
+    This is useful for testing converters with programmatically created
+    SDFormat objects that do not contain frame graphs.
+    :return: The resolved xyz vector.
+    :rtype: ignition.math.Vector3d
+    :raises RuntimeError: if an error is encountered when resolving the vector.
+    """
+    xyz_vec = Vector3d()
+    errors = joint_axis.resolve_xyz(xyz_vec)
+    if errors:
+        return joint_axis.xyz()
+    return xyz_vec

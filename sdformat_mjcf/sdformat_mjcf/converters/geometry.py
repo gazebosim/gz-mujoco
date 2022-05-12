@@ -14,6 +14,8 @@
 
 """Module to convert SDFormat Collision/Visual geometries to MJCF geoms"""
 
+import os
+
 import sdformat as sdf
 import sdformat_mjcf.sdf_utils as su
 
@@ -74,7 +76,25 @@ def add_geometry(body, name, pose, sdf_geom):
         geom.type = "sphere"
         geom.size = [sphere_shape.radius()]
     elif sdf_geom.mesh_shape():
-        raise RuntimeError("Meshes are not yet supported")
+        mesh_shape = sdf_geom.mesh_shape()
+        uri = mesh_shape.uri()
+        extension_tokens = os.path.basename(mesh_shape.uri()).split(".")
+        if (len(extension_tokens) == 1):
+            raise RuntimeError("Unable to find the mesh extension {}"
+                               .format(uri))
+        file_without_extension = os.path.splitext(
+            os.path.basename(mesh_shape.uri()))[0]
+        if 'http://' in uri or 'https://' in uri:
+            raise RuntimeError("Fuel meshes are not yet supported")
+        geom.type = "mesh"
+        asset_loaded = geom.root.asset.find('mesh', file_without_extension)
+        dirname = os.path.dirname(mesh_shape.file_path())
+        mesh_file_path = os.path.join(dirname, uri)
+        if asset_loaded is None:
+            geom.mesh = geom.root.asset.add('mesh',
+                                            file=mesh_file_path)
+        else:
+            geom.mesh = asset_loaded
     else:
         raise RuntimeError(
             f"Encountered unsupported shape type {sdf_geom.type()}")
