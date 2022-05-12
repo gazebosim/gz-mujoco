@@ -57,6 +57,32 @@ class MaterialTest(unittest.TestCase):
         self.assertEqual(0.0, material_mjcf.emission)
         self.assertEqual(0.0, material_mjcf.specular)
 
+        geom2 = body.add(
+            "geom",
+            name="geometry_test2")
+        material_mjcf2 = add_material(geom2, material)
+        self.assertEqual(material_mjcf2, material_mjcf)
+
+    def test_material_pbr_bad_extension(self):
+        pbr = sdf.Pbr()
+        workflow = sdf.PbrWorkflow()
+        workflow.set_type(sdf.PbrWorkflow.PbrWorkflowType.METAL)
+        workflow.set_albedo_map(os.path.join(
+                                os.path.dirname(os.path.abspath(__file__)),
+                                "resources/box_obj/textures/albedo_map"))
+        pbr.set_workflow(workflow.type(), workflow)
+
+        material = sdf.Material()
+        material.set_pbr_material(pbr)
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        geom = body.add(
+            "geom",
+            name="geometry_test")
+
+        self.assertRaises(RuntimeError, add_material, geom, material)
+
     def test_material_color(self):
         material = sdf.Material()
         material.set_diffuse(Color(1, 0, 0))
