@@ -13,18 +13,17 @@
 # limitations under the License.
 
 import unittest
-import numpy as np
 from numpy.testing import assert_allclose
 from math import pi
 
 import sdformat as sdf
-from ignition.math import Pose3d, Vector2d, Vector3d
+from ignition.math import Pose3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_mjcf.converters.joint import JointType
 from sdformat_mjcf.converters.joint import add_joint as add_joint_impl
 import sdformat_mjcf.sdf_utils as su
-import helpers
+from tests import helpers
 
 
 def add_joint(*args, **kwargs):
@@ -80,17 +79,10 @@ class JointTest(unittest.TestCase):
         self.assertEqual("freejoint", mj_joint.name)
         self.assertEqual("freejoint", mj_joint.tag)
 
-    def test_fixed_joint_to_world(self):
-        joint = self.create_sdf_joint("joint1", JointType.FIXED, Pose3d())
-        mj_joint = add_joint(self.body, joint)
-        self.assertIsNotNone(mj_joint)
-        self.assertEqual("hinge", mj_joint.type)
-        assert_allclose([0, 1e-9], mj_joint.range)
-
     def test_fixed_joint(self):
-        joint = self.create_sdf_joint("joint1", JointType.FIXED, Pose3d())
-        child_body = self.body.add("body")
-        mj_joint = add_joint(child_body, joint)
+        joint = sdf.Joint()
+        joint.set_type(JointType.FIXED)
+        mj_joint = add_joint(self.body, joint)
         self.assertIsNone(mj_joint)
 
     def test_revolute_joint(self):
