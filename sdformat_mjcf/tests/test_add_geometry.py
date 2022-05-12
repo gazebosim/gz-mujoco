@@ -22,7 +22,7 @@ import sdformat as sdf
 from ignition.math import Pose3d, Vector2d, Vector3d
 from dm_control import mjcf
 
-from tests import helpers
+import helpers
 from sdformat_mjcf.converters import geometry as geometry_conv
 
 GeometryType = sdf.Geometry.GeometryType
@@ -156,7 +156,7 @@ class GeometryTest(unittest.TestCase):
                                              self.test_pose, geometry)
         self.assertEqual("plane_shape", mj_geom.name)
         self.assertEqual("plane", mj_geom.type)
-        assert_allclose([x_size / 2., y_size / 2., 0.], mj_geom.size)
+        assert_allclose([x_size / 2., y_size / 2., 0.05], mj_geom.size)
         assert_allclose(self.expected_pos, mj_geom.pos)
         assert_allclose(self.expected_euler, mj_geom.euler)
 

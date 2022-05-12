@@ -77,7 +77,7 @@ class JointTest(unittest.TestCase):
     def test_free_joint(self):
         mj_joint = add_joint(self.body, None)
         self.assertIsNotNone(mj_joint)
-        self.assertEqual("freejoint", mj_joint.name)
+        self.assertEqual("freejoint_0", mj_joint.name)
         self.assertEqual("freejoint", mj_joint.tag)
 
     def test_fixed_joint_to_world(self):
