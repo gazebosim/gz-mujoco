@@ -78,7 +78,7 @@ class LinkTest(unittest.TestCase):
                            link,
                            pose_resolver=helpers.nonthrowing_pose_resolver)
         self.assertIsNotNone(mj_body)
-        assert_allclose((2604, 2604, 1064, -500, 260*sqrt(6), 260*sqrt(6)),
+        assert_allclose((2604, 2604, 1064, -500, 260 * sqrt(6), 260 * sqrt(6)),
                         mj_body.inertial.fullinertia)
         assert_allclose(self.moi_to_list(inertial.moi()),
                         mj_body.inertial.fullinertia)
