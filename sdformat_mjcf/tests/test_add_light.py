@@ -70,6 +70,12 @@ class LightTest(unittest.TestCase):
                          light.specular().b()],
                         light_mjcf.specular)
 
+    def test_light_none(self):
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+
+        light_mjcf = add_light(body, None, self.test_pose)
+        self.assertEqual(None, light_mjcf)
 
 if __name__ == "__main__":
     unittest.main()
