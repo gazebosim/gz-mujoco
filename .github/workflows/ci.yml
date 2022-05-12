@@ -27,10 +27,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y libsdformat13-dev python3-ignition-math7
     - name: Install test dependencies
-      run: python3 -m pip install -U tox
+      run: python3 -m pip install -U tox build[virtualenv]
     - name: Test
       run: |
         cd sdformat_mjcf
+        python3 -c "import sys;print(sys.path)"
         python3 -m tox -e py
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2

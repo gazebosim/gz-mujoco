@@ -23,16 +23,13 @@ from dm_control import mjcf
 import sdformat as sdf
 
 from sdformat_mjcf.converters.light import add_light
-import sdformat_mjcf.sdf_utils as su
 
 
 class LightTest(unittest.TestCase):
 
-
     test_pose = Pose3d(1, 2, 3, math.pi / 2, math.pi / 3, math.pi / 4)
     expected_pos = [1., 2., 3.]
     expected_euler = [90., 60., 45.]
-
 
     def test_light(self):
         light = sdf.Light()
@@ -40,8 +37,8 @@ class LightTest(unittest.TestCase):
         light.set_type(sdf.Light.LightType.DIRECTIONAL)
         light.set_raw_pose(self.test_pose)
         light.set_cast_shadows(True)
-        light.set_diffuse(Color(0.4,  0.5,  0.6,  1.0))
-        light.set_specular(Color(0.8,  0.9,  0.1,  1.0))
+        light.set_diffuse(Color(0.4, 0.5, 0.6, 1.0))
+        light.set_specular(Color(0.8, 0.9, 0.1, 1.0))
         light.set_linear_attenuation_factor(0.1)
         light.set_constant_attenuation_factor(0.5)
         light.set_quadratic_attenuation_factor(0.01)
@@ -72,6 +69,14 @@ class LightTest(unittest.TestCase):
                          light.specular().g(),
                          light.specular().b()],
                         light_mjcf.specular)
+
+    def test_light_none(self):
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+
+        light_mjcf = add_light(body, None, self.test_pose)
+        self.assertEqual(None, light_mjcf)
+
 
 if __name__ == "__main__":
     unittest.main()

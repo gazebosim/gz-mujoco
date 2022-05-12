@@ -32,20 +32,20 @@ def add_light(body, light, pose,
     """
     if light is None:
         return
-
+    type = light.type()
     light = body.add("light",
-                    name=light.name(),
-                    pos=su.vec3d_to_list(pose.pos()),
-                    directional=sdf.Light.LightType.DIRECTIONAL == light.type(),
-                    castshadow=light.cast_shadows(),
-                    attenuation=[light.constant_attenuation_factor(),
-                                 light.linear_attenuation_factor(),
-                                 light.quadratic_attenuation_factor()],
-                    dir=su.vec3d_to_list(light.direction()),
-                    diffuse=[light.diffuse().r(),
-                             light.diffuse().g(),
-                             light.diffuse().b()],
-                    specular=[light.specular().r(),
-                              light.specular().g(),
-                              light.specular().b()])
+                     name=light.name(),
+                     pos=su.vec3d_to_list(pose.pos()),
+                     directional=sdf.Light.LightType.DIRECTIONAL == type,
+                     castshadow=light.cast_shadows(),
+                     attenuation=[light.constant_attenuation_factor(),
+                                  light.linear_attenuation_factor(),
+                                  light.quadratic_attenuation_factor()],
+                     dir=su.vec3d_to_list(light.direction()),
+                     diffuse=[light.diffuse().r(),
+                              light.diffuse().g(),
+                              light.diffuse().b()],
+                     specular=[light.specular().r(),
+                               light.specular().g(),
+                               light.specular().b()])
     return light
