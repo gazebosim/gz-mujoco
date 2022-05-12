@@ -35,6 +35,9 @@ class GeometryTest(unittest.TestCase):
     expected_pos = [1., 2., 3.]
     expected_euler = [90., 60., 45.]
 
+    def setUp(self):
+        helpers.setup_test_graph_resolver()
+
     def test_box(self):
         box = sdf.Box()
         x_size, y_size, z_size = 1, 2, 3
@@ -182,6 +185,10 @@ class GeometryTest(unittest.TestCase):
 
 
 class CollisionTest(unittest.TestCase):
+
+    def setUp(self):
+        helpers.setup_test_graph_resolver()
+
     def test_basic_collision_attributes(self):
         collision = sdf.Collision()
         collision.set_name("c1")
@@ -194,8 +201,7 @@ class CollisionTest(unittest.TestCase):
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
-        mj_geom = geometry_conv.add_collision(
-            body, collision, helpers.nonthrowing_pose_resolver)
+        mj_geom = geometry_conv.add_collision(body, collision)
         self.assertEqual("c1", mj_geom.name)
         assert_allclose([1., 2., 3.], mj_geom.pos)
         assert_allclose([90., 60., 45.], mj_geom.euler)
@@ -203,6 +209,10 @@ class CollisionTest(unittest.TestCase):
 
 
 class VisualTest(unittest.TestCase):
+
+    def setUp(self):
+        helpers.setup_test_graph_resolver()
+
     def test_basic_visual_attributes(self):
         visual = sdf.Visual()
         visual.set_name("v1")
@@ -215,8 +225,7 @@ class VisualTest(unittest.TestCase):
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
-        mj_geom = geometry_conv.add_visual(
-            body, visual, helpers.nonthrowing_pose_resolver)
+        mj_geom = geometry_conv.add_visual(body, visual)
         self.assertEqual("v1", mj_geom.name)
         assert_allclose([1., 2., 3.], mj_geom.pos)
         assert_allclose([90., 60., 45.], mj_geom.euler)

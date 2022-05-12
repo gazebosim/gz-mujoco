@@ -32,6 +32,7 @@ class LinkTest(unittest.TestCase):
     expected_euler = [90.0, 60.0, 45.0]
 
     def setUp(self):
+        helpers.setup_test_graph_resolver()
         self.mujoco = mjcf.RootElement(model="test")
         self.body = self.mujoco.worldbody.add("body")
 
@@ -49,9 +50,7 @@ class LinkTest(unittest.TestCase):
         link = sdf.Link()
         link.set_name("base_link")
         link.set_raw_pose(self.test_pose)
-        mj_body = add_link(self.body,
-                           link,
-                           pose_resolver=helpers.nonthrowing_pose_resolver)
+        mj_body = add_link(self.body, link)
         self.assertIsNotNone(mj_body)
         assert_allclose(self.expected_pos, mj_body.pos)
         assert_allclose(self.expected_euler, mj_body.euler)
@@ -74,9 +73,7 @@ class LinkTest(unittest.TestCase):
             MassMatrix3d(384, Vector3d(544, 2624, 3104), Vector3d.ZERO),
             self.test_pose)
         link.set_inertial(inertial)
-        mj_body = add_link(self.body,
-                           link,
-                           pose_resolver=helpers.nonthrowing_pose_resolver)
+        mj_body = add_link(self.body, link)
         self.assertIsNotNone(mj_body)
         assert_allclose((2604, 2604, 1064, -500, 260 * sqrt(6), 260 * sqrt(6)),
                         mj_body.inertial.fullinertia)
@@ -88,17 +85,12 @@ class LinkTest(unittest.TestCase):
         link1 = sdf.Link()
         link1.set_name("base_link")
         link1.set_raw_pose(Pose3d(-1, -2, -3, 0, 0, 0))
-        mj_body1 = add_link(self.body,
-                            link1,
-                            pose_resolver=helpers.nonthrowing_pose_resolver)
+        mj_body1 = add_link(self.body, link1)
 
         link2 = sdf.Link()
         link2.set_name("lower_link")
         link2.set_raw_pose(self.test_pose)
-        mj_body2 = add_link(mj_body1,
-                            link2,
-                            parent_name="base_link",
-                            pose_resolver=helpers.nonthrowing_pose_resolver)
+        mj_body2 = add_link(mj_body1, link2, parent_name="base_link")
 
         self.assertIsNotNone(mj_body2)
         assert_allclose(self.expected_pos, mj_body2.pos)
@@ -125,9 +117,7 @@ class LinkTest(unittest.TestCase):
         link.add_visual(visual)
         link.add_collision(collision)
 
-        mj_body = add_link(self.body,
-                           link,
-                           pose_resolver=helpers.nonthrowing_pose_resolver)
+        mj_body = add_link(self.body, link)
         self.assertIsNotNone(mj_body)
         assert_allclose(self.expected_pos, mj_body.pos)
         assert_allclose(self.expected_euler, mj_body.euler)

@@ -21,20 +21,9 @@ from ignition.math import Pose3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_mjcf.converters.joint import JointType
-from sdformat_mjcf.converters.joint import add_joint as add_joint_impl
+from sdformat_mjcf.converters.joint import add_joint
 import sdformat_mjcf.sdf_utils as su
 from tests import helpers
-
-
-def add_joint(*args, **kwargs):
-    """Call the add_joint implementation with pose_resolver and
-    axis_xyz_resolver set to testing versions"""
-    return add_joint_impl(
-        *args,
-        **kwargs,
-        pose_resolver=helpers.nonthrowing_pose_resolver,
-        axis_xyz_resolver=helpers.nonthrowing_axis_xyz_resolver
-    )
 
 
 class JointTest(unittest.TestCase):
@@ -44,6 +33,7 @@ class JointTest(unittest.TestCase):
     expected_euler = [90.0, 60.0, 45.0]
 
     def setUp(self):
+        helpers.setup_test_graph_resolver()
         self.mujoco = mjcf.RootElement(model="test")
         self.body = self.mujoco.worldbody.add("body")
 

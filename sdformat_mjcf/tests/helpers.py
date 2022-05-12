@@ -14,42 +14,23 @@
 
 """Test helpers"""
 
-from sdformat_mjcf import sdf_utils as su
+import sdformat_mjcf.sdf_utils as su
 
 
-def nonthrowing_pose_resolver(sem_pose, relative_to=None):
-    """
-    Resolves SDFormat poses from a SemanticPose object but instead of raising
-    an exception when there's an error, it returns the raw pose of the
-    SemanticPose object. This is useful for testing converters with
-    programmatically created SDFormat objects that do not contain frame graphs.
+class TestGraphResolverImpl(su.GraphResolverImplBase):
 
-    :param sdformat.SemanticPose sem_pose: The SemanticPose object to be
-    resolved
-    :param str relative_to: (Optional) The frame relative to which the pose is
-    resolved.
-    :return: The resolved pose if it succeeds, otherwise, the raw pose of
-    sem_pose
-    :rtype: ignition.math.Pose3d
-    """
-    try:
-        return su.pose_resolver(sem_pose, relative_to)
-    except RuntimeError:
-        return sem_pose.raw_pose()
+    def resolve_pose(self, sem_pose, relative_to=None):
+        try:
+            return super().resolve_pose(sem_pose, relative_to)
+        except RuntimeError:
+            return sem_pose.raw_pose()
+
+    def resolve_axis_xyz(self, joint_axis):
+        try:
+            return super().resolve_axis_xyz(joint_axis)
+        except RuntimeError:
+            return joint_axis.xyz()
 
 
-def nonthrowing_axis_xyz_resolver(joint_axis):
-    """
-    Resolves the xyz unit vector of SDFormat Joint axes. If an error is
-    encountered, this simply returns the raw value of the xyz vector.
-    :param sdformat.JointAxis joint_axis: The JointAxis object to be resolved.
-    This is useful for testing converters with programmatically created
-    SDFormat objects that do not contain frame graphs.
-    :return: The resolved xyz vector.
-    :rtype: ignition.math.Vector3d
-    :raises RuntimeError: if an error is encountered when resolving the vector.
-    """
-    try:
-        return su.axis_xyz_resolver(joint_axis)
-    except RuntimeError:
-        return joint_axis.xyz()
+def setup_test_graph_resolver():
+    su.graph_resolver.resolver = TestGraphResolverImpl()
