@@ -33,6 +33,7 @@ def mjcf_file_to_sdformat(model_file):
 
     print(root.to_string())
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("model_file")

@@ -18,6 +18,7 @@ import sdformat as sdf
 
 NUMBER_OF_SDF_MODEL = 0
 
+
 def add_mjcf_model_to_sdf(mjcf_model, world):
     global NUMBER_OF_SDF_MODEL
     for geom in mjcf_model.worldbody.geom:

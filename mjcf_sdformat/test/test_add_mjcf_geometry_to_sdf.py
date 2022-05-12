@@ -38,7 +38,8 @@ class GeometryTest(unittest.TestCase):
 
         self.assertEqual(GeometryType.BOX, sdf_geom.type())
         self.assertNotEqual(None, sdf_geom.box_shape())
-        self.assertEqual(Vector3d(x_size, y_size, z_size), sdf_geom.box_shape().size())
+        self.assertEqual(Vector3d(x_size, y_size, z_size),
+                         sdf_geom.box_shape().size())
 
     def test_capsule(self):
         radius = 5.

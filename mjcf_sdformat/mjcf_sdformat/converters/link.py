@@ -13,8 +13,7 @@
 # limitations under the License.
 
 from sdformat_mjcf.converters.geometry import (add_mjcf_visual_to_sdf,
-    add_mjcf_collision_to_sdf)
-import sdformat_mjcf.sdf_utils as su
+                                               add_mjcf_collision_to_sdf)
 
 import sdformat as sdf
 
@@ -34,7 +33,6 @@ def add_mjcf_link_to_sdf(geom):
         col = add_mjcf_collision_to_sdf(geom)
         if col is not None:
             link.add_collision(col)
-
 
     NUMBER_OF_SDF_LINK = NUMBER_OF_SDF_LINK + 1
     return link
