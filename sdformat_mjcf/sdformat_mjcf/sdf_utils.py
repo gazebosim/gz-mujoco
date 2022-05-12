@@ -64,7 +64,7 @@ def pose_resolver(sem_pose, relative_to=None):
     Resolves SDFormat poses from a SemanticPose object.
     :param sdformat.SemanticPose sem_pose: The SemanticPose object to be
     resolved.
-    :param str relative_to: (Optional) The frame relative to which the pose is 
+    :param str relative_to: (Optional) The frame relative to which the pose is
     resolved.
     :return: The resolved pose.
     :rtype: ignition.math.Pose3d

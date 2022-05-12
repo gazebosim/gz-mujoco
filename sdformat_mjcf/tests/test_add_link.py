@@ -23,6 +23,8 @@ from dm_control import mjcf
 from sdformat_mjcf.converters.link import add_link
 import helpers
 
+GeometryType = sdf.Geometry.GeometryType
+
 
 class LinkTest(unittest.TestCase):
     test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
@@ -79,6 +81,58 @@ class LinkTest(unittest.TestCase):
         assert_allclose(self.moi_to_list(inertial.moi()),
                         mj_body.inertial.fullinertia)
         self.assertIsNone(mj_body.inertial.euler)
+
+    def test_multiple_links(self):
+        link1 = sdf.Link()
+        link1.set_name("base_link")
+        link1.set_raw_pose(Pose3d(-1, -2, -3, 0, 0, 0))
+        mj_body1 = add_link(self.body,
+                            link1,
+                            pose_resolver=helpers.nonthrowing_pose_resolver)
+
+        link2 = sdf.Link()
+        link2.set_name("lower_link")
+        link2.set_raw_pose(self.test_pose)
+        mj_body2 = add_link(mj_body1,
+                            link2,
+                            parent_name="base_link",
+                            pose_resolver=helpers.nonthrowing_pose_resolver)
+
+        self.assertIsNotNone(mj_body2)
+        assert_allclose(self.expected_pos, mj_body2.pos)
+        assert_allclose(self.expected_euler, mj_body2.euler)
+
+    def test_link_with_geometry(self):
+        link = sdf.Link()
+        link.set_name("base_link")
+        link.set_raw_pose(self.test_pose)
+
+        visual = sdf.Visual()
+        visual.set_name("v1")
+        visual.set_raw_pose(Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4))
+        collision = sdf.Collision()
+        collision.set_name("c1")
+        collision.set_raw_pose(Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4))
+
+        geometry = sdf.Geometry()
+        geometry.set_box_shape(sdf.Box())
+        geometry.set_type(GeometryType.BOX)
+        visual.set_geometry(geometry)
+        collision.set_geometry(geometry)
+
+        link.add_visual(visual)
+        link.add_collision(collision)
+
+        mj_body = add_link(self.body,
+                           link,
+                           pose_resolver=helpers.nonthrowing_pose_resolver)
+        self.assertIsNotNone(mj_body)
+        assert_allclose(self.expected_pos, mj_body.pos)
+        assert_allclose(self.expected_euler, mj_body.euler)
+        geoms = mj_body.find_all('geom')
+        self.assertEqual(2, len(geoms))
+        self.assertEqual("c1", geoms[0].name)
+        self.assertEqual("v1", geoms[1].name)
 
 
 if __name__ == "__main__":

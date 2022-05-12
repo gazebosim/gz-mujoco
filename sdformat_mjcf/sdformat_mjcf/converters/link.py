@@ -17,6 +17,7 @@ from sdformat_mjcf.converters.material import add_material
 from sdformat_mjcf.converters.light import add_light
 import sdformat_mjcf.sdf_utils as su
 
+from ignition.math import equal
 
 def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver,
              pose=None):
@@ -64,7 +65,7 @@ def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver,
     # attribute and not set the orientation. We choose the latter here.
     mass = link.inertial().mass_matrix().mass()
     moi = link.inertial().moi()
-    if mass > 0:
+    if mass > 0 and not equal(0, mass, 1e-6):
         fullinertia = [
             moi(0, 0),
             moi(1, 1),
