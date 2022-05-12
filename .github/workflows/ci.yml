@@ -28,11 +28,17 @@ jobs:
         sudo apt-get install -y libsdformat13-dev python3-ignition-math7 python3-sdformat13
     - name: Install test dependencies
       run: python3 -m pip install -U tox
-    - name: Test
+    - name: Test sdformat_mjcf
       env:
         PYTHONPATH: ${{ env.pythonLocation }}/lib/python${{ matrix.python }}/site-packages:/usr/lib/python3/dist-packages
       run: |
         cd sdformat_mjcf
+        python3 -m tox -e py
+    - name: Test mjcf_sdformat
+      env:
+        PYTHONPATH: ${{ env.pythonLocation }}/lib/python${{ matrix.python }}/site-packages:/usr/lib/python3/dist-packages
+      run: |
+        cd mjcf_sdformat
         python3 -m tox -e py
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2
