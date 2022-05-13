@@ -19,7 +19,7 @@ import sdformat as sdf
 from ignition.math import Vector3d
 from dm_control import mjcf
 
-from mjcf_sdformat.converters import geometry as geometry_conv
+from mjcf_to_sdformat.converters import geometry as geometry_conv
 
 import sdformat_mjcf.sdf_utils as su
 

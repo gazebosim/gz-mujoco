@@ -9,7 +9,7 @@ license_content = (here / "LICENSE").read_text(encoding="utf-8")
 
 
 setup(
-    name='mjcf_sdformat',
+    name='mjcf_to_sdformat',
     version='0.0.1',
     description='Tool to convert MJCF file to SDFormat',
     long_description=long_description,
@@ -22,7 +22,7 @@ setup(
     test_suite='tests',
     entry_points={
         'console_scripts': [
-            'mjcf-sdformat = mjcf_sdformat.mjcf_sdformat:execute',
+            'mjcf-sdformat = mjcf_to_sdformat.mjcf_to_sdformat:execute',
         ],
     },
 )
