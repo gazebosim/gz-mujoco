@@ -17,7 +17,7 @@
 import os
 
 import sdformat as sdf
-import sdformat_mjcf.sdf_utils as su
+import sdformat_mjcf_utils.sdf_utils as su
 
 GeometryType = sdf.Geometry.GeometryType
 

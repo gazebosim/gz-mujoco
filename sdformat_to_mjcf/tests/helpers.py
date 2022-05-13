@@ -14,10 +14,10 @@
 
 """Test helpers"""
 
-from sdformat_mjcf import sdf_utils as su
+from ignition.math import Pose3d, Vector3d
 
 
-def nonthrowing_pose_resolver(sem_pose, relative_to=None):
+def nonthrowing_pose_resolver(sem_pose):
     """
     Resolves SDFormat poses from a SemanticPose object but instead of raising
     an exception when there's an error, it returns the raw pose of the
@@ -26,16 +26,15 @@ def nonthrowing_pose_resolver(sem_pose, relative_to=None):
 
     :param sdformat.SemanticPose sem_pose: The SemanticPose object to be
     resolved
-    :param str relative_to: (Optional) The frame relative to which the pose is
-    resolved.
     :return: The resolved pose if it succeeds, otherwise, the raw pose of
     sem_pose
     :rtype: ignition.math.Pose3d
     """
-    try:
-        return su.pose_resolver(sem_pose, relative_to)
-    except RuntimeError:
+    pose = Pose3d()
+    errors = sem_pose.resolve(pose)
+    if errors:
         return sem_pose.raw_pose()
+    return pose
 
 
 def nonthrowing_axis_xyz_resolver(joint_axis):
@@ -49,7 +48,8 @@ def nonthrowing_axis_xyz_resolver(joint_axis):
     :rtype: ignition.math.Vector3d
     :raises RuntimeError: if an error is encountered when resolving the vector.
     """
-    try:
-        return su.axis_xyz_resolver(joint_axis)
-    except RuntimeError:
+    xyz_vec = Vector3d()
+    errors = joint_axis.resolve_xyz(xyz_vec)
+    if errors:
         return joint_axis.xyz()
+    return xyz_vec

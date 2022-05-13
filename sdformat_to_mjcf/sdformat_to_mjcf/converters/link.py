@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sdformat_mjcf.converters.geometry import add_collision, add_visual
-import sdformat_mjcf.sdf_utils as su
+from sdformat_to_mjcf.converters.geometry import add_collision, add_visual
+import sdformat_mjcf_utils.sdf_utils as su
 
 
 def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver):
@@ -80,8 +80,8 @@ def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver):
             add_collision(body, col, pose_resolver=pose_resolver)
 
     for vi in range(link.visual_count()):
-        vis = link.visual_by_index(vi)
-        if vis.geometry() is not None:
-            add_visual(body, vis, pose_resolver=pose_resolver)
+        col = link.visual_by_index(vi)
+        if col.geometry() is not None:
+            add_visual(body, col, pose_resolver=pose_resolver)
 
     return body

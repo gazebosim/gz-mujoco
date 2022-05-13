@@ -1,4 +1,4 @@
-# Tools for converting between SDFormat and MJCF
+# Utils for converting between MJCF and SDFormat
 
 To start development, create a python3 virtual environment, upgrade pip and
 install dm-control
@@ -25,27 +25,18 @@ export PYTHONPATH="$PYTHONPATH:$INSTALL_DIR/lib/python"
 where `$INSTALL_DIR` is the installation directory you used when building
 libsdformat.
 
-Install the `sdformat_mjcf` packages in "editable" mode
+Install the `sdformat_mjcf_utils` packages in "editable" mode
 
 ```
-pip install -e path/to/sdformat_mjcf
+pip install -e path/to/sdformat_mjcf_utils
 ```
 
 ### Running tests
 
-Simple run of test can be done by using:
+To run tests, either run the test files individually, eg:
 
 ```
-python -m unittest
+python tests/test_add_geometry.py
 ```
 
-A tox (environment manager) run of tests with multiple python versions:
-
-    python3 -m tox
-
-### Run the application
-
-After the editable install in the first point of this section, the sdformat-mjcf
-script defined in `setup.py` entrypoints:
-
-    sdformat-mjcf
+or run `pytest` from the root directory.

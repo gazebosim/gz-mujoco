@@ -29,6 +29,16 @@ def vec3d_to_list(vec):
     return [vec.x(), vec.y(), vec.z()]
 
 
+def list_to_vec3d(list):
+    """Convert a list to a Vector3d object.
+    :param List of values of the x, y, and z components of `vec`
+    respectively.
+    :return: Vector3d object
+    :rtype: ignition.math.Vector3d
+    """
+    return Vector3d(list[0], list[1], list[2])
+
+
 def vec2d_to_list(vec):
     """
     Convert a Vector2d object to a list.
@@ -59,22 +69,17 @@ def quat_to_euler_list(quat):
     return [math.degrees(val) for val in vec3d_to_list(quat.euler())]
 
 
-def pose_resolver(sem_pose, relative_to=None):
+def pose_resolver(sem_pose):
     """
     Resolves SDFormat poses from a SemanticPose object.
     :param sdformat.SemanticPose sem_pose: The SemanticPose object to be
-    resolved.
-    :param str relative_to: (Optional) The frame relative to which the pose is
     resolved.
     :return: The resolved pose.
     :rtype: ignition.math.Pose3d
     :raises RuntimeError: if an error is encountered when resolving the pose.
     """
     pose = Pose3d()
-    if relative_to is None:
-        errors = sem_pose.resolve(pose)
-    else:
-        errors = sem_pose.resolve(pose, relative_to)
+    errors = sem_pose.resolve(pose)
     if errors:
         raise RuntimeError("\n".join(str(err) for err in errors))
     return pose
