@@ -16,8 +16,8 @@ import argparse
 
 import sdformat as sdf
 from dm_control import mjcf
-from sdformat_mjcf.converters.model import add_model
-from sdformat_mjcf.converters.world import add_world
+from sdformat_to_mjcf.converters.model import add_model
+from sdformat_to_mjcf.converters.world import add_world
 
 
 def sdformat_root_to_mjcf(root):

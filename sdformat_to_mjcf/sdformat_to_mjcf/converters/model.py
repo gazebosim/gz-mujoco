@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sdformat_mjcf.sdf_kinematics import KinematicHierarchy
-from sdformat_mjcf.converters.link import add_link
-from sdformat_mjcf.converters.joint import add_joint
+from sdformat_to_mjcf.sdf_kinematics import KinematicHierarchy
+from sdformat_to_mjcf.converters.link import add_link
+from sdformat_to_mjcf.converters.joint import add_joint
 
 
 def add_model(mjcf_out, model):

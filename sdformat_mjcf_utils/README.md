@@ -1,4 +1,4 @@
-# Tools for converting between SDFormat and MJCF
+# Utils for converting between MJCF and SDFormat
 
 To start development, create a python3 virtual environment, upgrade pip and
 install dm-control
@@ -25,26 +25,13 @@ export PYTHONPATH="$PYTHONPATH:$INSTALL_DIR/lib/python"
 where `$INSTALL_DIR` is the installation directory you used when building
 libsdformat.
 
-Install the `sdformat_mjcf` packages in "editable" mode
+Install the `sdformat_mjcf_utils` packages in "editable" mode
 
 ```
-pip install -e path/to/sdformat_mjcf
-```
-
-To convert an SDFormat file to mjcf:
-
-```
-python -m sdformat_mjcf.sdformat2mjcf path/to/file.sdf | tee new_file.xml
-```
-
-To run the mjcf file in Mujoco, download a Mujoco release from https://github.com/deepmind/mujoco/releases, extract the contents and run
-
-```
-<path/to/mujoco>/bin/simulate new_file.xml
+pip install -e path/to/sdformat_mjcf_utils
 ```
 
 ### Running tests
-
 
 To run tests, either run the test files individually, eg:
 

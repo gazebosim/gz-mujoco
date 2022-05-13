@@ -20,9 +20,9 @@ import sdformat as sdf
 from ignition.math import Pose3d, Vector3d
 from dm_control import mjcf
 
-from sdformat_mjcf.converters.joint import JointType
-from sdformat_mjcf.converters.joint import add_joint as add_joint_impl
-import sdformat_mjcf.sdf_utils as su
+from sdformat_to_mjcf.converters.joint import JointType
+from sdformat_to_mjcf.converters.joint import add_joint as add_joint_impl
+import sdformat_mjcf_utils.sdf_utils as su
 from tests import helpers
 
 
