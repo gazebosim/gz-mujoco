@@ -12,7 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sdformat_to_mjcf.converters.link import add_mjcf_link_to_sdf
+from ignition.math import Pose3d, Vector3d, Quaterniond
+
+from mjcf_to_sdformat.converters.link import add_mjcf_link_to_sdf
+
+import sdformat_mjcf_utils.sdf_utils as su
 
 import sdformat as sdf
 
@@ -29,8 +33,10 @@ def add_mjcf_model_to_sdf(mjcf_model, world):
         world.add_model(model)
         NUMBER_OF_SDF_MODEL = NUMBER_OF_SDF_MODEL + 1
     for body in mjcf_model.worldbody.body:
+        model = sdf.Model()
+        model.set_raw_pose(Pose3d(su.list_to_vec3d(body.pos),
+                           Quaterniond(0, 0, 0)))
         for geom in body.geom:
-            model = sdf.Model()
             model.set_name("model_" + str(NUMBER_OF_SDF_MODEL))
             link = add_mjcf_link_to_sdf(geom)
             model.add_link(link)

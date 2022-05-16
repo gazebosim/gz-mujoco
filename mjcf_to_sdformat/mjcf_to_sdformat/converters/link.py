@@ -12,14 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sdformat_to_mjcf.converters.geometry import (add_mjcf_visual_to_sdf,
+from mjcf_to_sdformat.converters.geometry import (add_mjcf_visual_to_sdf,
     add_mjcf_collision_to_sdf)
 import sdformat_mjcf_utils.sdf_utils as su
 
 import sdformat as sdf
 
 NUMBER_OF_SDF_LINK = 0
-
+COLLISION_GEOM_GROUP = 3
+VISUAL_GEOM_GROUP = 0
 
 def add_mjcf_link_to_sdf(geom):
     global NUMBER_OF_SDF_LINK
@@ -34,6 +35,15 @@ def add_mjcf_link_to_sdf(geom):
         col = add_mjcf_collision_to_sdf(geom)
         if col is not None:
             link.add_collision(col)
+    elif geom.group == VISUAL_GEOM_GROUP:
+        visual = add_mjcf_visual_to_sdf(geom)
+        if visual is not None:
+            link.add_visual(visual)
+    elif geom.group == COLLISION_GEOM_GROUP:
+        col = add_mjcf_collision_to_sdf(geom)
+        if col is not None:
+            link.add_collision(col)
+
 
 
     NUMBER_OF_SDF_LINK = NUMBER_OF_SDF_LINK + 1

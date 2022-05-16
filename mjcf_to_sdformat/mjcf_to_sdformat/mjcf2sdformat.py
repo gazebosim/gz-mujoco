@@ -16,7 +16,7 @@ import argparse
 
 from dm_control import mjcf
 
-from sdformat_to_mjcf.converters.model import add_mjcf_model_to_sdf
+from mjcf_to_sdformat.converters.model import add_mjcf_model_to_sdf
 
 import sdformat as sdf
 
