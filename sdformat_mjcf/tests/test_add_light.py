@@ -60,7 +60,9 @@ class LightTest(unittest.TestCase):
                          light.linear_attenuation_factor(),
                          light.quadratic_attenuation_factor()],
                         light_mjcf.attenuation)
-        assert_allclose([0.1, 0.2, 1], light_mjcf.dir)
+        assert_allclose([0.752613, 0.190018, 0.43921],
+                        light_mjcf.dir,
+                        rtol=1e-4)
         assert_allclose([light.diffuse().r(),
                          light.diffuse().g(),
                          light.diffuse().b()],
