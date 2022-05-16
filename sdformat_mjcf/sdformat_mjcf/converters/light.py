@@ -14,6 +14,10 @@
 
 """Module to convert SDFormat Lights to MJCF"""
 
+from ignition.math import Quaterniond
+
+import math
+
 import sdformat_mjcf.sdf_utils as su
 import sdformat as sdf
 
@@ -33,6 +37,8 @@ def add_light(body, light, pose,
     if light is None:
         return
     type = light.type()
+    rotation = pose.rot()
+    q = Quaterniond(light.direction(), math.pi / 2.0)
     light = body.add("light",
                      name=light.name(),
                      pos=su.vec3d_to_list(pose.pos()),
@@ -41,7 +47,7 @@ def add_light(body, light, pose,
                      attenuation=[light.constant_attenuation_factor(),
                                   light.linear_attenuation_factor(),
                                   light.quadratic_attenuation_factor()],
-                     dir=su.vec3d_to_list(light.direction()),
+                     dir=su.vec3d_to_list(rotation * q),
                      diffuse=[light.diffuse().r(),
                               light.diffuse().g(),
                               light.diffuse().b()],
