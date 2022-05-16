@@ -82,7 +82,7 @@ class LinkTest(unittest.TestCase):
                         mj_body.inertial.fullinertia)
         assert_allclose(self.moi_to_list(inertial.moi()),
                         mj_body.inertial.fullinertia)
-        self.assertIsNone(mj_body.inertial.euler)
+        self.assertIsNotNone(mj_body.inertial.euler)
 
     def test_multiple_links(self):
         link1 = sdf.Link()

@@ -72,6 +72,7 @@ def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver):
         body.add("inertial",
                  mass=mass,
                  pos=su.vec3d_to_list(link.inertial().pose().pos()),
+                 euler=su.vec3d_to_list(link.inertial().pose().rot().euler()),
                  fullinertia=fullinertia)
 
     for ci in range(link.collision_count()):
