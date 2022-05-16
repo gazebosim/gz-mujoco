@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ignition.math import Inertiald, MassMatrix3d, Vector3d, Pose3d
+
 from mjcf_to_sdformat.converters.geometry import (add_mjcf_visual_to_sdf,
     add_mjcf_collision_to_sdf)
-import sdformat_mjcf_utils.sdf_utils as su
 
 import sdformat as sdf
 
@@ -22,10 +23,32 @@ NUMBER_OF_SDF_LINK = 0
 COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
 
-def add_mjcf_link_to_sdf(geom):
+def add_mjcf_link_to_sdf(geom, inertial):
     global NUMBER_OF_SDF_LINK
     link = sdf.Link()
     link.set_name(geom.type + "_" + str(NUMBER_OF_SDF_LINK))
+
+    if inertial is not None:
+        inertial_pos = [0, 0, 0]
+        inertial_euler = [0, 0, 0]
+        if inertial.pos is not None:
+            inertial_pos = inertial.pos
+        if inertial.euler is not None:
+            inertial_euler = inertial.euler
+        inertial = Inertiald(MassMatrix3d(inertial.mass,
+                                          Vector3d(inertial.fullinertia[0],
+                                                   inertial.fullinertia[1],
+                                                   inertial.fullinertia[2]),
+                                          Vector3d(inertial.fullinertia[3],
+                                                   inertial.fullinertia[4],
+                                                   inertial.fullinertia[5])),
+                             Pose3d(inertial_pos[0],
+                                    inertial_pos[1],
+                                    inertial_pos[2],
+                                    inertial_euler[0],
+                                    inertial_euler[1],
+                                    inertial_euler[2]))
+        link.set_inertial(inertial)
 
     if geom.group is None:
         visual = add_mjcf_visual_to_sdf(geom)

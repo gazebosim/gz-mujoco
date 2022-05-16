@@ -15,6 +15,7 @@
 from ignition.math import Pose3d, Vector3d, Quaterniond
 
 from mjcf_to_sdformat.converters.link import add_mjcf_link_to_sdf
+from mjcf_to_sdformat.converters.light import add_mjcf_light_to_sdf
 
 import sdformat_mjcf_utils.sdf_utils as su
 
@@ -27,18 +28,31 @@ def add_mjcf_model_to_sdf(mjcf_model, world):
     for geom in mjcf_model.worldbody.geom:
         model = sdf.Model()
         model.set_name("model_" + str(NUMBER_OF_SDF_MODEL))
-        link = add_mjcf_link_to_sdf(geom)
+        link = add_mjcf_link_to_sdf(geom, None)
         model.set_static(True)
         model.add_link(link)
         world.add_model(model)
         NUMBER_OF_SDF_MODEL = NUMBER_OF_SDF_MODEL + 1
+
+    for light in mjcf_model.worldbody.light:
+        print(light)
+        light_sdf = add_mjcf_light_to_sdf(light)
+        world.add_light(light_sdf)
+
     for body in mjcf_model.worldbody.body:
         model = sdf.Model()
-        model.set_raw_pose(Pose3d(su.list_to_vec3d(body.pos),
-                           Quaterniond(0, 0, 0)))
+        model_pose = [0, 0, 0]
+        model_euler = [0, 0, 0]
+        if body.pos is not None:
+            model_pose = body.pos
+        if body.euler is not None:
+            model_euler = body.euler
+        model.set_raw_pose(Pose3d(su.list_to_vec3d(model_pose),
+                           Quaterniond(su.list_to_vec3d(model_euler))))
+
         for geom in body.geom:
             model.set_name("model_" + str(NUMBER_OF_SDF_MODEL))
-            link = add_mjcf_link_to_sdf(geom)
+            link = add_mjcf_link_to_sdf(geom, body.inertial)
             model.add_link(link)
-            world.add_model(model)
             NUMBER_OF_SDF_MODEL = NUMBER_OF_SDF_MODEL + 1
+        world.add_model(model)
