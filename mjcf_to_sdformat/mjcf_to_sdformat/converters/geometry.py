@@ -14,7 +14,7 @@
 
 """Module to convert MJCF geoms to SDFormat Collision/Visual geometries"""
 
-from ignition.math import Vector2d
+from ignition.math import Vector2d, Vector3d
 
 import sdformat as sdf
 import sdformat_mjcf.sdf_utils as su
@@ -40,13 +40,25 @@ def add_mjcf_geometry_to_sdf(geom):
     elif geom.type == "capsule":
         capsule = sdf.Capsule()
         capsule.set_radius(geom.size[0])
-        capsule.set_length(geom.size[1] * 2)
+        if geom.fromto is None:
+            capsule.set_length(geom.size[1] * 2)
+        else:
+            v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
+            v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
+            length = v1.distance(v2)
+            capsule.set_length(length)
         sdf_geometry.set_capsule_shape(capsule)
         sdf_geometry.set_type(sdf.Geometry.GeometryType.CAPSULE)
     elif geom.type == "cylinder":
         cylinder = sdf.Cylinder()
         cylinder.set_radius(geom.size[0])
-        cylinder.set_length(geom.size[1] * 2)
+        if geom.fromto is None:
+            cylinder.set_length(geom.size[1] * 2)
+        else:
+            v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
+            v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
+            length = v1.distance(v2)
+            cylinder.set_length(length)
         sdf_geometry.set_cylinder_shape(cylinder)
         sdf_geometry.set_type(sdf.Geometry.GeometryType.CYLINDER)
     elif geom.type == "ellipsoid":

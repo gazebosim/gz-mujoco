@@ -38,7 +38,7 @@ class GeometryTest(unittest.TestCase):
 
         self.assertEqual(GeometryType.BOX, sdf_geom.type())
         self.assertNotEqual(None, sdf_geom.box_shape())
-        self.assertEqual(Vector3d(x_size, y_size, z_size),
+        self.assertEqual(Vector3d(x_size, y_size, z_size) * 2,
                          sdf_geom.box_shape().size())
 
     def test_capsule(self):
@@ -53,7 +53,23 @@ class GeometryTest(unittest.TestCase):
         self.assertEqual(GeometryType.CAPSULE, sdf_geom.type())
         self.assertNotEqual(None, sdf_geom.capsule_shape())
         self.assertEqual(radius, sdf_geom.capsule_shape().radius())
+        self.assertEqual(length, sdf_geom.capsule_shape().length() / 2)
+
+    def test_capsule_fromto(self):
+        radius = 5.
+        length = 1.
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        geom = body.add('geom', type="capsule", size=[radius],
+                        fromto=[0, 0, 0, 0, 0, 1])
+        sdf_geom = geometry_conv.add_mjcf_geometry_to_sdf(geom)
+
+        self.assertEqual(GeometryType.CAPSULE, sdf_geom.type())
+        self.assertNotEqual(None, sdf_geom.capsule_shape())
+        self.assertEqual(radius, sdf_geom.capsule_shape().radius())
         self.assertEqual(length, sdf_geom.capsule_shape().length())
+
 
     def test_cylinder(self):
         radius = 5.
@@ -68,6 +84,21 @@ class GeometryTest(unittest.TestCase):
         self.assertNotEqual(None, sdf_geom.cylinder_shape())
         self.assertEqual(radius, sdf_geom.cylinder_shape().radius())
         self.assertEqual(length, sdf_geom.cylinder_shape().length() / 2)
+
+    def test_cylinder_fromto(self):
+        radius = 5.
+        length = 1.
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        geom = body.add('geom', type="cylinder", size=[radius],
+                        fromto=[0, 0, 0, 0, 0, 1])
+        sdf_geom = geometry_conv.add_mjcf_geometry_to_sdf(geom)
+
+        self.assertEqual(GeometryType.CYLINDER, sdf_geom.type())
+        self.assertNotEqual(None, sdf_geom.cylinder_shape())
+        self.assertEqual(radius, sdf_geom.cylinder_shape().radius())
+        self.assertEqual(length, sdf_geom.cylinder_shape().length())
 
     def test_ellipsoid(self):
         x_radius = 1.
