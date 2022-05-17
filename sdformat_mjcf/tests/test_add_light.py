@@ -16,13 +16,15 @@ import unittest
 from numpy.testing import assert_allclose
 import math
 
-from ignition.math import Color, Pose3d, Vector3d
-
 from dm_control import mjcf
+
+from ignition.math import Color, Pose3d, Vector3d
 
 import sdformat as sdf
 
 from sdformat_mjcf.converters.light import add_light
+
+from tests import helpers
 
 
 class LightTest(unittest.TestCase):
@@ -48,7 +50,7 @@ class LightTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
 
-        light_mjcf = add_light(body, light, self.test_pose)
+        light_mjcf = add_light(body, light, helpers.nonthrowing_pose_resolver)
 
         self.assertNotEqual(light_mjcf, None)
         self.assertEqual(light_mjcf.name, light.name())
@@ -60,7 +62,7 @@ class LightTest(unittest.TestCase):
                          light.linear_attenuation_factor(),
                          light.quadratic_attenuation_factor()],
                         light_mjcf.attenuation)
-        assert_allclose([0.752613, 0.190018, 0.43921],
+        assert_allclose([0.864937, -0.549277,  0.013397],
                         light_mjcf.dir,
                         rtol=1e-4)
         assert_allclose([light.diffuse().r(),
@@ -76,7 +78,7 @@ class LightTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
 
-        light_mjcf = add_light(body, None, self.test_pose)
+        light_mjcf = add_light(body, None)
         self.assertEqual(None, light_mjcf)
 
 
