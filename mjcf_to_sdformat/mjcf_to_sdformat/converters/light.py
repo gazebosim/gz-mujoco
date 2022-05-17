@@ -22,7 +22,6 @@ LIGHT_NUMBER = 0
 
 def add_mjcf_light_to_sdf(light):
     light_sdf = sdf.Light()
-    print(light.name)
     if light.name is not None:
         light_sdf.set_name(light.name)
     else:

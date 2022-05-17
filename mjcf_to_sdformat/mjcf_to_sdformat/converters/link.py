@@ -17,6 +17,8 @@ from ignition.math import Inertiald, MassMatrix3d, Vector3d, Pose3d
 from mjcf_to_sdformat.converters.geometry import (add_mjcf_visual_to_sdf,
     add_mjcf_collision_to_sdf)
 
+from mjcf_to_sdformat.converters.material import add_mjcf_material_to_sdf
+
 import sdformat as sdf
 
 NUMBER_OF_SDF_LINK = 0
@@ -26,7 +28,12 @@ VISUAL_GEOM_GROUP = 0
 def add_mjcf_link_to_sdf(geom, inertial):
     global NUMBER_OF_SDF_LINK
     link = sdf.Link()
-    link.set_name(geom.type + "_" + str(NUMBER_OF_SDF_LINK))
+    if geom.name is not None:
+        link.set_name(geom.name)
+    else:
+        link.set_name(geom.type + "_" + str(NUMBER_OF_SDF_LINK))
+        NUMBER_OF_SDF_LINK = NUMBER_OF_SDF_LINK + 1
+
 
     if inertial is not None:
         inertial_pos = [0, 0, 0]
@@ -52,6 +59,9 @@ def add_mjcf_link_to_sdf(geom, inertial):
 
     if geom.group is None:
         visual = add_mjcf_visual_to_sdf(geom)
+        material = add_mjcf_material_to_sdf(geom)
+        if material is not None:
+            visual.set_material(material)
         if visual is not None:
             link.add_visual(visual)
 
@@ -60,6 +70,9 @@ def add_mjcf_link_to_sdf(geom, inertial):
             link.add_collision(col)
     elif geom.group == VISUAL_GEOM_GROUP:
         visual = add_mjcf_visual_to_sdf(geom)
+        material = add_mjcf_material_to_sdf(geom)
+        if material is not None:
+            visual.set_material(material)
         if visual is not None:
             link.add_visual(visual)
     elif geom.group == COLLISION_GEOM_GROUP:
@@ -67,7 +80,4 @@ def add_mjcf_link_to_sdf(geom, inertial):
         if col is not None:
             link.add_collision(col)
 
-
-
-    NUMBER_OF_SDF_LINK = NUMBER_OF_SDF_LINK + 1
     return link

@@ -14,7 +14,7 @@
 
 """Module to convert MJCF geoms to SDFormat Collision/Visual geometries"""
 
-from ignition.math import Vector2d
+from ignition.math import Pose3d, Quaterniond, Vector2d, Vector3d
 
 import sdformat as sdf
 import sdformat_mjcf_utils.sdf_utils as su
@@ -31,6 +31,15 @@ def add_mjcf_geometry_to_sdf(geom):
     :return: The newly created SDFormat geometry.
     :rtype: sdf.Geometry
     """
+    if geom.root.default.geom is not None:
+        geom_attributes = geom.get_attributes().items()
+        for k, v in geom.root.default.geom.get_attributes().items():
+            try:
+                geom.get_attributes()[k]
+            except:
+                geom.set_attributes(**{k:v})
+    geom_attributes = geom.get_attributes().items()
+
     sdf_geometry = sdf.Geometry()
     if geom.type == "box":
         box = sdf.Box()
@@ -40,13 +49,25 @@ def add_mjcf_geometry_to_sdf(geom):
     elif geom.type == "capsule":
         capsule = sdf.Capsule()
         capsule.set_radius(geom.size[0])
-        capsule.set_length(geom.size[1])
+        if geom.fromto is None:
+            capsule.set_length(geom.size[1])
+        else:
+            v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
+            v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
+            length = v1.distance(v2)
+            capsule.set_length(length)
         sdf_geometry.set_capsule_shape(capsule)
         sdf_geometry.set_type(sdf.Geometry.GeometryType.CAPSULE)
     elif geom.type == "cylinder":
         cylinder = sdf.Cylinder()
         cylinder.set_radius(geom.size[0])
-        cylinder.set_length(geom.size[1] * 2)
+        if geom.fromto is None:
+            cylinder.set_length(geom.size[1] * 2)
+        else:
+            v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
+            v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
+            length = v1.distance(v2)
+            cylinder.set_length(length)
         sdf_geometry.set_cylinder_shape(cylinder)
         sdf_geometry.set_type(sdf.Geometry.GeometryType.CYLINDER)
     elif geom.type == "ellipsoid":
@@ -81,8 +102,11 @@ def add_mjcf_visual_to_sdf(geom):
     """
     global VISUAL_NUMBER
     visual = sdf.Visual()
-    visual.set_name("visual_" + str(VISUAL_NUMBER))
-    VISUAL_NUMBER = VISUAL_NUMBER + 1
+    if geom.name is not None:
+        visual.set_name("visual_" + geom.name)
+    else:
+        visual.set_name("visual_" + str(VISUAL_NUMBER))
+        VISUAL_NUMBER = VISUAL_NUMBER + 1
     sdf_geometry = add_mjcf_geometry_to_sdf(geom)
     if sdf_geometry is not None:
         visual.set_geometry(sdf_geometry)
@@ -102,8 +126,11 @@ def add_mjcf_collision_to_sdf(geom):
     """
     global COLLISION_NUMBER
     col = sdf.Collision()
-    col.set_name("collision_" + str(COLLISION_NUMBER))
-    COLLISION_NUMBER = COLLISION_NUMBER + 1
+    if geom.name is not None:
+        col.set_name("collision_" + geom.name)
+    else:
+        col.set_name("collision_" + str(COLLISION_NUMBER))
+        COLLISION_NUMBER = COLLISION_NUMBER + 1
     sdf_geometry = add_mjcf_geometry_to_sdf(geom)
     if sdf_geometry is not None:
         col.set_geometry(sdf_geometry)
