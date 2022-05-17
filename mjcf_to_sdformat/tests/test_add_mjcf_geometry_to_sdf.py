@@ -70,7 +70,6 @@ class GeometryTest(unittest.TestCase):
         self.assertEqual(radius, sdf_geom.capsule_shape().radius())
         self.assertEqual(length, sdf_geom.capsule_shape().length())
 
-
     def test_cylinder(self):
         radius = 5.
         length = 20.
