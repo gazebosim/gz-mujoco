@@ -16,7 +16,7 @@ setup(
     long_description_content_type="text/markdown",
     author='Open Robotics',
     author_email='info@openrobotics.org',
-    url='https://github.com/ignitionrobotics/gz-mujoco',
+    url='https://github.com/gazebosim/gz-mujoco',
     license=license_content,
     packages=find_packages(exclude=('tests', 'docs')),
     test_suite='tests',
