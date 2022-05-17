@@ -25,10 +25,11 @@ export PYTHONPATH="$PYTHONPATH:$INSTALL_DIR/lib/python"
 where `$INSTALL_DIR` is the installation directory you used when building
 libsdformat.
 
-Install the `sdformat_to_mjcf` packages in "editable" mode
+Install the `sdformat_to_mjcf` and `sdformat_mjcf_utils` packages in "editable" mode
 
 ```
 pip install -e path/to/sdformat_to_mjcf
+pip install -e path/to/sdformat_mjcf_utils
 ```
 
 To convert an SDFormat file to mjcf:
