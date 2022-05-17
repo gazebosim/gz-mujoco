@@ -69,17 +69,22 @@ def quat_to_euler_list(quat):
     return [math.degrees(val) for val in vec3d_to_list(quat.euler())]
 
 
-def pose_resolver(sem_pose):
+def pose_resolver(sem_pose, relative_to=None):
     """
     Resolves SDFormat poses from a SemanticPose object.
     :param sdformat.SemanticPose sem_pose: The SemanticPose object to be
+    resolved.
+    :param str relative_to: (Optional) The frame relative to which the pose is
     resolved.
     :return: The resolved pose.
     :rtype: ignition.math.Pose3d
     :raises RuntimeError: if an error is encountered when resolving the pose.
     """
     pose = Pose3d()
-    errors = sem_pose.resolve(pose)
+    if relative_to is None:
+        errors = sem_pose.resolve(pose)
+    else:
+        errors = sem_pose.resolve(pose, relative_to)
     if errors:
         raise RuntimeError("\n".join(str(err) for err in errors))
     return pose
