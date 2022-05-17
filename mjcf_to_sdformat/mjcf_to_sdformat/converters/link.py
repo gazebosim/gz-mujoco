@@ -20,7 +20,7 @@ import sdformat as sdf
 NUMBER_OF_SDF_LINK = 0
 
 
-def add_mjcf_link_to_sdf(geom):
+def add_mjcf_body_to_sdf(geom):
     global NUMBER_OF_SDF_LINK
     link = sdf.Link()
     link.set_name(geom.type + "_" + str(NUMBER_OF_SDF_LINK))

@@ -34,13 +34,13 @@ def add_mjcf_geometry_to_sdf(geom):
     sdf_geometry = sdf.Geometry()
     if geom.type == "box":
         box = sdf.Box()
-        box.set_size(su.list_to_vec3d(geom.size))
+        box.set_size(su.list_to_vec3d(geom.size) * 2)
         sdf_geometry.set_box_shape(box)
         sdf_geometry.set_type(sdf.Geometry.GeometryType.BOX)
     elif geom.type == "capsule":
         capsule = sdf.Capsule()
         capsule.set_radius(geom.size[0])
-        capsule.set_length(geom.size[1])
+        capsule.set_length(geom.size[1] * 2)
         sdf_geometry.set_capsule_shape(capsule)
         sdf_geometry.set_type(sdf.Geometry.GeometryType.CAPSULE)
     elif geom.type == "cylinder":

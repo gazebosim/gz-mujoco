@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sdformat_mjcf.converters.link import add_mjcf_link_to_sdf
+from sdformat_mjcf.converters.link import add_mjcf_body_to_sdf
 
 import sdformat as sdf
 
@@ -24,7 +24,7 @@ def add_mjcf_model_to_sdf(mjcf_model, world):
     for geom in mjcf_model.worldbody.geom:
         model = sdf.Model()
         model.set_name("model_" + str(NUMBER_OF_SDF_MODEL))
-        link = add_mjcf_link_to_sdf(geom)
+        link = add_mjcf_body_to_sdf(geom)
         model.set_static(True)
         model.add_link(link)
         world.add_model(model)
@@ -33,7 +33,7 @@ def add_mjcf_model_to_sdf(mjcf_model, world):
         for geom in body.geom:
             model = sdf.Model()
             model.set_name("model_" + str(NUMBER_OF_SDF_MODEL))
-            link = add_mjcf_link_to_sdf(geom)
+            link = add_mjcf_body_to_sdf(geom)
             model.add_link(link)
             world.add_model(model)
             NUMBER_OF_SDF_MODEL = NUMBER_OF_SDF_MODEL + 1
