@@ -66,7 +66,8 @@ def add_joint(body, joint):
     :rtype: mjcf.Element
     """
     if joint is None:
-        return body.add("freejoint", name="freejoint")
+        return body.add("freejoint",
+                        name=su.prefix_name(body.name, "freejoint"))
     elif joint.type() == JointType.FIXED:
         return None
     elif joint.type() in [

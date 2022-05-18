@@ -21,6 +21,7 @@ from ignition.math import Inertiald, Pose3d, MassMatrix3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_to_mjcf.converters.link import add_link
+import sdformat_mjcf_utils.sdf_utils as su
 from tests import helpers
 
 GeometryType = sdf.Geometry.GeometryType
@@ -44,6 +45,15 @@ class LinkTest(helpers.TestCase):
             moi(0, 2),
             moi(1, 2)
         ]
+
+    def create_box(self, sdf_cls, name):
+        item = sdf_cls()
+        item.set_name(name)
+        geometry = sdf.Geometry()
+        geometry.set_box_shape(sdf.Box())
+        geometry.set_type(GeometryType.BOX)
+        item.set_geometry(geometry)
+        return item
 
     def test_basic_link(self):
         link = sdf.Link()
@@ -122,8 +132,34 @@ class LinkTest(helpers.TestCase):
         assert_allclose(self.expected_euler, mj_body.euler)
         geoms = mj_body.find_all('geom')
         self.assertEqual(2, len(geoms))
-        self.assertEqual("c1", geoms[0].name)
-        self.assertEqual("v1", geoms[1].name)
+        self.assertEqual(su.prefix_name("base_link", "c1"), geoms[0].name)
+        self.assertEqual(su.prefix_name("base_link", "v1"), geoms[1].name)
+
+    def test_duplicate_collision_names(self):
+        c1 = self.create_box(sdf.Collision, "c1")
+        link1 = sdf.Link()
+        link1.set_name("link1")
+        link1.add_collision(c1)
+        link2 = sdf.Link()
+        link2.set_name("link2")
+        link2.add_collision(c1)
+        mj_body1 = add_link(self.body, link1)
+        mj_body2 = add_link(self.body, link2)
+        self.assertIsNotNone(mj_body1)
+        self.assertIsNotNone(mj_body2)
+
+    def test_duplicate_visual(self):
+        v1 = self.create_box(sdf.Visual, "v1")
+        link1 = sdf.Link()
+        link1.set_name("link1")
+        link1.add_visual(v1)
+        link2 = sdf.Link()
+        link2.set_name("link2")
+        link2.add_visual(v1)
+        mj_body1 = add_link(self.body, link1)
+        mj_body2 = add_link(self.body, link2)
+        self.assertIsNotNone(mj_body1)
+        self.assertIsNotNone(mj_body2)
 
 
 if __name__ == "__main__":
