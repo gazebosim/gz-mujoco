@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sdformat_mjcf.converters.geometry import add_collision, add_visual
-import sdformat_mjcf.sdf_utils as su
+from sdformat_to_mjcf.converters.geometry import add_collision, add_visual
+import sdformat_mjcf_utils.sdf_utils as su
 
 
-def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver):
+def add_link(body, link, parent_name="world"):
     """
     Converts a link from SDFormat to MJCF and add it to the given
     body/worldbody.
@@ -45,9 +45,9 @@ def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver):
     #     - particle_emitter
     sem_pose = link.semantic_pose()
     if parent_name == 'world':
-        pose = pose_resolver(sem_pose)
+        pose = su.graph_resolver.resolve_pose(sem_pose)
     else:
-        pose = pose_resolver(sem_pose, parent_name)
+        pose = su.graph_resolver.resolve_pose(sem_pose, parent_name)
     body = body.add("body",
                     name=link.name(),
                     pos=su.vec3d_to_list(pose.pos()),
@@ -77,11 +77,11 @@ def add_link(body, link, parent_name="world", pose_resolver=su.pose_resolver):
     for ci in range(link.collision_count()):
         col = link.collision_by_index(ci)
         if col.geometry() is not None:
-            add_collision(body, col, pose_resolver=pose_resolver)
+            add_collision(body, col)
 
     for vi in range(link.visual_count()):
-        vis = link.visual_by_index(vi)
-        if vis.geometry() is not None:
-            add_visual(body, vis, pose_resolver=pose_resolver)
+        col = link.visual_by_index(vi)
+        if col.geometry() is not None:
+            add_visual(body, col)
 
     return body

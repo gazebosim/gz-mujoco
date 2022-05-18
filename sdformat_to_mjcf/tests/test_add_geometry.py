@@ -22,13 +22,13 @@ import sdformat as sdf
 from ignition.math import Pose3d, Vector2d, Vector3d
 from dm_control import mjcf
 
-import helpers
-from sdformat_mjcf.converters import geometry as geometry_conv
+from tests import helpers
+from sdformat_to_mjcf.converters import geometry as geometry_conv
 
 GeometryType = sdf.Geometry.GeometryType
 
 
-class GeometryTest(unittest.TestCase):
+class GeometryTest(helpers.TestCase):
 
     test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
     expected_pos = [1., 2., 3.]
@@ -180,7 +180,11 @@ class GeometryTest(unittest.TestCase):
         assert_allclose(self.expected_euler, mj_geom.euler)
 
 
-class CollisionTest(unittest.TestCase):
+class CollisionTest(helpers.TestCase):
+
+    def setUp(self):
+        helpers.setup_test_graph_resolver()
+
     def test_basic_collision_attributes(self):
         collision = sdf.Collision()
         collision.set_name("c1")
@@ -193,15 +197,15 @@ class CollisionTest(unittest.TestCase):
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
-        mj_geom = geometry_conv.add_collision(
-            body, collision, helpers.nonthrowing_pose_resolver)
+        mj_geom = geometry_conv.add_collision(body, collision)
         self.assertEqual("c1", mj_geom.name)
         assert_allclose([1., 2., 3.], mj_geom.pos)
         assert_allclose([90., 60., 45.], mj_geom.euler)
         self.assertEqual(geometry_conv.COLLISION_GEOM_GROUP, mj_geom.group)
 
 
-class VisualTest(unittest.TestCase):
+class VisualTest(helpers.TestCase):
+
     def test_basic_visual_attributes(self):
         visual = sdf.Visual()
         visual.set_name("v1")
@@ -214,8 +218,7 @@ class VisualTest(unittest.TestCase):
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
-        mj_geom = geometry_conv.add_visual(
-            body, visual, helpers.nonthrowing_pose_resolver)
+        mj_geom = geometry_conv.add_visual(body, visual)
         self.assertEqual("v1", mj_geom.name)
         assert_allclose([1., 2., 3.], mj_geom.pos)
         assert_allclose([90., 60., 45.], mj_geom.euler)

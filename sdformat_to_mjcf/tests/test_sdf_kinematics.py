@@ -16,7 +16,7 @@ import pathlib
 import unittest
 
 import sdformat as sdf
-from sdformat_mjcf.sdf_kinematics import KinematicHierarchy
+from sdformat_to_mjcf.sdf_kinematics import KinematicHierarchy
 
 JointType = sdf.Joint.JointType
 
