@@ -93,7 +93,7 @@ def add_mjcf_visual_to_sdf(geom):
     """
     visual = sdf.Visual()
     if geom.name is not None:
-        col.set_name("visual_" + geom.name)
+        visual.set_name("visual_" + geom.name)
     else:
         global VISUAL_NUMBER
         visual.set_name("visual_" + str(VISUAL_NUMBER))
