@@ -47,8 +47,8 @@ class TreeTest(unittest.TestCase):
         upper_link_node = base_node.child_nodes[0]
         self.assertEqual("upper_link", upper_link_node.link.name())
         self.assertEqual(1, len(upper_link_node.child_nodes))
-        self.assertEqual("upper_joint", upper_link_node .joint.name())
-        self.assertEqual(JointType.REVOLUTE, upper_link_node .joint.type())
+        self.assertEqual("upper_joint", upper_link_node.joint.name())
+        self.assertEqual(JointType.REVOLUTE, upper_link_node.joint.type())
 
         lower_link_node = upper_link_node.child_nodes[0]
         self.assertEqual("lower_link", lower_link_node.link.name())

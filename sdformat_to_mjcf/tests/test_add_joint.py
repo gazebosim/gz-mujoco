@@ -34,7 +34,7 @@ class JointTest(helpers.TestCase):
 
     def setUp(self):
         self.mujoco = mjcf.RootElement(model="test")
-        self.body = self.mujoco.worldbody.add("body")
+        self.body = self.mujoco.worldbody.add("body", name="base_link")
 
     def create_sdf_joint(self,
                          name,
@@ -65,8 +65,17 @@ class JointTest(helpers.TestCase):
     def test_free_joint(self):
         mj_joint = add_joint(self.body, None)
         self.assertIsNotNone(mj_joint)
-        self.assertEqual("freejoint", mj_joint.name)
+        self.assertEqual(su.prefix_name("base_link", "freejoint"),
+                         mj_joint.name)
         self.assertEqual("freejoint", mj_joint.tag)
+
+    def test_multilpe_free_joints(self):
+        mj_joint1 = add_joint(self.body, None)
+        self.assertIsNotNone(mj_joint1)
+        # Add another body with a free joint to worldbody
+        body2 = self.mujoco.worldbody.add("body", name="test_body")
+        mj_joint2 = add_joint(body2, None)
+        self.assertIsNotNone(mj_joint2)
 
     def test_fixed_joint(self):
         joint = sdf.Joint()

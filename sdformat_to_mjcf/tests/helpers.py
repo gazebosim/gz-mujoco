@@ -34,6 +34,18 @@ class TestGraphResolverImpl(su.GraphResolverImplBase):
         except RuntimeError:
             return joint_axis.xyz()
 
+    def resolve_parent_link_name(self, joint):
+        try:
+            return super().resolve_parent_link_name(joint)
+        except RuntimeError:
+            return joint.parent_link_name()
+
+    def resolve_child_link_name(self, joint):
+        try:
+            return super().resolve_child_link_name(joint)
+        except RuntimeError:
+            return joint.child_link_name()
+
 
 def setup_test_graph_resolver():
     su.graph_resolver.resolver = TestGraphResolverImpl()

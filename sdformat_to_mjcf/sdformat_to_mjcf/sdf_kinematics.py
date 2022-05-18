@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import sdformat as sdf
+import sdformat_mjcf_utils.sdf_utils as su
 
 
 class LinkNode:
@@ -25,7 +26,7 @@ class LinkNode:
         an optional joint
         :param sdformat.Link link: The SDFormat link associated with this node.
         :param LinkNode parent: The parent link node.
-        :param sdformat.Joint joint: The SDFormat joint that whose <child> tag
+        :param sdformat.Joint joint: The SDFormat joint whose <child> tag
         refers to the link assocated with this node.
         """
         self.link = link
@@ -39,9 +40,8 @@ class LinkNode:
 
     def add_child(self, node, joint):
         """
-        Add a child node.
-        :param sdformat.Link link: The SDFormat link associated with this node.
-        :param LinkNode parent: The parent link node.
+        Add a child node and set the node's parent_node attribute to this node.
+        :param LinkNode node: The child node to be added
         :param sdformat.Joint joint: The SDFormat joint that whose <child> tag
         refers to the link assocated with this node.
         """
@@ -51,8 +51,8 @@ class LinkNode:
 
     def remove_child(self, node):
         """
-        Remove a child node.
-        :param sdformat.Link link: The SDFormat link associated with this node.
+        Remove a child node. This also clears the node's parent_node attribute.
+        :param LinkNode node: The child node to be removed.
         """
         node.parent_node = None
         self.child_nodes.remove(node)
@@ -79,7 +79,7 @@ class KinematicHierarchy:
         link_to_node_dict = {self.world_link: self.world_node}
 
         # Start with every link being a child of world link. Later on, we will
-        # process joints build the hierarchy.
+        # process joints to build the hierarchy.
         for li in range(model.link_count()):
             node = LinkNode(model.link_by_index(li), self.world_node)
             link_to_node_dict[node.link] = node
@@ -87,12 +87,13 @@ class KinematicHierarchy:
 
         for ji in range(model.joint_count()):
             joint = model.joint_by_index(ji)
-            errors, parent_link_name = joint.resolve_parent_link()
+            parent_link_name = su.graph_resolver.resolve_parent_link_name(
+                joint)
             parent = model.link_by_name(parent_link_name)
             if parent_link_name == "world":
                 parent = self.world_link
 
-            errors, child_link_name = joint.resolve_child_link()
+            child_link_name = su.graph_resolver.resolve_child_link_name(joint)
             # TODO (azeey) We assume that the child link is in the current
             # model, i.e., not nested. Remove this assumption when we support
             # nesting.

@@ -182,9 +182,6 @@ class GeometryTest(helpers.TestCase):
 
 class CollisionTest(helpers.TestCase):
 
-    def setUp(self):
-        helpers.setup_test_graph_resolver()
-
     def test_basic_collision_attributes(self):
         collision = sdf.Collision()
         collision.set_name("c1")
