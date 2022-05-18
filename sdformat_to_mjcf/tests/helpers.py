@@ -14,7 +14,7 @@
 
 """Test helpers"""
 
-from sdformat_mjcf import sdf_utils as su
+from sdformat_mjcf_utils import sdf_utils as su
 
 
 def nonthrowing_pose_resolver(sem_pose, relative_to=None):

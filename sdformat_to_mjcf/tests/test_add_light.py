@@ -22,7 +22,7 @@ from ignition.math import Color, Pose3d, Vector3d
 
 import sdformat as sdf
 
-from sdformat_mjcf.converters.light import add_light
+from sdformat_to_mjcf.converters.light import add_light
 
 from tests import helpers
 

@@ -1,4 +1,4 @@
-from sdformat_mjcf.sdformat_mjcf import execute
+from sdformat_to_mjcf.sdformat_mjcf import execute
 
 
 def main():
