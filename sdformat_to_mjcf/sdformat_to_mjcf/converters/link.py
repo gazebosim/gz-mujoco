@@ -80,7 +80,6 @@ def add_link(body, link, parent_name="world"):
 
     for vi in range(link.visual_count()):
         vis = link.visual_by_index(vi)
-        material = None
         if vis.geometry() is not None:
             visual_geom = add_visual(body, vis)
             if vis.material() is not None:

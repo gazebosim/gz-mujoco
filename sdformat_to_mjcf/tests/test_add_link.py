@@ -142,7 +142,7 @@ class LinkTest(helpers.TestCase):
         self.assertNotEqual(None, geoms[1].material)
         self.assertAlmostEqual(0.1, geoms[1].material.emission)
         self.assertAlmostEqual(0.2, geoms[1].material.specular)
-        assert_allclose([0, 0, 0, 1],  geoms[1].material.rgba)
+        assert_allclose([0, 0, 0, 1], geoms[1].material.rgba)
         self.assertEqual(su.prefix_name("base_link", "v1"), geoms[1].name)
 
     def test_duplicate_collision_names(self):
