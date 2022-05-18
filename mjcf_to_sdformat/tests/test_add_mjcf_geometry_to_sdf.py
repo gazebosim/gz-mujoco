@@ -21,7 +21,7 @@ from dm_control import mjcf
 
 from mjcf_to_sdformat.converters import geometry as geometry_conv
 
-import sdformat_mjcf.sdf_utils as su
+import sdformat_mjcf_utils.sdf_utils as su
 
 GeometryType = sdf.Geometry.GeometryType
 
