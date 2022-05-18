@@ -18,7 +18,7 @@ import math
 
 import sdformat as sdf
 
-import sdformat_mjcf.sdf_utils as su
+import sdformat_mjcf_utils.sdf_utils as su
 
 JointType = sdf.Joint.JointType
 
@@ -30,7 +30,7 @@ JOINT_DEFAULT_SPRING_REFERENCE = 0.0
 JOINT_DEFAULT_SPRING_STIFFNESS = 0.0
 
 
-def _compute_joint_axis(joint_axis, joint_pose, axis_xyz_resolver):
+def _compute_joint_axis(joint_axis, joint_pose):
     """
     Compute the joint axis unit vector taking into account the pose of the
     joint.
@@ -42,7 +42,7 @@ def _compute_joint_axis(joint_axis, joint_pose, axis_xyz_resolver):
     :return: The computed axis unit vector.
     :rtype: list[float]
     """
-    xyz_vec = axis_xyz_resolver(joint_axis)
+    xyz_vec = su.graph_resolver.resolve_axis_xyz(joint_axis)
     # Orientation cannot be set on MJCF joints, so resolve the axis
     # unit vector to be in the frame of the child link of the joint. We
     # do this by first resolving the unit vector to the joint frame,
@@ -54,18 +54,13 @@ def _compute_joint_axis(joint_axis, joint_pose, axis_xyz_resolver):
     return su.vec3d_to_list(xyz_vec_in_child_link)
 
 
-def add_joint(body,
-              joint,
-              pose_resolver=su.pose_resolver,
-              axis_xyz_resolver=su.axis_xyz_resolver):
+def add_joint(body, joint):
     """
     Converts a joint from SDFormat to MJCF and add it to the given body.
 
     :param mjcf.Element body: The MJCF body to which the geom is added.
     :param sdformat.Joint joint: The joint to be converted. This would be
     `None` when creating an MJCF freejoint.
-    :param pose_resolver: Function to resolve the pose of a
-    sdformat.SemanticPose object.
     :param axis_xyz_resolver: Function to resolve the unit vector a joint axis.
     :return: The newly created MJCF joint.
     :rtype: mjcf.Element
@@ -77,7 +72,7 @@ def add_joint(body,
     elif joint.type() in [
             JointType.CONTINUOUS, JointType.REVOLUTE, JointType.PRISMATIC
     ]:
-        pose = pose_resolver(joint.semantic_pose())
+        pose = su.graph_resolver.resolve_pose(joint.semantic_pose())
         mjcf_joint = body.add("joint", name=joint.name())
         mjcf_joint.pos = su.vec3d_to_list(pose.pos())
         joint_axis = joint.axis(0)
@@ -120,12 +115,11 @@ def add_joint(body,
             add_limits()
             add_dynamics()
 
-        mjcf_joint.axis = _compute_joint_axis(joint_axis, pose,
-                                              axis_xyz_resolver)
+        mjcf_joint.axis = _compute_joint_axis(joint_axis, pose)
 
         return mjcf_joint
     elif joint.type() == JointType.BALL:
-        pose = pose_resolver(joint.semantic_pose())
+        pose = su.graph_resolver.resolve_pose(joint.semantic_pose())
         mjcf_joint = body.add("joint", name=joint.name())
         mjcf_joint.pos = su.vec3d_to_list(pose.pos())
         mjcf_joint.type = "ball"
