@@ -17,7 +17,7 @@ from numpy.testing import assert_allclose
 from math import pi, sqrt
 
 import sdformat as sdf
-from ignition.math import Inertiald, Pose3d, MassMatrix3d, Vector3d
+from ignition.math import Color, Inertiald, Pose3d, MassMatrix3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_to_mjcf.converters.link import add_link
@@ -117,6 +117,11 @@ class LinkTest(helpers.TestCase):
         collision.set_name("c1")
         collision.set_raw_pose(Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4))
 
+        material = sdf.Material()
+        material.set_emissive(Color(0.1, 0.1, 0.1))
+        material.set_specular(Color(0.2, 0.2, 0.2))
+        visual.set_material(material)
+
         geometry = sdf.Geometry()
         geometry.set_box_shape(sdf.Box())
         geometry.set_type(GeometryType.BOX)
@@ -133,6 +138,11 @@ class LinkTest(helpers.TestCase):
         geoms = mj_body.find_all('geom')
         self.assertEqual(2, len(geoms))
         self.assertEqual(su.prefix_name("base_link", "c1"), geoms[0].name)
+        self.assertEqual(None, geoms[0].material)
+        self.assertNotEqual(None, geoms[1].material)
+        self.assertAlmostEqual(0.1, geoms[1].material.emission)
+        self.assertAlmostEqual(0.2, geoms[1].material.specular)
+        assert_allclose([0, 0, 0, 1], geoms[1].material.rgba)
         self.assertEqual(su.prefix_name("base_link", "v1"), geoms[1].name)
 
     def test_duplicate_collision_names(self):
