@@ -21,6 +21,7 @@ import sdformat as sdf
 
 NUMBER_OF_SDF_MODEL = 0
 
+
 def add_link(body, model, main_body, parent_name):
     """
     Get a body and iterate all the geoms to convert them in SDFormat links

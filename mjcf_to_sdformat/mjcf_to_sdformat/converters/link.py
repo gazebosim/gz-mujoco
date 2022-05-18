@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ignition.math import Inertiald, MassMatrix3d, Vector3d, Pose3d
+
 from mjcf_to_sdformat.converters.geometry import (add_mjcf_visual_to_sdf,
                                                   add_mjcf_collision_to_sdf)
 
