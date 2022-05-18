@@ -84,6 +84,12 @@ class GraphResolverImplBase:
     def resolve_axis_xyz(self, joint_axis):
         raise NotImplementedError
 
+    def resolve_parent_link_name(self, joint):
+        raise NotImplementedError
+
+    def resolve_child_link_name(self, joint):
+        raise NotImplementedError
+
 
 class GraphResolverImpl(GraphResolverImplBase):
     """Implementation of different pose and frame resolution functions."""
@@ -120,6 +126,32 @@ class GraphResolverImpl(GraphResolverImplBase):
         xyz_vec = Vector3d()
         self._handle_errors(joint_axis.resolve_xyz(xyz_vec))
         return xyz_vec
+
+    def resolve_parent_link_name(self, joint):
+        """
+        Resolves the parent link name of an SDFormat Joint.
+        :param sdformat.Joint joint: The Joint object.
+        :return: The resolved name of the parent link.
+        :rtype: str
+        :raises RuntimeError: if an error is encountered when resolving the
+        the link.
+        """
+        errors, parent_link_name = joint.resolve_parent_link()
+        self._handle_errors(errors)
+        return parent_link_name
+
+    def resolve_child_link_name(self, joint):
+        """
+        Resolves the child link name of an SDFormat Joint.
+        :param sdformat.Joint joint: The Joint object.
+        :return: The resolved name of the child link.
+        :rtype: str
+        :raises RuntimeError: if an error is encountered when resolving the
+        the link.
+        """
+        errors, child_link_name = joint.resolve_child_link()
+        self._handle_errors(errors)
+        return child_link_name
 
     def _handle_errors(self, errors):
         if errors:
