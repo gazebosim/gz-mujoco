@@ -25,7 +25,7 @@ COLLISION_NUMBER = 0
 
 def add_mjcf_geometry_to_sdf(geom):
     """
-    Converts an MJCF geom to an SDFormat geometry.
+    Converts an MJCF geom to a SDFormat geometry.
 
     :param mjcf.Element geom: The MJCF geom
     :return: The newly created SDFormat geometry.
@@ -91,10 +91,13 @@ def add_mjcf_visual_to_sdf(geom):
     :return: The newly created SDFormat visual.
     :rtype: sdformat.Visual
     """
-    global VISUAL_NUMBER
     visual = sdf.Visual()
-    visual.set_name("visual_" + str(VISUAL_NUMBER))
-    VISUAL_NUMBER = VISUAL_NUMBER + 1
+    if geom.name is not None:
+        col.set_name("visual_" + geom.name)
+    else:
+        global VISUAL_NUMBER
+        visual.set_name("visual_" + str(VISUAL_NUMBER))
+        VISUAL_NUMBER = VISUAL_NUMBER + 1
     sdf_geometry = add_mjcf_geometry_to_sdf(geom)
     if sdf_geometry is not None:
         visual.set_geometry(sdf_geometry)
@@ -112,10 +115,13 @@ def add_mjcf_collision_to_sdf(geom):
     :return: The newly created SDFormat collision.
     :rtype: sdformat.Collision
     """
-    global COLLISION_NUMBER
     col = sdf.Collision()
-    col.set_name("collision_" + str(COLLISION_NUMBER))
-    COLLISION_NUMBER = COLLISION_NUMBER + 1
+    if geom.name is not None:
+        col.set_name("collision_" + geom.name)
+    else:
+        global COLLISION_NUMBER
+        col.set_name("collision_" + str(COLLISION_NUMBER))
+        COLLISION_NUMBER = COLLISION_NUMBER + 1
     sdf_geometry = add_mjcf_geometry_to_sdf(geom)
     if sdf_geometry is not None:
         col.set_geometry(sdf_geometry)
