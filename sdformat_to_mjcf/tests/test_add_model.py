@@ -28,13 +28,12 @@ GeometryType = sdf.Geometry.GeometryType
 JointType = sdf.Joint.JointType
 
 
-class ModelTest(unittest.TestCase):
+class ModelTest(helpers.TestCase):
     test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
     expected_pos = [1.0, 2.0, 3.0]
     expected_euler = [90.0, 60.0, 45.0]
 
     def setUp(self):
-        helpers.setup_test_graph_resolver()
         self.mujoco = mjcf.RootElement(model="test")
 
     def test_basic_model(self):
@@ -48,7 +47,6 @@ class ModelTest(unittest.TestCase):
 
         mj_root = add_model(self.mujoco, model)
         self.assertIsNotNone(mj_root)
-        self.assertEqual("test_model", mj_root.model)
         mj_bodies = mj_root.worldbody.get_children("body")
         self.assertEqual(1, len(mj_bodies))
         self.assertEqual("base_link", mj_bodies[0].name)
@@ -74,7 +72,6 @@ class ModelTest(unittest.TestCase):
 
         mj_root = add_model(self.mujoco, model)
         self.assertIsNotNone(mj_root)
-        self.assertEqual("test_model", mj_root.model)
 
         mj_float_link_1 = mj_root.worldbody.find('body', 'float_link_1')
         self.assertIsNotNone(mj_float_link_1)
@@ -121,7 +118,6 @@ class ModelTest(unittest.TestCase):
 
         mj_root = add_model(self.mujoco, model)
         self.assertIsNotNone(mj_root)
-        self.assertEqual("test_model", mj_root.model)
 
         mj_base_link = mj_root.worldbody.find('body', 'base_link')
         self.assertIsNotNone(mj_base_link)

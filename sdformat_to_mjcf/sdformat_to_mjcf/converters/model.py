@@ -31,7 +31,6 @@ def add_model(mjcf_root, model):
     """
 
     kin_hierarchy = KinematicHierarchy(model)
-    mjcf_root.model = model.name()
     model_pose = graph_resolver.resolve_pose(model.semantic_pose())
 
     def convert_node(body, node):
