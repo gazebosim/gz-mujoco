@@ -25,8 +25,6 @@ def add_link(body, link, parent_name="world"):
     :param mjcf.Element body: The MJCF body to which the body is added.
     :param sdformat.Link link: The SDFormat link to be converted.
     :param str parent_name: Name of parent link.
-    :param pose_resolver: Function to resolve the pose of a
-    sdformat.SemanticPose object.
     :return: The newly created MJCF body.
     :rtype: mjcf.Element
     """

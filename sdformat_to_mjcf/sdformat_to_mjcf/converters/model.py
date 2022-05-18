@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from dm_control import mjcf
+
 from sdformat_to_mjcf.sdf_kinematics import KinematicHierarchy
 from sdformat_to_mjcf.converters.link import add_link
-from sdformat_to_mjcf.converters.joint import add_joint
+from sdformat_to_mjcf.converters.joint import add_joint, JointType
 from sdformat_mjcf_utils.sdf_utils import graph_resolver
 
 
@@ -49,8 +51,9 @@ def add_model(mjcf_root, model):
         # will collide with eachother since the geoms of A are considered
         # to belong to worldbody. To avoid this problem, we create contact
         # exclusions between A and B.
-        should_add_exclusions = (node.joint.type() == JointType.FIXED
-                                 and body.tag == mjcf.constants.WORLDBODY)
+        should_add_exclusions = node.joint is not None and (
+            node.joint.type() == JointType.FIXED
+            and body.tag == mjcf.constants.WORLDBODY)
 
         for cn in node.child_nodes:
             grand_child_body = convert_node(child_body, cn)
