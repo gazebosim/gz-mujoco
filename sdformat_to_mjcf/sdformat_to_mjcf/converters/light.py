@@ -19,21 +19,19 @@ import sdformat_mjcf_utils.sdf_utils as su
 import sdformat as sdf
 
 
-def add_light(body, light, pose_resolver=su.pose_resolver):
+def add_light(body, light):
     """
     Converts an SDFormat light to an MJCF light and add it to the given body.
 
     :param mjcf.Element body: The MJCF body to which the geom is added.
     :param sdf.Light light: SDF light
-    :param sdformat.Pose3d pose: Resolved pose of the light (obtained from the
-            pose of the SDFormat Light).
     :return: The newly created MJCF light.
     :rtype: mjcf.Element
     """
     if light is None:
         return
     type = light.type()
-    pose = pose_resolver(light.semantic_pose())
+    pose = su.graph_resolver.resolve_pose(light.semantic_pose())
     light = body.add("light",
                      name=light.name(),
                      pos=su.vec3d_to_list(pose.pos()),

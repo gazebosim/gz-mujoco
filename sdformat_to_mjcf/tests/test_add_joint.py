@@ -21,23 +21,12 @@ from ignition.math import Pose3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_to_mjcf.converters.joint import JointType
-from sdformat_to_mjcf.converters.joint import add_joint as add_joint_impl
+from sdformat_to_mjcf.converters.joint import add_joint
 import sdformat_mjcf_utils.sdf_utils as su
 from tests import helpers
 
 
-def add_joint(*args, **kwargs):
-    """Call the add_joint implementation with pose_resolver and
-    axis_xyz_resolver set to testing versions"""
-    return add_joint_impl(
-        *args,
-        **kwargs,
-        pose_resolver=helpers.nonthrowing_pose_resolver,
-        axis_xyz_resolver=helpers.nonthrowing_axis_xyz_resolver
-    )
-
-
-class JointTest(unittest.TestCase):
+class JointTest(helpers.TestCase):
 
     test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
     expected_pos = [1.0, 2.0, 3.0]

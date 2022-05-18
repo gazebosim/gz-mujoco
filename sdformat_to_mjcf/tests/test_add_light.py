@@ -33,6 +33,12 @@ class LightTest(unittest.TestCase):
     expected_pos = [1., 2., 3.]
     expected_euler = [90., 60., 45.]
 
+    def setUp(self):
+        helpers.setup_test_graph_resolver()
+
+    def tearDown(self):
+        helpers.reset_graph_resolver()
+
     def test_light(self):
         light = sdf.Light()
         light.set_name("light")
@@ -50,7 +56,7 @@ class LightTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
 
-        light_mjcf = add_light(body, light, helpers.nonthrowing_pose_resolver)
+        light_mjcf = add_light(body, light)
 
         self.assertNotEqual(light_mjcf, None)
         self.assertEqual(light_mjcf.name, light.name())

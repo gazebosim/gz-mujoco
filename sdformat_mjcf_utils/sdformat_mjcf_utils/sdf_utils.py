@@ -59,37 +59,77 @@ def quat_to_euler_list(quat):
     return [math.degrees(val) for val in vec3d_to_list(quat.euler())]
 
 
-def pose_resolver(sem_pose, relative_to=None):
-    """
-    Resolves SDFormat poses from a SemanticPose object.
-    :param sdformat.SemanticPose sem_pose: The SemanticPose object to be
-    resolved.
-    :param str relative_to: (Optional) The frame relative to which the pose is
-    resolved.
-    :return: The resolved pose.
-    :rtype: ignition.math.Pose3d
-    :raises RuntimeError: if an error is encountered when resolving the pose.
-    """
-    pose = Pose3d()
-    if relative_to is None:
-        errors = sem_pose.resolve(pose)
-    else:
-        errors = sem_pose.resolve(pose, relative_to)
-    if errors:
-        raise RuntimeError("\n".join(str(err) for err in errors))
-    return pose
+class GraphResolverImplBase:
+    """Interface for graph resolver implementors"""
+
+    def resolve_pose(self, sem_pose, relative_to=None):
+        raise NotImplementedError
+
+    def resolve_axis_xyz(self, joint_axis):
+        raise NotImplementedError
 
 
-def axis_xyz_resolver(joint_axis):
-    """
-    Resolves the xyz unit vector of SDFormat Joint axes.
-    :param sdformat.JointAxis joint_axis: The JointAxis object to be resolved.
-    :return: The resolved xyz vector.
-    :rtype: ignition.math.Vector3d
-    :raises RuntimeError: if an error is encountered when resolving the vector.
-    """
-    xyz_vec = Vector3d()
-    errors = joint_axis.resolve_xyz(xyz_vec)
-    if errors:
-        raise RuntimeError("\n".join(str(err) for err in errors))
-    return xyz_vec
+class GraphResolverImpl(GraphResolverImplBase):
+    """Implementation of different pose and frame resolution functions."""
+
+    def resolve_pose(self, sem_pose, relative_to=None):
+        """
+        Resolves SDFormat poses from a SemanticPose object.
+        :param sdformat.SemanticPose sem_pose: The SemanticPose object to be
+        resolved.
+        :param str relative_to: (Optional) The frame relative to which the pose
+        is resolved.
+        :return: The resolved pose.
+        :rtype: ignition.math.Pose3d
+        :raises RuntimeError: if an error is encountered when resolving the
+        pose.
+        """
+        pose = Pose3d()
+        if relative_to is None:
+            self._handle_errors(sem_pose.resolve(pose))
+        else:
+            self._handle_errors(sem_pose.resolve(pose, relative_to))
+        return pose
+
+    def resolve_axis_xyz(self, joint_axis):
+        """
+        Resolves the xyz unit vector of SDFormat Joint axes.
+        :param sdformat.JointAxis joint_axis: The JointAxis object to be
+        resolved.
+        :return: The resolved xyz vector.
+        :rtype: ignition.math.Vector3d
+        :raises RuntimeError: if an error is encountered when resolving the
+        vector.
+        """
+        xyz_vec = Vector3d()
+        self._handle_errors(joint_axis.resolve_xyz(xyz_vec))
+        return xyz_vec
+
+    def _handle_errors(self, errors):
+        if errors:
+            raise RuntimeError("\n".join(str(err) for err in errors))
+
+
+class GraphResolver:
+    """Forwards all pose and frame resolution calls to a chosen graph resolver
+    implementation. By default it will use GraphResolverImpl, this can be
+    overridden for testing purposes."""
+
+    def __init__(self, resolver=GraphResolverImpl()):
+        """
+        Initialize resolver with the provided graph resolver.
+        :param GraphResolverImplBase resolver: An implementation of
+        GraphResolverImplBase.
+        """
+        self.resolver = resolver
+
+    def __getattr__(self, attr):
+        """Forward all calls too the graph resolver implementation.
+        :param attr: Name of method or attribute.
+        """
+        return getattr(self.resolver, attr)
+
+
+# This is the default graph resolver, but it can be overridden by tests to
+# bypass errors due to frame graphs not being initialized.
+graph_resolver = GraphResolver()

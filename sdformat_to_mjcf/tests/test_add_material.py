@@ -22,9 +22,10 @@ from ignition.math import Color
 import sdformat as sdf
 
 from sdformat_to_mjcf.converters.material import add_material
+from tests import helpers
 
 
-class MaterialTest(unittest.TestCase):
+class MaterialTest(helpers.TestCase):
 
     def test_material_pbr(self):
         pbr = sdf.Pbr()
