@@ -21,7 +21,7 @@ from ignition.math import Color
 
 import sdformat as sdf
 
-from sdformat_mjcf.converters.material import add_material
+from sdformat_to_mjcf.converters.material import add_material
 
 
 class MaterialTest(unittest.TestCase):
