@@ -36,9 +36,7 @@ def add_model(mjcf_root, model):
     model_pose = graph_resolver.resolve_pose(model.semantic_pose())
 
     def convert_node(body, node):
-        child_body = add_link(body,
-                              node.link,
-                              node.parent_node.link.name())
+        child_body = add_link(body, node.link, node.parent_node.link.name())
 
         add_joint(child_body, node.joint)
         # Geoms added to bodies attached to the worldbody without a
@@ -51,9 +49,12 @@ def add_model(mjcf_root, model):
         # will collide with eachother since the geoms of A are considered
         # to belong to worldbody. To avoid this problem, we create contact
         # exclusions between A and B.
-        should_add_exclusions = node.joint is not None and (
-            node.joint.type() == JointType.FIXED
-            and body.tag == mjcf.constants.WORLDBODY)
+        if node.joint is None:
+            should_add_exclusions = False
+        else:
+            is_fixed_joint = node.joint.type() == JointType.FIXED
+            is_body_world = body.tag == mjcf.constants.WORLDBODY
+            should_add_exclusions = is_fixed_joint and is_body_world
 
         for cn in node.child_nodes:
             grand_child_body = convert_node(child_body, cn)
@@ -62,7 +63,8 @@ def add_model(mjcf_root, model):
                     "exclude",
                     name=f"{child_body.name}_{grand_child_body.name}",
                     body1=child_body.name,
-                    body2=grand_child_body.name)
+                    body2=grand_child_body.name,
+                )
         return child_body
 
     for cn in kin_hierarchy.world_node.child_nodes:
