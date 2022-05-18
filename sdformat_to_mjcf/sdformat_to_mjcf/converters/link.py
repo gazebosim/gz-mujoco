@@ -83,6 +83,6 @@ def add_link(body, link, parent_name="world"):
         if vis.geometry() is not None:
             visual_geom = add_visual(body, vis)
             if vis.material() is not None:
-                material = add_material(visual_geom, vis.material())
+                add_material(visual_geom, vis.material())
 
     return body
