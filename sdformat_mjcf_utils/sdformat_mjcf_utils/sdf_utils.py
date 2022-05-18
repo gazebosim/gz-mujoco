@@ -18,6 +18,8 @@ Python"""
 import math
 from ignition.math import Pose3d, Vector3d
 
+NAME_DELIMITER = '_'
+
 
 def vec3d_to_list(vec):
     """Convert a Vector3d object to a list.
@@ -57,6 +59,20 @@ def quat_to_euler_list(quat):
     :rtype: list[float]
     """
     return [math.degrees(val) for val in vec3d_to_list(quat.euler())]
+
+
+def prefix_name(prefix, name):
+    """
+    Prefixes a given `name` with `prefix`.
+    :param str prefix: The prefix. If this is None or "world", the name is
+    returned without being prefixed.
+    :param str name: Name to prefix.
+    :return: Prefixed name.
+    :rtype: str
+    """
+    if prefix is None or prefix == "world":
+        return name
+    return prefix + NAME_DELIMITER + name
 
 
 class GraphResolverImplBase:
