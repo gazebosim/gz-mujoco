@@ -9,20 +9,20 @@ license_content = (here / "LICENSE").read_text(encoding="utf-8")
 
 
 setup(
-    name='sdformat_mjcf',
+    name='sdformat_to_mjcf',
     version='0.0.1',
-    description='Tool to convert SDFormat file to MJCF',
+    description='Tool to convert MJCF file to SDFormat',
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Open Robotics',
     author_email='info@openrobotics.org',
-    url='https://github.com/ignitionrobotics/gz-mujoco',
+    url='https://github.com/gazebosim/gz-mujoco',
     license=license_content,
     packages=find_packages(exclude=('tests', 'docs')),
     test_suite='tests',
     entry_points={
         'console_scripts': [
-            'sdformat-mjcf = sdformat_mjcf.sdformat_mjcf:execute',
+            'sdformat-mjcf = sdformat_to_mjcf.sdformat_to_mjcf:execute',
         ],
     },
 )

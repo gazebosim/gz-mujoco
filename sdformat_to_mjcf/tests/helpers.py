@@ -17,7 +17,7 @@
 import unittest
 from contextlib import contextmanager
 
-import sdformat_mjcf.sdf_utils as su
+from sdformat_mjcf_utils import sdf_utils as su
 
 
 class TestGraphResolverImpl(su.GraphResolverImplBase):

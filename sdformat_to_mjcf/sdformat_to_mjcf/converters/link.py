@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sdformat_mjcf.converters.geometry import add_collision, add_visual
-import sdformat_mjcf.sdf_utils as su
+from sdformat_to_mjcf.converters.geometry import add_collision, add_visual
+import sdformat_mjcf_utils.sdf_utils as su
 
 
 def add_link(body, link, parent_name="world"):

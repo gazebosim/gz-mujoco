@@ -18,7 +18,7 @@ import sdformat as sdf
 from ignition.math import Pose3d, Vector3d
 
 from tests import helpers
-import sdformat_mjcf.sdf_utils as su
+import sdformat_mjcf_utils.sdf_utils as su
 
 
 class GraphResolverTest(unittest.TestCase):

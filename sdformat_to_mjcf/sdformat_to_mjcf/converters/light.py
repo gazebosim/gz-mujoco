@@ -15,7 +15,7 @@
 """Module to convert SDFormat Lights to MJCF"""
 
 
-import sdformat_mjcf.sdf_utils as su
+import sdformat_mjcf_utils.sdf_utils as su
 import sdformat as sdf
 
 
