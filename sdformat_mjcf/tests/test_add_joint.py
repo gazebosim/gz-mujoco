@@ -26,14 +26,13 @@ import sdformat_mjcf.sdf_utils as su
 from tests import helpers
 
 
-class JointTest(unittest.TestCase):
+class JointTest(helpers.TestCase):
 
     test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
     expected_pos = [1.0, 2.0, 3.0]
     expected_euler = [90.0, 60.0, 45.0]
 
     def setUp(self):
-        helpers.setup_test_graph_resolver()
         self.mujoco = mjcf.RootElement(model="test")
         self.body = self.mujoco.worldbody.add("body")
 

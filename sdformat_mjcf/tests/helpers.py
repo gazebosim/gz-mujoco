@@ -14,6 +14,9 @@
 
 """Test helpers"""
 
+import unittest
+from contextlib import contextmanager
+
 import sdformat_mjcf.sdf_utils as su
 
 
@@ -34,3 +37,25 @@ class TestGraphResolverImpl(su.GraphResolverImplBase):
 
 def setup_test_graph_resolver():
     su.graph_resolver.resolver = TestGraphResolverImpl()
+
+
+def reset_graph_resolver():
+    su.graph_resolver = su.GraphResolver()
+
+
+class TestCase(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        setup_test_graph_resolver()
+
+    @classmethod
+    def tearDownClass(cls):
+        reset_graph_resolver()
+
+
+@contextmanager
+def test_graph_resolver_context():
+    setup_test_graph_resolver()
+    yield
+    reset_graph_resolver()

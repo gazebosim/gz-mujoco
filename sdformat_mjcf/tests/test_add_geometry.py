@@ -29,14 +29,11 @@ from sdformat_mjcf.converters import geometry as geometry_conv
 GeometryType = sdf.Geometry.GeometryType
 
 
-class GeometryTest(unittest.TestCase):
+class GeometryTest(helpers.TestCase):
 
     test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
     expected_pos = [1., 2., 3.]
     expected_euler = [90., 60., 45.]
-
-    def setUp(self):
-        helpers.setup_test_graph_resolver()
 
     def test_box(self):
         box = sdf.Box()
@@ -184,7 +181,7 @@ class GeometryTest(unittest.TestCase):
         assert_allclose(self.expected_euler, mj_geom.euler)
 
 
-class CollisionTest(unittest.TestCase):
+class CollisionTest(helpers.TestCase):
 
     def setUp(self):
         helpers.setup_test_graph_resolver()
@@ -208,10 +205,7 @@ class CollisionTest(unittest.TestCase):
         self.assertEqual(geometry_conv.COLLISION_GEOM_GROUP, mj_geom.group)
 
 
-class VisualTest(unittest.TestCase):
-
-    def setUp(self):
-        helpers.setup_test_graph_resolver()
+class VisualTest(helpers.TestCase):
 
     def test_basic_visual_attributes(self):
         visual = sdf.Visual()

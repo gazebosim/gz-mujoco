@@ -36,6 +36,9 @@ class LightTest(unittest.TestCase):
     def setUp(self):
         helpers.setup_test_graph_resolver()
 
+    def tearDown(self):
+        helpers.reset_graph_resolver()
+
     def test_light(self):
         light = sdf.Light()
         light.set_name("light")
