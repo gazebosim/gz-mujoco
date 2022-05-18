@@ -33,7 +33,8 @@ class GeometryTest(unittest.TestCase):
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
-        geom = body.add('geom', type="box", size=[x_size, y_size, z_size])
+        geom = body.add('geom', type="box", name="box",
+                        size=[x_size, y_size, z_size])
         sdf_geom = geometry_conv.add_mjcf_geometry_to_sdf(geom)
 
         self.assertEqual(GeometryType.BOX, sdf_geom.type())

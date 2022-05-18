@@ -20,10 +20,14 @@ import sdformat as sdf
 NUMBER_OF_SDF_LINK = 0
 
 
-def add_mjcf_body_to_sdf(geom):
+def add_mjcf_geom_to_sdf(geom):
     global NUMBER_OF_SDF_LINK
     link = sdf.Link()
-    link.set_name(geom.type + "_" + str(NUMBER_OF_SDF_LINK))
+    if geom.name is not None:
+        link.set_name(geom.name)
+    else:
+        link.set_name(geom.type + "_" + str(NUMBER_OF_SDF_LINK))
+        NUMBER_OF_SDF_LINK = NUMBER_OF_SDF_LINK + 1
 
     if geom.group is None:
         visual = add_mjcf_visual_to_sdf(geom)
