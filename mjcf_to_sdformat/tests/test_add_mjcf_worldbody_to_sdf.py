@@ -68,6 +68,17 @@ class ModelTest(unittest.TestCase):
         assert_allclose([0, 0, 1], su.vec3d_to_list(link_2.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(link_2.raw_pose().rot().euler()))
+        mass_matrix = link_2.inertial().mass_matrix()
+        self.assertEqual(2, mass_matrix.mass())
+        self.assertEqual([0, 1, 0],
+                         su.vec3d_to_list(link_2.inertial().pose().pos()))
+        self.assertEqual([0, 0, 0],
+                         su.vec3d_to_list(link_2.inertial().pose().rot()))
+        assert_allclose([2, 2, 2],
+                        su.vec3d_to_list(mass_matrix.diagonal_moments()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(mass_matrix.off_diagonal_moments()))
+
         visual_2 = link_2.visual_by_index(0)
         self.assertNotEqual(None, visual_2)
         self.assertEqual("visual_0", visual_2.name())
@@ -88,6 +99,18 @@ class ModelTest(unittest.TestCase):
         self.assertEqual("link_2", link_3.name())
         self.assertEqual(1, link_3.visual_count())
         self.assertEqual(1, link_3.collision_count())
+
+        mass_matrix = link_3.inertial().mass_matrix()
+        self.assertEqual(2, mass_matrix.mass())
+        self.assertEqual([1, 2, 3],
+                         su.vec3d_to_list(link_3.inertial().pose().pos()))
+        self.assertEqual([0, 0, 0],
+                         su.vec3d_to_list(link_3.inertial().pose().rot()))
+        assert_allclose([0.026026, 0.023326, 0.011595],
+                        su.vec3d_to_list(mass_matrix.diagonal_moments()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(mass_matrix.off_diagonal_moments()))
+
         assert_allclose([0, 1, 0], su.vec3d_to_list(link_3.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(link_3.raw_pose().rot().euler()))

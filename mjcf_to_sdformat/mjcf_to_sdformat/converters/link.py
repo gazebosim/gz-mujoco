@@ -68,6 +68,14 @@ def add_mjcf_geom_to_sdf(body):
             inertial_euler = inertial.euler
         if inertial.fullinertia is not None:
             fullinertia = inertial.fullinertia
+        if inertial.diaginertia is not None:
+            fullinertia = [inertial.diaginertia[0],
+                           inertial.diaginertia[1],
+                           inertial.diaginertia[2],
+                           0,
+                           0,
+                           0]
+
         # Mass is required, we don't need to check it
         inertial = Inertiald(MassMatrix3d(inertial.mass,
                                           Vector3d(fullinertia[0],
