@@ -14,6 +14,7 @@
 
 from sdformat_to_mjcf.converters.light import add_light
 from sdformat_to_mjcf.converters.model import add_model
+import sdformat_mjcf_utils.sdf_utils as su
 
 
 def add_world(mjcf_out, world):
@@ -29,4 +30,8 @@ def add_world(mjcf_out, world):
     for li in range(world.light_count()):
         light = world.light_by_index(li)
         add_light(mjcf_out.worldbody, light)
+
+    mjcf_out.option.gravity = su.vec3d_to_list(world.gravity())
+    mjcf_out.option.magnetic = su.vec3d_to_list(world.magnetic_field())
+    mjcf_out.option.wind = su.vec3d_to_list(world.wind_linear_velocity())
     return mjcf_out
