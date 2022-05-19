@@ -96,7 +96,7 @@ def get_pose_from_mjcf(element):
             pos = element.pos
         if element.euler is not None:
             euler = element.euler
-    except:
+    except AttributeError:
         pass
     return Pose3d(list_to_vec3d(pos),
                   list_to_quat(euler))
