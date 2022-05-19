@@ -18,30 +18,43 @@ from mjcf_to_sdformat.converters.geometry import (add_mjcf_visual_to_sdf,
                                                   add_mjcf_collision_to_sdf)
 
 import sdformat as sdf
+import sdformat_mjcf_utils.sdf_utils as su
 
 NUMBER_OF_SDF_LINK = 0
 COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
 
 
-def add_mjcf_geom_to_sdf(geom, inertial):
+def add_mjcf_geom_to_sdf(body):
     """
-    Converts an MJCF geom to a SDFormat.
+    Converts an MJCF body to a SDFormat.
 
-    :param mjcf.Element geom: The MJCF geom
+    :param mjcf.Element body: The MJCF body
     :param mjcf.Element inertial: Inertial of the body
     :return: The newly created SDFormat link.
     :rtype: sdf.Link
     """
     link = sdf.Link()
 
+    body_name = None
+    try:
+        body_name = body.name
+    except:
+        pass
+
     # If name is not defined, we add a dummy name
-    if geom.name is not None:
-        link.set_name(geom.name)
+    if body_name is not None:
+        link.set_name(body_name)
     else:
         global NUMBER_OF_SDF_LINK
-        link.set_name(geom.type + "_" + str(NUMBER_OF_SDF_LINK))
+        link.set_name("link_" + str(NUMBER_OF_SDF_LINK))
         NUMBER_OF_SDF_LINK = NUMBER_OF_SDF_LINK + 1
+
+    inertial = None
+    try:
+        inertial = body.inertial
+    except:
+        pass
 
     # If inertial is defined, then it added to the link
     if inertial is not None:
@@ -71,21 +84,51 @@ def add_mjcf_geom_to_sdf(geom, inertial):
                                     inertial_euler[2]))
         link.set_inertial(inertial)
 
-    # If the group is not defined then visual and collision is added
-    if geom.group is None:
-        visual = add_mjcf_visual_to_sdf(geom)
-        if visual is not None:
-            link.add_visual(visual)
+    NUMBER_OF_VISUAL = 0
+    NUMBER_OF_COLLISION = 0
 
-        col = add_mjcf_collision_to_sdf(geom)
-        if col is not None:
-            link.add_collision(col)
-    elif geom.group == VISUAL_GEOM_GROUP:
-        visual = add_mjcf_visual_to_sdf(geom)
-        if visual is not None:
-            link.add_visual(visual)
-    elif geom.group == COLLISION_GEOM_GROUP:
-        col = add_mjcf_collision_to_sdf(geom)
-        if col is not None:
-            link.add_collision(col)
+    link.set_raw_pose(su.get_pose_from_mjcf(body))
+
+    for geom in body.geom:
+        # If the group is not defined then visual and collision is added
+        if geom.group is None:
+            visual = add_mjcf_visual_to_sdf(geom)
+            if visual is not None:
+                if geom.name is not None:
+                    visual.set_name("visual_" + geom.name)
+                else:
+                    visual.set_name("visual_" + str(NUMBER_OF_VISUAL))
+                    NUMBER_OF_VISUAL = NUMBER_OF_VISUAL + 1
+                visual.set_raw_pose(su.get_pose_from_mjcf(geom))
+                link.add_visual(visual)
+
+            col = add_mjcf_collision_to_sdf(geom)
+            if col is not None:
+                if geom.name is not None:
+                    col.set_name("collision_" + geom.name)
+                else:
+                    col.set_name("collision_" + str(NUMBER_OF_COLLISION))
+                    NUMBER_OF_COLLISION = NUMBER_OF_COLLISION + 1
+                col.set_raw_pose(su.get_pose_from_mjcf(geom))
+                link.add_collision(col)
+        elif geom.group == VISUAL_GEOM_GROUP:
+            visual = add_mjcf_visual_to_sdf(geom)
+            if visual is not None:
+                if geom.name is not None:
+                    visual.set_name("visual_" + geom.name)
+                else:
+                    visual.set_name("visual_" + str(NUMBER_OF_VISUAL))
+                    NUMBER_OF_VISUAL = NUMBER_OF_VISUAL + 1
+                visual.set_raw_pose(su.get_pose_from_mjcf(geom))
+                link.add_visual(visual)
+        elif geom.group == COLLISION_GEOM_GROUP:
+            col = add_mjcf_collision_to_sdf(geom)
+            if col is not None:
+                if geom.name is not None:
+                    col.set_name("collision_" + geom.name)
+                else:
+                    col.set_name("collision_" + str(NUMBER_OF_COLLISION))
+                    NUMBER_OF_COLLISION = NUMBER_OF_COLLISION + 1
+                col.set_raw_pose(su.get_pose_from_mjcf(geom))
+                link.add_collision(col)
     return link

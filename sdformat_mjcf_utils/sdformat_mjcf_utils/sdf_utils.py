@@ -16,7 +16,7 @@
 Python"""
 
 import math
-from ignition.math import Pose3d, Vector3d
+from ignition.math import Pose3d, Quaterniond, Vector3d
 
 NAME_DELIMITER = '_'
 
@@ -51,6 +51,17 @@ def vec2d_to_list(vec):
     return [vec.x(), vec.y()]
 
 
+def list_to_quat(list):
+    """
+    Convert a euler list to a Quaternion
+    :param List of values of the roll, pitch, and yaw components of `vec`
+    respectively.
+    :return: The newly created Quaterniond
+    :rtype: ignition.math.Quaterniond
+    """
+    return Quaterniond(Vector3d(list[0], list[1], list[2]))
+
+
 def quat_to_list(quat):
     """
     Convert a Quaterniond object to a list in the order expected by MJCF.
@@ -69,6 +80,26 @@ def quat_to_euler_list(quat):
     :rtype: list[float]
     """
     return [math.degrees(val) for val in vec3d_to_list(quat.euler())]
+
+
+def get_pose_from_mjcf(element):
+    """
+    Get the pose from a MJCF element
+    :param mjcf.Element element: MJCF element to get the pose
+    :return: The newly created Pose3d
+    :rtype: ignition.math.Pose3d
+    """
+    pos = [0, 0, 0]
+    euler = [0, 0, 0]
+    try:
+        if element.pos is not None:
+            pos = element.pos
+        if element.euler is not None:
+            euler = element.euler
+    except:
+        pass
+    return Pose3d(list_to_vec3d(pos),
+                  list_to_quat(euler))
 
 
 def prefix_name(prefix, name):

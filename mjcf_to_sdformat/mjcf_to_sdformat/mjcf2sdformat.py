@@ -16,27 +16,30 @@ import argparse
 
 from dm_control import mjcf
 
-from mjcf_to_sdformat.converters.model import add_mjcf_model_to_sdf
+from mjcf_to_sdformat.converters.model import add_mjcf_worldbody_to_sdf
 
 import sdformat as sdf
 
 
-def mjcf_file_to_sdformat(model_file):
+def mjcf_file_to_sdformat(model_file, output_file):
     mjcf_model = mjcf.from_path(model_file)
     root = sdf.Root()
     world = sdf.World()
-    world.set_name(mjcf_model.model)
+    world.set_name("default")
 
-    add_mjcf_model_to_sdf(mjcf_model, world)
+    add_mjcf_worldbody_to_sdf(mjcf_model, world)
 
     root.add_world(world)
 
-    print(root.to_string())
+    f = open(output_file, "w")
+    f.write(root.to_string())
+    f.close()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("model_file")
+    parser.add_argument("output_file")
 
     args = parser.parse_args()
-    mjcf_file_to_sdformat(args.model_file)
+    mjcf_file_to_sdformat(args.model_file, args.output_file)
