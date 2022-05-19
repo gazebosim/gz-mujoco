@@ -50,3 +50,16 @@ After the editable install in the first point of this section, the sdformat-mjcf
 script defined in `setup.py` entrypoints:
 
     sdformat-mjcf
+
+To convert an SDFormat file to mjcf:
+
+```
+python -m sdformat_to_mjcf.sdformat2mjcf path/to/file.sdf new_file.xml
+```
+
+To run the MJCF file in Mujoco, download a Mujoco release from https://github.com/deepmind/mujoco/releases, 
+extract the contents and run
+
+```
+<path/to/mujoco>/bin/simulate new_file.xml
+```
