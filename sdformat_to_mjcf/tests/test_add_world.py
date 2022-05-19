@@ -14,11 +14,9 @@
 
 import unittest
 from numpy.testing import assert_allclose
-from math import pi
 import os
 
 import sdformat as sdf
-from ignition.math import Color, Pose3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_to_mjcf.converters.world import add_world
@@ -71,7 +69,7 @@ class WorldTest(helpers.TestCase):
         self.assertEqual("true", self.mujoco.worldbody.light[0].directional)
         self.assertEqual("true", self.mujoco.worldbody.light[0].castshadow)
         assert_allclose([0., 0., 10.], self.mujoco.worldbody.light[0].pos)
-        assert_allclose([0.9 , 0.01, 0.001],
+        assert_allclose([0.9, 0.01, 0.001],
                         self.mujoco.worldbody.light[0].attenuation)
         assert_allclose([0.5, 0.2, -0.9],
                         self.mujoco.worldbody.light[0].dir,

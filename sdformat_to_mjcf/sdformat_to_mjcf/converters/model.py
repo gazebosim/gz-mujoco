@@ -26,8 +26,6 @@ def add_model(mjcf_root, model):
     :param mjcf.RootElement mjcf_root: The MJCF root element to which the model
     is added.
     :param sdformat.Model model: The SDFormat model to be converted.
-    :param boolean parent_is_world: True if the parent of the model is a world,
-    otherwise False
     :return: The newly created MJCF body.
     :rtype: mjcf.Element
     """
