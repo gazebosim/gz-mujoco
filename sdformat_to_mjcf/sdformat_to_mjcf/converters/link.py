@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from sdformat_to_mjcf.converters.geometry import add_collision, add_visual
+from sdformat_to_mjcf.converters.material import add_material
 import sdformat_mjcf_utils.sdf_utils as su
 
 
@@ -80,6 +81,8 @@ def add_link(body, link, parent_name="world"):
     for vi in range(link.visual_count()):
         vis = link.visual_by_index(vi)
         if vis.geometry() is not None:
-            add_visual(body, vis)
+            visual_geom = add_visual(body, vis)
+            if vis.material() is not None:
+                add_material(visual_geom, vis.material())
 
     return body

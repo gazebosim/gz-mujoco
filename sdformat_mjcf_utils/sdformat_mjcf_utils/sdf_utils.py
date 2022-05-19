@@ -18,6 +18,8 @@ Python"""
 import math
 from ignition.math import Pose3d, Vector3d
 
+NAME_DELIMITER = '_'
+
 
 def vec3d_to_list(vec):
     """Convert a Vector3d object to a list.
@@ -69,6 +71,20 @@ def quat_to_euler_list(quat):
     return [math.degrees(val) for val in vec3d_to_list(quat.euler())]
 
 
+def prefix_name(prefix, name):
+    """
+    Prefixes a given `name` with `prefix`.
+    :param str prefix: The prefix. If this is None or "world", the name is
+    returned without being prefixed.
+    :param str name: Name to prefix.
+    :return: Prefixed name.
+    :rtype: str
+    """
+    if prefix is None or prefix == "world":
+        return name
+    return prefix + NAME_DELIMITER + name
+
+
 class GraphResolverImplBase:
     """Interface for graph resolver implementors"""
 
@@ -76,6 +92,12 @@ class GraphResolverImplBase:
         raise NotImplementedError
 
     def resolve_axis_xyz(self, joint_axis):
+        raise NotImplementedError
+
+    def resolve_parent_link_name(self, joint):
+        raise NotImplementedError
+
+    def resolve_child_link_name(self, joint):
         raise NotImplementedError
 
 
@@ -114,6 +136,32 @@ class GraphResolverImpl(GraphResolverImplBase):
         xyz_vec = Vector3d()
         self._handle_errors(joint_axis.resolve_xyz(xyz_vec))
         return xyz_vec
+
+    def resolve_parent_link_name(self, joint):
+        """
+        Resolves the parent link name of an SDFormat Joint.
+        :param sdformat.Joint joint: The Joint object.
+        :return: The resolved name of the parent link.
+        :rtype: str
+        :raises RuntimeError: if an error is encountered when resolving the
+        the link.
+        """
+        errors, parent_link_name = joint.resolve_parent_link()
+        self._handle_errors(errors)
+        return parent_link_name
+
+    def resolve_child_link_name(self, joint):
+        """
+        Resolves the child link name of an SDFormat Joint.
+        :param sdformat.Joint joint: The Joint object.
+        :return: The resolved name of the child link.
+        :rtype: str
+        :raises RuntimeError: if an error is encountered when resolving the
+        the link.
+        """
+        errors, child_link_name = joint.resolve_child_link()
+        self._handle_errors(errors)
+        return child_link_name
 
     def _handle_errors(self, errors):
         if errors:
