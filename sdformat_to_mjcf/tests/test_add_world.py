@@ -59,11 +59,11 @@ class WorldTest(helpers.TestCase):
         self.assertEqual(2, len(self.mujoco.worldbody.body[1].geom))
         self.assertEqual("box_link_box_visual",
                          self.mujoco.worldbody.body[1].geom[1].name)
-        assert_allclose([0, 0, 0],
+        assert_allclose([0.5, 0, 0],
                         self.mujoco.worldbody.body[1].geom[1].pos)
         self.assertEqual("box_link_box_collision",
                          self.mujoco.worldbody.body[1].geom[0].name)
-        assert_allclose([0, 0, 0],
+        assert_allclose([0, 0.5, 0.5],
                         self.mujoco.worldbody.body[1].geom[0].pos)
 
         self.assertNotEqual(self.mujoco.worldbody.light[0], None)

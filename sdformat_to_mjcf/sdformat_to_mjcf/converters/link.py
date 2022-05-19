@@ -19,7 +19,7 @@ import sdformat_mjcf_utils.sdf_utils as su
 from ignition.math import equal
 
 
-def add_link(body, link, parent_name="world", pose=None):
+def add_link(body, link, parent_name="world"):
     """
     Converts a link from SDFormat to MJCF and add it to the given
     body/worldbody.
@@ -46,14 +46,11 @@ def add_link(body, link, parent_name="world", pose=None):
     #     - light (TODO (azeey))
     #     - particle_emitter
     sem_pose = link.semantic_pose()
-    if pose is None:
-        if parent_name == 'world':
-            pose = su.graph_resolver.resolve_pose(sem_pose)
-        else:
-            pose = su.graph_resolver.resolve_pose(sem_pose, parent_name)
+    if parent_name == 'world':
+        pose = su.graph_resolver.resolve_pose(sem_pose)
     else:
-        link_pose = su.graph_resolver.resolve_pose(link.semantic_pose())
-        pose = pose * link_pose
+        pose = su.graph_resolver.resolve_pose(sem_pose, parent_name)
+
     body = body.add("body",
                     name=link.name(),
                     pos=su.vec3d_to_list(pose.pos()),
