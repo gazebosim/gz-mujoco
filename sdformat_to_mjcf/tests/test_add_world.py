@@ -79,6 +79,16 @@ class WorldTest(helpers.TestCase):
         assert_allclose([0.2, 0.2, 0.2],
                         self.mujoco.worldbody.light[0].specular)
 
+    def test_world_link_mass_zero(self):
+        root = sdf.Root()
+        errors = root.load(os.path.join(
+                  os.path.dirname(os.path.abspath(__file__)),
+                  "resources/model_mass_zero.sdf"))
+
+        world = root.world_by_index(0)
+        with self.assertRaises(RuntimeError):
+            add_world(self.mujoco, world)
+
 
 if __name__ == "__main__":
     unittest.main()
