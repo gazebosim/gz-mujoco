@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from sdformat_to_mjcf.converters.geometry import add_collision, add_visual
+from sdformat_to_mjcf.converters.light import add_light
 from sdformat_to_mjcf.converters.material import add_material
 import sdformat_mjcf_utils.sdf_utils as su
 
@@ -40,7 +41,6 @@ def add_link(body, link, parent_name="world"):
     #     - audio_sink
     #     - audio_source
     #     - battery
-    #     - light (TODO (azeey))
     #     - particle_emitter
     sem_pose = link.semantic_pose()
     if parent_name == 'world':
@@ -84,5 +84,10 @@ def add_link(body, link, parent_name="world"):
             visual_geom = add_visual(body, vis)
             if vis.material() is not None:
                 add_material(visual_geom, vis.material())
+
+    for li in range(link.light_count()):
+        light = link.light_by_index(li)
+        if light is not None:
+            add_light(body, light)
 
     return body
