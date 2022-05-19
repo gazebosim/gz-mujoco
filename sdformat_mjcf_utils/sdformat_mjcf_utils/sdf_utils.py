@@ -31,16 +31,6 @@ def vec3d_to_list(vec):
     return [vec.x(), vec.y(), vec.z()]
 
 
-def list_to_vec3d(list):
-    """Convert a list to a Vector3d object.
-    :param List of values of the x, y, and z components of `vec`
-    respectively.
-    :return: Vector3d object
-    :rtype: ignition.math.Vector3d
-    """
-    return Vector3d(list[0], list[1], list[2])
-
-
 def vec2d_to_list(vec):
     """
     Convert a Vector2d object to a list.
