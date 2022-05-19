@@ -16,8 +16,10 @@ from sdformat_to_mjcf.converters.geometry import add_collision, add_visual
 from sdformat_to_mjcf.converters.material import add_material
 import sdformat_mjcf_utils.sdf_utils as su
 
+from ignition.math import equal
 
-def add_link(body, link, parent_name="world"):
+
+def add_link(body, link, parent_name="world", pose=None):
     """
     Converts a link from SDFormat to MJCF and add it to the given
     body/worldbody.
@@ -43,10 +45,14 @@ def add_link(body, link, parent_name="world"):
     #     - light (TODO (azeey))
     #     - particle_emitter
     sem_pose = link.semantic_pose()
-    if parent_name == 'world':
-        pose = su.graph_resolver.resolve_pose(sem_pose)
+    if pose is None:
+        if parent_name == 'world':
+            pose = su.graph_resolver.resolve_pose(sem_pose)
+        else:
+            pose = su.graph_resolver.resolve_pose(sem_pose, parent_name)
     else:
-        pose = su.graph_resolver.resolve_pose(sem_pose, parent_name)
+        link_pose = su.graph_resolver.resolve_pose(link.semantic_pose())
+        pose = pose * link_pose
     body = body.add("body",
                     name=link.name(),
                     pos=su.vec3d_to_list(pose.pos()),
@@ -59,17 +65,22 @@ def add_link(body, link, parent_name="world"):
     # attribute and not set the orientation. We choose the latter here.
     mass = link.inertial().mass_matrix().mass()
     moi = link.inertial().moi()
-    if mass > 0:
-        fullinertia = [
-            moi(0, 0),
-            moi(1, 1),
-            moi(2, 2),
-            moi(0, 1),
-            moi(0, 2),
-            moi(1, 2)
-        ]
+    fullinertia = [
+        moi(0, 0),
+        moi(1, 1),
+        moi(2, 2),
+        moi(0, 1),
+        moi(0, 2),
+        moi(1, 2)
+    ]
+    if mass > 0 and not equal(0, mass, 1e-6):
         body.add("inertial",
                  mass=mass,
+                 pos=su.vec3d_to_list(link.inertial().pose().pos()),
+                 fullinertia=fullinertia)
+    else:
+        body.add("inertial",
+                 mass=1.0,
                  pos=su.vec3d_to_list(link.inertial().pose().pos()),
                  fullinertia=fullinertia)
 
