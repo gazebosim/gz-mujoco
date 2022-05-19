@@ -62,7 +62,7 @@ def add_link(body, link, parent_name="world"):
     # attribute and not set the orientation. We choose the latter here.
     mass = link.inertial().mass_matrix().mass()
     moi = link.inertial().moi()
-    if mass > 0 and not equal(0, mass, 1e-6):
+    if mass > 0:
         fullinertia = [
             moi(0, 0),
             moi(1, 1),
@@ -76,7 +76,7 @@ def add_link(body, link, parent_name="world"):
                  pos=su.vec3d_to_list(link.inertial().pose().pos()),
                  fullinertia=fullinertia)
     else:
-        raise RuntimeError("Mass of link {} could no be 0".format(link.name()))
+        raise RuntimeError("Mass of link {} should no be 0".format(link.name()))
     for ci in range(link.collision_count()):
         col = link.collision_by_index(ci)
         if col.geometry() is not None:

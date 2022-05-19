@@ -31,6 +31,13 @@ def add_world(mjcf_out, world):
         light = world.light_by_index(li)
         add_light(mjcf_out.worldbody, light)
 
+    # TODO(ahcorde) Add this properties
+    # - audio_device
+    # - spherical_coordinates ?
+    # - atmosphere
+    # - physics
+    # - Scene ?
+
     mjcf_out.option.gravity = su.vec3d_to_list(world.gravity())
     mjcf_out.option.magnetic = su.vec3d_to_list(world.magnetic_field())
     mjcf_out.option.wind = su.vec3d_to_list(world.wind_linear_velocity())
