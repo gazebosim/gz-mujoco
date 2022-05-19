@@ -17,7 +17,7 @@ from numpy.testing import assert_allclose
 from math import pi
 
 import sdformat as sdf
-from ignition.math import Color, Inertiald, Pose3d, MassMatrix3d, Vector3d
+from ignition.math import Color, Pose3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_to_mjcf.converters.world import add_world
@@ -87,7 +87,6 @@ class WorldTest(helpers.TestCase):
                         self.mujoco.worldbody.body[1].pos, rtol=1e-4)
         assert_allclose([-166.935687, 7.435472, 105.852574],
                         self.mujoco.worldbody.body[1].euler)
-        geoms = self.body.find_all('geom')
         self.assertEqual(2, len(self.mujoco.worldbody.body[1].geom))
         self.assertEqual("base_link_v1",
                          self.mujoco.worldbody.body[1].geom[1].name)
@@ -120,6 +119,7 @@ class WorldTest(helpers.TestCase):
                          light.specular().g(),
                          light.specular().b()],
                         self.mujoco.worldbody.light[0].specular)
+
 
 if __name__ == "__main__":
     unittest.main()
