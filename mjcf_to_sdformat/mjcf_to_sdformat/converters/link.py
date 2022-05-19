@@ -39,7 +39,7 @@ def add_mjcf_geom_to_sdf(body):
     body_name = None
     try:
         body_name = body.name
-    except:
+    except AttributeError:
         pass
 
     # If name is not defined, we add a dummy name
@@ -53,7 +53,7 @@ def add_mjcf_geom_to_sdf(body):
     inertial = None
     try:
         inertial = body.inertial
-    except:
+    except AttributeError:
         pass
 
     # If inertial is defined, then it added to the link

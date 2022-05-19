@@ -12,10 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ignition.math import Pose3d, Quaterniond, Vector3d
-
 from mjcf_to_sdformat.converters.link import add_mjcf_geom_to_sdf
-import sdformat_mjcf_utils.sdf_utils as su
 
 import sdformat as sdf
 
