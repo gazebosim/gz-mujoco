@@ -19,14 +19,13 @@ import sys
 import sdformat as sdf
 from dm_control import mjcf
 from dm_control.mjcf.export_with_assets import export_with_assets
-from sdformat_mjcf.converters.model import add_model
-from sdformat_mjcf.converters.world import add_world
+from sdformat_to_mjcf.converters.model import add_model
+from sdformat_to_mjcf.converters.world import add_world
 
 
 def sdformat_root_to_mjcf(root):
     mjcf_root = mjcf.RootElement()
     mjcf_root.compiler.eulerseq = 'XYZ'
-    mjcf_root.model = root.model().name()
     if root.model():
         mjcf_root.model = root.model().name()
     elif root.world_count() == 1:
