@@ -29,7 +29,7 @@ def sdformat_root_to_mjcf(root):
     if root.model():
         mjcf_root.model = root.model().name()
     elif root.world_count() == 1:
-        mjcf_root.model = "default"
+        mjcf_root.model = root.world_by_index(0).name()
     else:
         raise RuntimeError("One model or one world is supported")
 
