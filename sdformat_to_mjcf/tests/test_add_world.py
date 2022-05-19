@@ -48,7 +48,7 @@ class WorldTest(helpers.TestCase):
                         self.mujoco.option.magnetic)
         assert_allclose(su.vec3d_to_list(world.wind_linear_velocity()),
                         self.mujoco.option.wind)
-        self.assertEqual(2, len(self.mujoco.worldbody.body))
+        self.assertEqual(3, len(self.mujoco.worldbody.body))
 
         assert_allclose([0, 0, 0.5],
                         self.mujoco.worldbody.body[1].pos, rtol=1e-4)
@@ -63,6 +63,20 @@ class WorldTest(helpers.TestCase):
                          self.mujoco.worldbody.body[1].geom[0].name)
         assert_allclose([0, 0.5, 0.5],
                         self.mujoco.worldbody.body[1].geom[0].pos)
+
+        assert_allclose([0, 1.5, 0.5],
+                        self.mujoco.worldbody.body[2].pos, rtol=1e-4)
+        assert_allclose([0, 0, 0],
+                        self.mujoco.worldbody.body[2].euler)
+        self.assertEqual(2, len(self.mujoco.worldbody.body[1].geom))
+        self.assertEqual("sphere_link_sphere_visual",
+                         self.mujoco.worldbody.body[2].geom[1].name)
+        assert_allclose([0.0, 0, 0],
+                        self.mujoco.worldbody.body[2].geom[1].pos)
+        self.assertEqual("sphere_link_sphere_collision",
+                         self.mujoco.worldbody.body[2].geom[0].name)
+        assert_allclose([0, 0., 0.],
+                        self.mujoco.worldbody.body[2].geom[0].pos)
 
         self.assertNotEqual(self.mujoco.worldbody.light[0], None)
         self.assertEqual("directional", self.mujoco.worldbody.light[0].name)
