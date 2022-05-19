@@ -18,7 +18,7 @@ from sdformat_to_mjcf.converters.joint import add_joint
 from sdformat_mjcf_utils.sdf_utils import graph_resolver
 
 
-def add_model(mjcf_root, model, is_sdf_world=False):
+def add_model(mjcf_root, model, parent_is_world=False):
     """
     Converts a model from SDFormat to MJCF and add it to the given
     MJCF root.
@@ -26,6 +26,8 @@ def add_model(mjcf_root, model, is_sdf_world=False):
     :param mjcf.RootElement mjcf_root: The MJCF root element to which the model
     is added.
     :param sdformat.Model model: The SDFormat model to be converted.
+    :param boolean parent_is_world: True if the parent of the model is a world,
+    otherwise False
     :return: The newly created MJCF body.
     :rtype: mjcf.Element
     """
@@ -34,16 +36,15 @@ def add_model(mjcf_root, model, is_sdf_world=False):
     model_pose = graph_resolver.resolve_pose(model.semantic_pose())
 
     def convert_node(body, node):
-        if not is_sdf_world:
+        if not parent_is_world:
             child_body = add_link(body,
                                   node.link,
                                   node.parent_node.link.name())
         else:
-            pose = model.raw_pose()
             child_body = add_link(body,
                                   node.link,
                                   node.parent_node.link.name(),
-                                  pose=pose)
+                                  pose=model.raw_pose())
 
         add_joint(child_body, node.joint)
 
@@ -51,7 +52,7 @@ def add_model(mjcf_root, model, is_sdf_world=False):
             convert_node(child_body, cn)
 
     for cn in kin_hierarchy.world_node.child_nodes:
-        if not is_sdf_world:
+        if not parent_is_world:
             # Adjust the poses of each of the nodes to account for the model
             link_pose = graph_resolver.resolve_pose(cn.link.semantic_pose())
             new_link_pose = model_pose * link_pose

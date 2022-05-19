@@ -27,6 +27,7 @@ def add_link(body, link, parent_name="world", pose=None):
     :param mjcf.Element body: The MJCF body to which the body is added.
     :param sdformat.Link link: The SDFormat link to be converted.
     :param str parent_name: Name of parent link.
+    :param ignition.math.Pose3d pose: Pose of the link
     :return: The newly created MJCF body.
     :rtype: mjcf.Element
     """
@@ -65,25 +66,21 @@ def add_link(body, link, parent_name="world", pose=None):
     # attribute and not set the orientation. We choose the latter here.
     mass = link.inertial().mass_matrix().mass()
     moi = link.inertial().moi()
-    fullinertia = [
-        moi(0, 0),
-        moi(1, 1),
-        moi(2, 2),
-        moi(0, 1),
-        moi(0, 2),
-        moi(1, 2)
-    ]
     if mass > 0 and not equal(0, mass, 1e-6):
+        fullinertia = [
+            moi(0, 0),
+            moi(1, 1),
+            moi(2, 2),
+            moi(0, 1),
+            moi(0, 2),
+            moi(1, 2)
+        ]
         body.add("inertial",
                  mass=mass,
                  pos=su.vec3d_to_list(link.inertial().pose().pos()),
                  fullinertia=fullinertia)
     else:
-        body.add("inertial",
-                 mass=1.0,
-                 pos=su.vec3d_to_list(link.inertial().pose().pos()),
-                 fullinertia=fullinertia)
-
+        raise RuntimeError("Mass of link {} could no be 0".format(link.name()))
     for ci in range(link.collision_count()):
         col = link.collision_by_index(ci)
         if col.geometry() is not None:
