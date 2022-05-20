@@ -32,14 +32,14 @@ jobs:
       env:
         PYTHONPATH: ${{ env.pythonLocation }}/lib/python${{ matrix.python }}/site-packages:/usr/lib/python3/dist-packages
       run: |
-        cd sdformat_mjcf_utils
+        cd sdformat_mjcf/sdformat_mjcf_utils
         python3 -m tox -e py
     - name: Test sdformat_to_mjcf
       env:
         PYTHONPATH: ${{ env.pythonLocation }}/lib/python${{ matrix.python }}/site-packages:/usr/lib/python3/dist-packages
         MUJOCO_GL: egl
       run: |
-        cd sdformat_to_mjcf
+        cd sdformat_mjcf/sdformat_to_mjcf
         python3 -m tox -e py
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2
