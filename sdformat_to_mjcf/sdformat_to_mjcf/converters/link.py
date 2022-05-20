@@ -18,7 +18,7 @@ from sdformat_to_mjcf.converters.material import add_material
 import sdformat_mjcf_utils.sdf_utils as su
 
 
-def add_link(body, link, parent_name="world"):
+def add_link(body, link, parent_name="world", model_name="model"):
     """
     Converts a link from SDFormat to MJCF and add it to the given
     body/worldbody.
@@ -26,13 +26,13 @@ def add_link(body, link, parent_name="world"):
     :param mjcf.Element body: The MJCF body to which the body is added.
     :param sdformat.Link link: The SDFormat link to be converted.
     :param str parent_name: Name of parent link.
+    :param str mode_name: Name of the model who contains the link. This is used
+    to generate the name and avoid collisions in the names
     :return: The newly created MJCF body.
     :rtype: mjcf.Element
     """
     # Currently the following SDFormat elements inside <link> are ignored
     # during conversion
-    #     - gravity
-    #     - enable_wind
     #     - self_collide (TODO (azeey))
     #     - kinematic
     #     - must_be_base_link
@@ -49,7 +49,7 @@ def add_link(body, link, parent_name="world"):
         pose = su.graph_resolver.resolve_pose(sem_pose, parent_name)
 
     body = body.add("body",
-                    name=link.name(),
+                    name=su.prefix_name(model_name, link.name()),
                     pos=su.vec3d_to_list(pose.pos()),
                     euler=su.quat_to_euler_list(pose.rot()))
 

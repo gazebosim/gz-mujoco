@@ -55,11 +55,11 @@ class WorldTest(helpers.TestCase):
         assert_allclose([0, 0, 0],
                         self.mujoco.worldbody.body[1].euler)
         self.assertEqual(2, len(self.mujoco.worldbody.body[1].geom))
-        self.assertEqual("box_link_box_visual",
+        self.assertEqual("box_box_link_box_visual",
                          self.mujoco.worldbody.body[1].geom[1].name)
         assert_allclose([0.5, 0, 0],
                         self.mujoco.worldbody.body[1].geom[1].pos)
-        self.assertEqual("box_link_box_collision",
+        self.assertEqual("box_box_link_box_collision",
                          self.mujoco.worldbody.body[1].geom[0].name)
         assert_allclose([0, 0.5, 0.5],
                         self.mujoco.worldbody.body[1].geom[0].pos)
@@ -69,11 +69,11 @@ class WorldTest(helpers.TestCase):
         assert_allclose([0, 0, 0],
                         self.mujoco.worldbody.body[2].euler)
         self.assertEqual(2, len(self.mujoco.worldbody.body[1].geom))
-        self.assertEqual("sphere_link_sphere_visual",
+        self.assertEqual("sphere_sphere_link_sphere_visual",
                          self.mujoco.worldbody.body[2].geom[1].name)
         assert_allclose([0.0, 0, 0],
                         self.mujoco.worldbody.body[2].geom[1].pos)
-        self.assertEqual("sphere_link_sphere_collision",
+        self.assertEqual("sphere_sphere_link_sphere_collision",
                          self.mujoco.worldbody.body[2].geom[0].name)
         assert_allclose([0, 0., 0.],
                         self.mujoco.worldbody.body[2].geom[0].pos)
