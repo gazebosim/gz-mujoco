@@ -30,7 +30,7 @@ def main(argv=None):
                         help="Desired path for the output MJCF file")
 
     args = parser.parse_args(argv)
-    sdformat_file_to_mjcf(args.input_file, args.output_file)
+    return sdformat_file_to_mjcf(args.input_file, args.output_file)
 
 
 if __name__ == "__main__":

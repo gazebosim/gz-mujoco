@@ -31,7 +31,9 @@ def sdformat_file_to_mjcf(input_file, output_file):
     errors = root.load(input_file)
     if errors:
         print(errors, file=sys.stderr)
+        return 1
     else:
         mjcf_root = add_root(root)
         export_with_assets(mjcf_root, os.path.dirname(output_file),
                            output_file)
+        return 0
