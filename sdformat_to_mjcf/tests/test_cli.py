@@ -39,8 +39,9 @@ class CLITest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             output_file = path.join(temp_dir, "double_pendulum.xml")
             with redirect_stderr(output):
-                cli.main([str(model_file), output_file])
+                return_code = cli.main([str(model_file), output_file])
             self.assertEqual("", output.getvalue())
+            self.assertEqual(0, return_code)
 
             # Check that the generated file is valid by loading it and
             # simulating a few steps
@@ -51,6 +52,16 @@ class CLITest(unittest.TestCase):
             final_state = engine.get_state()
             self.assertFalse(np.allclose(initial_state, final_state,
                                          rtol=1e-6))
+
+    def test_invalid_sdformat_file(self):
+        output = io.StringIO()
+        model_file = TEST_RESOURCES_DIR / "invalid_xml_syntax.sdf"
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_file = path.join(temp_dir, "test_invalid_file.xml")
+            with redirect_stderr(output):
+                return_code = cli.main([str(model_file), output_file])
+            self.assertIn("Unable to read file", output.getvalue())
+            self.assertEqual(1, return_code)
 
 
 if __name__ == "__main__":
