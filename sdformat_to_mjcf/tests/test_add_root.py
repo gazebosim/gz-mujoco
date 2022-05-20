@@ -52,8 +52,8 @@ class RootTest(helpers.TestCase):
         root.add_world(world)
 
         mjcf_root = add_root(root)
-        # TODO (azeey) Fix when add_world is implemented
-        self.assertIsNone(mjcf_root)
+        self.assertIsNotNone(mjcf_root)
+        self.assertEqual("test_world", mjcf_root.model)
 
     def test_root_with_multiple_worlds(self):
         root = sdf.Root()

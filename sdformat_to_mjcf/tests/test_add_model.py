@@ -169,9 +169,9 @@ class ModelTest(helpers.TestCase):
         self.assertIsNotNone(mj_root)
         excludes = mj_root.contact.get_children("exclude")
         self.assertEqual(1, len(excludes))
-        self.assertEqual("link1_link2", excludes[0].name)
-        self.assertEqual("link1", excludes[0].body1)
-        self.assertEqual("link2", excludes[0].body2)
+        self.assertEqual("test_model_link1_test_model_link2", excludes[0].name)
+        self.assertEqual("test_model_link1", excludes[0].body1)
+        self.assertEqual("test_model_link2", excludes[0].body2)
 
 
 if __name__ == "__main__":
