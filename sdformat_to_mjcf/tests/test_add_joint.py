@@ -69,7 +69,7 @@ class JointTest(helpers.TestCase):
                          mj_joint.name)
         self.assertEqual("freejoint", mj_joint.tag)
 
-    def test_multilpe_free_joints(self):
+    def test_multiple_free_joints(self):
         mj_joint1 = add_joint(self.body, None)
         self.assertIsNotNone(mj_joint1)
         # Add another body with a free joint to worldbody
