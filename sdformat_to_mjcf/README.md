@@ -46,7 +46,16 @@ A tox (environment manager) run of tests with multiple python versions:
 
 ### Run the application
 
-After the editable install in the first point of this section, the sdformat-mjcf
-script defined in `setup.py` entrypoints:
+After the editable install in the first part of this section, to convert an 
+SDFormat file to mjcf, run:
 
-    sdformat-mjcf
+```
+sdformat2mjcf path/to/file.sdf new_file.xml
+```
+
+To run the MJCF file in Mujoco, download a Mujoco release from https://github.com/deepmind/mujoco/releases, 
+extract the contents and run
+
+```
+<path/to/mujoco>/bin/simulate new_file.xml
+```

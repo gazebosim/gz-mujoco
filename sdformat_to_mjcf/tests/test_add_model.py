@@ -144,6 +144,35 @@ class ModelTest(helpers.TestCase):
         assert_allclose(upper_link_expected_pos, mj_upper_link.pos)
         assert_allclose(upper_link_expected_euler, mj_upper_link.euler)
 
+    def test_collision_exclusions(self):
+        test_model_sdf = """
+        <sdf version="1.6">
+            <model name="test_model">
+                <joint name="joint_to_world" type="fixed">
+                    <parent>world</parent>
+                    <child>link1</child>
+                </joint>
+                <link name="link1"/>
+                <joint name="joint1" type="revolute">
+                    <parent>link1</parent>
+                    <child>link2</child>
+                    <axis><xyz>1 0 0</xyz></axis>
+                </joint>
+                <link name="link2"/>
+            </model>
+        </sdf>
+        """
+
+        root = sdf.Root()
+        root.load_sdf_string(test_model_sdf)
+        mj_root = add_model(self.mujoco, root.model())
+        self.assertIsNotNone(mj_root)
+        excludes = mj_root.contact.get_children("exclude")
+        self.assertEqual(1, len(excludes))
+        self.assertEqual("test_model_link1_test_model_link2", excludes[0].name)
+        self.assertEqual("test_model_link1", excludes[0].body1)
+        self.assertEqual("test_model_link2", excludes[0].body2)
+
 
 if __name__ == "__main__":
     unittest.main()

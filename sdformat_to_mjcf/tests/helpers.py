@@ -14,10 +14,13 @@
 
 """Test helpers"""
 
+import pathlib
 import unittest
 from contextlib import contextmanager
 
 from sdformat_mjcf_utils import sdf_utils as su
+
+TEST_RESOURCES_DIR = pathlib.Path(__file__).resolve().parent / 'resources'
 
 
 class TestGraphResolverImpl(su.GraphResolverImplBase):

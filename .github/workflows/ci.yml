@@ -37,6 +37,7 @@ jobs:
     - name: Test sdformat_to_mjcf
       env:
         PYTHONPATH: ${{ env.pythonLocation }}/lib/python${{ matrix.python }}/site-packages:/usr/lib/python3/dist-packages
+        MUJOCO_GL: egl
       run: |
         cd sdformat_to_mjcf
         python3 -m tox -e py
