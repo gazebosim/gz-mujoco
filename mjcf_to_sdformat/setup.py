@@ -22,7 +22,7 @@ setup(
     test_suite='tests',
     entry_points={
         'console_scripts': [
-            'mjcf-sdformat = mjcf_to_sdformat.mjcf_to_sdformat:execute',
+            'mjcf2sdformat = mjcf_to_sdformat.cli:main',
         ],
     },
 )

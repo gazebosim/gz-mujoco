@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
-
 from dm_control import mjcf
 
 from mjcf_to_sdformat.converters.model import add_mjcf_worldbody_to_sdf
@@ -21,8 +19,13 @@ from mjcf_to_sdformat.converters.model import add_mjcf_worldbody_to_sdf
 import sdformat as sdf
 
 
-def mjcf_file_to_sdformat(model_file, output_file):
-    mjcf_model = mjcf.from_path(model_file)
+def mjcf_file_to_sdformat(input_file, output_file):
+    """
+    Loads a MJCF input file and converts to SDFormat.
+    :param str input_file: Path to input MJCF file
+    :param str output_file: Path to output SDFormat file.
+    """
+    mjcf_model = mjcf.from_path(input_file)
     root = sdf.Root()
     world = sdf.World()
     world.set_name("default")
@@ -31,15 +34,6 @@ def mjcf_file_to_sdformat(model_file, output_file):
 
     root.add_world(world)
 
-    f = open(output_file, "w")
-    f.write(root.to_string())
-    f.close()
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("model_file")
-    parser.add_argument("output_file")
-
-    args = parser.parse_args()
-    mjcf_file_to_sdformat(args.model_file, args.output_file)
+    with open(output_file, "w") as f:
+        f.write(root.to_string())
+        f.close()
