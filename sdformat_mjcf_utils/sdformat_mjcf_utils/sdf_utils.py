@@ -41,6 +41,22 @@ def list_to_vec3d(list):
     return Vector3d(list[0], list[1], list[2])
 
 
+def get_angle(element):
+    """Get the angles from a MJCF element
+    :param mjcf.Element element: Element to extract the angles
+    :rtype: ignition.math.Quateriond
+    """
+    angle_type = "radian"
+    if element.root.compiler.angle is not None:
+        angle_type = element.root.compiler.angle
+    result = Vector3d()
+    if element.euler is not None:
+        result = list_to_vec3d(element.euler)
+    if angle_type == "degree":
+        result = result * math.pi / 180.0
+    return Quaterniond(result)
+
+
 def vec2d_to_list(vec):
     """
     Convert a Vector2d object to a list.

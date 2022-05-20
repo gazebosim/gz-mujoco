@@ -64,8 +64,7 @@ def add_mjcf_geom_to_sdf(body):
 
         if inertial.pos is not None:
             inertial_pos = inertial.pos
-        if inertial.euler is not None:
-            inertial_euler = inertial.euler
+        inertial_euler = su.get_angle(inertial)
         if inertial.fullinertia is not None:
             fullinertia = inertial.fullinertia
         if inertial.diaginertia is not None:
@@ -87,9 +86,9 @@ def add_mjcf_geom_to_sdf(body):
                              Pose3d(inertial_pos[0],
                                     inertial_pos[1],
                                     inertial_pos[2],
-                                    inertial_euler[0],
-                                    inertial_euler[1],
-                                    inertial_euler[2]))
+                                    inertial_euler.roll(),
+                                    inertial_euler.pitch(),
+                                    inertial_euler.yaw()))
         link.set_inertial(inertial)
 
     NUMBER_OF_VISUAL = 0
