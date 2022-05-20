@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from dm_control import mjcf
+
 from sdformat_to_mjcf.sdf_kinematics import KinematicHierarchy
 from sdformat_to_mjcf.converters.link import add_link
-from sdformat_to_mjcf.converters.joint import add_joint
+from sdformat_to_mjcf.converters.joint import add_joint, JointType
 from sdformat_mjcf_utils.sdf_utils import graph_resolver
 
 
@@ -36,12 +38,37 @@ def add_model(mjcf_root, model):
     def convert_node(body, node):
         child_body = add_link(body,
                               node.link,
-                              node.parent_node.link.name())
+                              node.parent_node.link.name(),
+                              model.name())
 
         add_joint(child_body, node.joint)
+        # Geoms added to bodies attached to the worldbody without a
+        # joint (a fixed joint in SDFormat) are treated as belonging to
+        # worldbody. This means that the collision filtering rule that
+        # applies to geoms in bodies connected by a joint may not apply to
+        # these geoms. For example, let body A be a child of worldbody
+        # without a joint and B be a child of A with a revolute joint. Even
+        # though A and B are connected by a joint, by default, their geoms
+        # will collide with eachother since the geoms of A are considered
+        # to belong to worldbody. To avoid this problem, we create contact
+        # exclusions between A and B.
+        if node.joint is None:
+            should_add_exclusions = False
+        else:
+            is_fixed_joint = node.joint.type() == JointType.FIXED
+            is_body_world = body.tag == mjcf.constants.WORLDBODY
+            should_add_exclusions = is_fixed_joint and is_body_world
 
         for cn in node.child_nodes:
-            convert_node(child_body, cn)
+            grand_child_body = convert_node(child_body, cn)
+            if should_add_exclusions:
+                body.root.contact.add(
+                    "exclude",
+                    name=f"{child_body.name}_{grand_child_body.name}",
+                    body1=child_body.name,
+                    body2=grand_child_body.name,
+                )
+        return child_body
 
     for cn in kin_hierarchy.world_node.child_nodes:
         # Adjust the poses of each of the nodes to account for the model

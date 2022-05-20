@@ -12,15 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pathlib
 import unittest
 
 import sdformat as sdf
 from sdformat_to_mjcf.sdf_kinematics import KinematicHierarchy
+from tests.helpers import TEST_RESOURCES_DIR
 
 JointType = sdf.Joint.JointType
-
-TEST_RESOURCES_DIR = pathlib.Path(__file__).resolve().parent / 'resources'
 
 
 class TreeTest(unittest.TestCase):
