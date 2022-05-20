@@ -138,7 +138,7 @@ class LinkTest(helpers.TestCase):
         geoms = mj_body.find_all('geom')
         self.assertEqual(2, len(geoms))
         self.assertEqual(
-            su.prefix_name("base_model",su.prefix_name("base_link", "c1")),
+            su.prefix_name("base_model", su.prefix_name("base_link", "c1")),
             geoms[0].name)
         self.assertEqual(None, geoms[0].material)
         self.assertNotEqual(None, geoms[1].material)
@@ -146,7 +146,7 @@ class LinkTest(helpers.TestCase):
         self.assertAlmostEqual(0.2, geoms[1].material.specular)
         assert_allclose([0, 0, 0, 1], geoms[1].material.rgba)
         self.assertEqual(
-            su.prefix_name("base_model",su.prefix_name("base_link", "v1")),
+            su.prefix_name("base_model", su.prefix_name("base_link", "v1")),
             geoms[1].name)
 
     def test_duplicate_collision_names(self):
