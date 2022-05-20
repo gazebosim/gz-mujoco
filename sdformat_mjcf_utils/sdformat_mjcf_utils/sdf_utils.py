@@ -16,7 +16,7 @@
 Python"""
 
 import math
-from ignition.math import Pose3d, Vector3d
+from ignition.math import Pose3d, Quaterniond, Vector3d
 
 NAME_DELIMITER = '_'
 
@@ -31,6 +31,32 @@ def vec3d_to_list(vec):
     return [vec.x(), vec.y(), vec.z()]
 
 
+def list_to_vec3d(list):
+    """Convert a list to a Vector3d object.
+    :param List of values of the x, y, and z components of `vec`
+    respectively.
+    :return: Vector3d object
+    :rtype: ignition.math.Vector3d
+    """
+    return Vector3d(list[0], list[1], list[2])
+
+
+def get_rotation(element):
+    """Get the angles from a MJCF element
+    :param mjcf.Element element: Element to extract the angles
+    :rtype: ignition.math.Quateriond
+    """
+    angle_type = "radian"
+    if element.root.compiler.angle is not None:
+        angle_type = element.root.compiler.angle
+    result = Vector3d()
+    if element.euler is not None:
+        result = list_to_vec3d(element.euler)
+    if angle_type == "degree":
+        result = result * math.pi / 180.0
+    return Quaterniond(result)
+
+
 def vec2d_to_list(vec):
     """
     Convert a Vector2d object to a list.
@@ -39,6 +65,17 @@ def vec2d_to_list(vec):
     :rtype: list[float]
     """
     return [vec.x(), vec.y()]
+
+
+def euler_list_to_quat(list):
+    """
+    Convert a euler list to a Quaternion
+    :param List of values of the roll, pitch, and yaw components of `vec`
+    respectively.
+    :return: The newly created Quaterniond
+    :rtype: ignition.math.Quaterniond
+    """
+    return Quaterniond(Vector3d(list[0], list[1], list[2]))
 
 
 def quat_to_list(quat):
@@ -61,6 +98,26 @@ def quat_to_euler_list(quat):
     return [math.degrees(val) for val in vec3d_to_list(quat.euler())]
 
 
+def get_pose_from_mjcf(element):
+    """
+    Get the pose from a MJCF element
+    :param mjcf.Element element: MJCF element to get the pose
+    :return: The newly created Pose3d
+    :rtype: ignition.math.Pose3d
+    """
+    pos = [0, 0, 0]
+    euler = [0, 0, 0]
+    try:
+        if element.pos is not None:
+            pos = element.pos
+        if element.euler is not None:
+            euler = element.euler
+    except AttributeError:
+        pass
+    return Pose3d(list_to_vec3d(pos),
+                  euler_list_to_quat(euler))
+
+
 def prefix_name(prefix, name):
     """
     Prefixes a given `name` with `prefix`.
@@ -73,6 +130,23 @@ def prefix_name(prefix, name):
     if prefix is None or prefix == "world":
         return name
     return prefix + NAME_DELIMITER + name
+
+
+def prefix_name_with_index(prefix, name, index):
+    """
+    Create a new string a given `name` with `prefix` and an `index`
+    :param str prefix: The prefix. For example: visual or collision
+    :param str name: Name to prefix.
+    :param str index: Index to add as a suffix to avoid name collision
+    :return: The newly created name
+    :rtype: str
+    """
+    if name is not None:
+        return prefix + NAME_DELIMITER + name
+    else:
+        new_name = prefix + NAME_DELIMITER + str(index)
+        index = index + 1
+        return new_name
 
 
 class GraphResolverImplBase:

@@ -41,5 +41,11 @@ jobs:
       run: |
         cd sdformat_to_mjcf
         python3 -m tox -e py
+    - name: Test mjcf_to_sdformat
+      env:
+        PYTHONPATH: ${{ env.pythonLocation }}/lib/python${{ matrix.python }}/site-packages:/usr/lib/python3/dist-packages
+      run: |
+        cd mjcf_to_sdformat
+        python3 -m tox -e py
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2
