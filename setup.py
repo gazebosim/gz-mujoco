@@ -10,8 +10,11 @@ license_content = (here / 'LICENSE').read_text(encoding='utf-8')
 # Native namespace package is being used
 # https://packaging.python.org/en/latest/guides/packaging-namespace-packages/#native-namespace-packages
 packages = find_namespace_packages(
-    include=['sdformat_*'],
-    exclude=['sdformat_mjcf.github', 'sdformat_mjcf.sdformat_to_mjcf.tests'])
+    include=['sdformat_mjcf.*'],
+    exclude=['sdformat_mjcf.sdformat_to_mjcf.tests',
+             'sdformat_mjcf.sdformat_to_mjcf.tests*',
+             'sdformat_mjcf.sdformat_mjcf_utils.tests',
+             'sdformat_mjcf.sdformat_mjcf_utils.tests*'])
 
 setup(
     name='sdformat_mjcf',
