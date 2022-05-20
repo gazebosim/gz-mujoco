@@ -23,5 +23,10 @@ setup(
     author_email='info@openrobotics.org',
     url='https://github.com/gazebosim/gz-mujoco',
     license=license_content,
-    packages=packages
+    packages=packages,
+    entry_points={
+        'console_scripts': [
+            'sdformat2mjcf = sdformat_mjcf.sdformat_to_mjcf.cli:main',
+        ],
+    },
 )
