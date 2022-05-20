@@ -15,7 +15,6 @@
 import unittest
 from numpy.testing import assert_allclose
 from dm_control import mjcf
-import os
 
 import sdformat as sdf
 
@@ -23,6 +22,7 @@ from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
 import sdformat_mjcf_utils.sdf_utils as su
 
 from tests.helpers import TEST_RESOURCES_DIR
+
 
 class ModelTest(unittest.TestCase):
 
