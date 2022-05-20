@@ -31,6 +31,10 @@ def mjcf_geom_to_sdf(geom):
     :return: The newly created SDFormat geometry.
     :rtype: sdf.Geometry
     """
+    # TODO(ahcorde): we have to adjust the pose of the visual/collision to
+    # match the longitudinal axis of the capsule/cylinder and its position
+    # Related comment:
+    # https://github.com/gazebosim/gz-mujoco/pull/26#discussion_r877558075
     sdf_geometry = sdf.Geometry()
     if geom.type == "box":
         box = sdf.Box()
