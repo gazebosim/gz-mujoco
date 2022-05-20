@@ -36,7 +36,10 @@ def add_model(mjcf_root, model):
     model_pose = graph_resolver.resolve_pose(model.semantic_pose())
 
     def convert_node(body, node):
-        child_body = add_link(body, node.link, node.parent_node.link.name())
+        child_body = add_link(body,
+                              node.link,
+                              node.parent_node.link.name(),
+                              model.name())
 
         add_joint(child_body, node.joint)
         # Geoms added to bodies attached to the worldbody without a
