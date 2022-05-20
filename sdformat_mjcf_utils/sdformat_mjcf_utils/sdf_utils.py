@@ -132,6 +132,23 @@ def prefix_name(prefix, name):
     return prefix + NAME_DELIMITER + name
 
 
+def prefix_name_with_index(prefix, name, index):
+    """
+    Create a new string a given `name` with `prefix` and an `index`
+    :param str prefix: The prefix. For example: visual or collision
+    :param str name: Name to prefix.
+    :param str index: Index to add as a suffix to avoid name collision
+    :return: The newly created name
+    :rtype: str
+    """
+    if name is not None:
+        return prefix + NAME_DELIMITER + name
+    else:
+        new_name = prefix + NAME_DELIMITER + str(index)
+        index = index + 1
+        return new_name
+
+
 class GraphResolverImplBase:
     """Interface for graph resolver implementors"""
 

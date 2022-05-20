@@ -101,41 +101,29 @@ def add_mjcf_geom_to_sdf(body):
         if geom.group is None:
             visual = add_mjcf_visual_to_sdf(geom)
             if visual is not None:
-                if geom.name is not None:
-                    visual.set_name("visual_" + geom.name)
-                else:
-                    visual.set_name("visual_" + str(NUMBER_OF_VISUAL))
-                    NUMBER_OF_VISUAL = NUMBER_OF_VISUAL + 1
+                visual.set_name(su.prefix_name_with_index(
+                    "visual", geom.name, NUMBER_OF_VISUAL))
                 visual.set_raw_pose(su.get_pose_from_mjcf(geom))
                 link.add_visual(visual)
 
             col = add_mjcf_collision_to_sdf(geom)
             if col is not None:
-                if geom.name is not None:
-                    col.set_name("collision_" + geom.name)
-                else:
-                    col.set_name("collision_" + str(NUMBER_OF_COLLISION))
-                    NUMBER_OF_COLLISION = NUMBER_OF_COLLISION + 1
+                col.set_name(su.prefix_name_with_index(
+                    "collision", geom.name, NUMBER_OF_COLLISION))
                 col.set_raw_pose(su.get_pose_from_mjcf(geom))
                 link.add_collision(col)
         elif geom.group == VISUAL_GEOM_GROUP:
             visual = add_mjcf_visual_to_sdf(geom)
             if visual is not None:
-                if geom.name is not None:
-                    visual.set_name("visual_" + geom.name)
-                else:
-                    visual.set_name("visual_" + str(NUMBER_OF_VISUAL))
-                    NUMBER_OF_VISUAL = NUMBER_OF_VISUAL + 1
+                visual.set_name(su.prefix_name_with_index(
+                    "visual", geom.name, NUMBER_OF_VISUAL))
                 visual.set_raw_pose(su.get_pose_from_mjcf(geom))
                 link.add_visual(visual)
         elif geom.group == COLLISION_GEOM_GROUP:
             col = add_mjcf_collision_to_sdf(geom)
             if col is not None:
-                if geom.name is not None:
-                    col.set_name("collision_" + geom.name)
-                else:
-                    col.set_name("collision_" + str(NUMBER_OF_COLLISION))
-                    NUMBER_OF_COLLISION = NUMBER_OF_COLLISION + 1
+                col.set_name(su.prefix_name_with_index(
+                    "collision", geom.name, NUMBER_OF_COLLISION))
                 col.set_raw_pose(su.get_pose_from_mjcf(geom))
                 link.add_collision(col)
     return link
