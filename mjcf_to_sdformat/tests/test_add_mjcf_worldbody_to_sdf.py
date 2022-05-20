@@ -19,7 +19,7 @@ import os
 
 import sdformat as sdf
 
-from mjcf_to_sdformat.converters.model import add_mjcf_worldbody_to_sdf
+from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
 import sdformat_mjcf_utils.sdf_utils as su
 
 
@@ -32,7 +32,7 @@ class ModelTest(unittest.TestCase):
         world = sdf.World()
         world.set_name("default")
 
-        add_mjcf_worldbody_to_sdf(mjcf_model, world)
+        mjcf_worldbody_to_sdf(mjcf_model, world)
 
         self.assertEqual("default", world.name())
         self.assertEqual(1, world.model_count())

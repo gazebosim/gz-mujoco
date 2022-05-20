@@ -23,7 +23,7 @@ VISUAL_NUMBER = 0
 COLLISION_NUMBER = 0
 
 
-def add_mjcf_geometry_to_sdf(geom):
+def mjcf_geom_to_sdf(geom):
     """
     Converts an MJCF geom to a SDFormat geometry.
 
@@ -37,6 +37,7 @@ def add_mjcf_geometry_to_sdf(geom):
         box.set_size(su.list_to_vec3d(geom.size) * 2)
         sdf_geometry.set_box_shape(box)
         sdf_geometry.set_type(sdf.Geometry.GeometryType.BOX)
+        # TODO(ahcorde): Add fromto
     elif geom.type == "capsule":
         capsule = sdf.Capsule()
         capsule.set_radius(geom.size[0])
@@ -66,6 +67,7 @@ def add_mjcf_geometry_to_sdf(geom):
         ellipsoid.set_radii(su.list_to_vec3d(geom.size))
         sdf_geometry.set_ellipsoid_shape(ellipsoid)
         sdf_geometry.set_type(sdf.Geometry.GeometryType.ELLIPSOID)
+        # TODO(ahcorde): Add fromto
     elif geom.type == "sphere":
         sphere = sdf.Sphere()
         sphere.set_radius(geom.size[0])
@@ -82,7 +84,7 @@ def add_mjcf_geometry_to_sdf(geom):
     return sdf_geometry
 
 
-def add_mjcf_visual_to_sdf(geom):
+def mjcf_visual_to_sdf(geom):
     """
     Converts MJCF geom to a SDFormat visual
     MJCF geom should be part of group `VISUAL_GEOM_GROUP`.
@@ -98,7 +100,7 @@ def add_mjcf_visual_to_sdf(geom):
         global VISUAL_NUMBER
         visual.set_name("visual_" + str(VISUAL_NUMBER))
         VISUAL_NUMBER = VISUAL_NUMBER + 1
-    sdf_geometry = add_mjcf_geometry_to_sdf(geom)
+    sdf_geometry = mjcf_geom_to_sdf(geom)
     if sdf_geometry is not None:
         visual.set_geometry(sdf_geometry)
     else:
@@ -106,7 +108,7 @@ def add_mjcf_visual_to_sdf(geom):
     return visual
 
 
-def add_mjcf_collision_to_sdf(geom):
+def mjcf_collision_to_sdf(geom):
     """
     Converts MJCF geom to a SDFormat collision
     MJCF geom should be part of group `COLLISION_GEOM_GROUP`.
@@ -122,7 +124,7 @@ def add_mjcf_collision_to_sdf(geom):
         global COLLISION_NUMBER
         col.set_name("collision_" + str(COLLISION_NUMBER))
         COLLISION_NUMBER = COLLISION_NUMBER + 1
-    sdf_geometry = add_mjcf_geometry_to_sdf(geom)
+    sdf_geometry = mjcf_geom_to_sdf(geom)
     if sdf_geometry is not None:
         col.set_geometry(sdf_geometry)
     else:

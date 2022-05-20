@@ -35,7 +35,7 @@ class GeometryTest(unittest.TestCase):
         body = mujoco.worldbody.add('body')
         geom = body.add('geom', type="box", name="box",
                         size=[x_size, y_size, z_size])
-        sdf_geom = geometry_conv.add_mjcf_geometry_to_sdf(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(GeometryType.BOX, sdf_geom.type())
         self.assertNotEqual(None, sdf_geom.box_shape())
@@ -49,7 +49,7 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         geom = body.add('geom', type="capsule", size=[radius, length])
-        sdf_geom = geometry_conv.add_mjcf_geometry_to_sdf(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(GeometryType.CAPSULE, sdf_geom.type())
         self.assertNotEqual(None, sdf_geom.capsule_shape())
@@ -64,7 +64,7 @@ class GeometryTest(unittest.TestCase):
         body = mujoco.worldbody.add('body')
         geom = body.add('geom', type="capsule", size=[radius],
                         fromto=[0, 0, 0, 0, 0, 1])
-        sdf_geom = geometry_conv.add_mjcf_geometry_to_sdf(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(GeometryType.CAPSULE, sdf_geom.type())
         self.assertNotEqual(None, sdf_geom.capsule_shape())
@@ -78,7 +78,7 @@ class GeometryTest(unittest.TestCase):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         geom = body.add('geom', type="cylinder", size=[radius, length])
-        sdf_geom = geometry_conv.add_mjcf_geometry_to_sdf(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(GeometryType.CYLINDER, sdf_geom.type())
         self.assertNotEqual(None, sdf_geom.cylinder_shape())
@@ -93,7 +93,7 @@ class GeometryTest(unittest.TestCase):
         body = mujoco.worldbody.add('body')
         geom = body.add('geom', type="cylinder", size=[radius],
                         fromto=[0, 0, 0, 0, 0, 1])
-        sdf_geom = geometry_conv.add_mjcf_geometry_to_sdf(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(GeometryType.CYLINDER, sdf_geom.type())
         self.assertNotEqual(None, sdf_geom.cylinder_shape())
@@ -109,7 +109,7 @@ class GeometryTest(unittest.TestCase):
         geom = body.add('geom',
                         type="ellipsoid",
                         size=[x_radius, y_radius, z_radius])
-        sdf_geom = geometry_conv.add_mjcf_geometry_to_sdf(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(GeometryType.ELLIPSOID, sdf_geom.type())
         self.assertNotEqual(None, sdf_geom.ellipsoid_shape())
@@ -131,7 +131,7 @@ class GeometryTest(unittest.TestCase):
         geom = body.add('geom',
                         type="plane",
                         size=[x_size, y_size, 0.05])
-        sdf_geom = geometry_conv.add_mjcf_geometry_to_sdf(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(GeometryType.PLANE, sdf_geom.type())
         self.assertNotEqual(None, sdf_geom.plane_shape())
@@ -146,7 +146,7 @@ class GeometryTest(unittest.TestCase):
         geom = body.add('geom',
                         type="sphere",
                         size=[radius])
-        sdf_geom = geometry_conv.add_mjcf_geometry_to_sdf(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(GeometryType.SPHERE, sdf_geom.type())
         self.assertNotEqual(None, sdf_geom.sphere_shape())
@@ -162,7 +162,7 @@ class VisualTest(unittest.TestCase):
         geom = body.add('geom',
                         type="sphere",
                         size=[radius])
-        sdf_visual = geometry_conv.add_mjcf_visual_to_sdf(geom)
+        sdf_visual = geometry_conv.mjcf_visual_to_sdf(geom)
 
         self.assertEqual(GeometryType.SPHERE, sdf_visual.geometry().type())
         self.assertNotEqual(None, sdf_visual.geometry())
@@ -182,7 +182,7 @@ class CollisionTest(unittest.TestCase):
         geom = body.add('geom',
                         type="sphere",
                         size=[radius])
-        sdf_col = geometry_conv.add_mjcf_collision_to_sdf(geom)
+        sdf_col = geometry_conv.mjcf_collision_to_sdf(geom)
 
         self.assertEqual(GeometryType.SPHERE, sdf_col.geometry().type())
         self.assertNotEqual(None, sdf_col.geometry())

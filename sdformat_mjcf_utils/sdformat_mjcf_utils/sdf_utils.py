@@ -67,7 +67,7 @@ def vec2d_to_list(vec):
     return [vec.x(), vec.y()]
 
 
-def list_to_quat(list):
+def euler_list_to_quat(list):
     """
     Convert a euler list to a Quaternion
     :param List of values of the roll, pitch, and yaw components of `vec`
@@ -115,7 +115,7 @@ def get_pose_from_mjcf(element):
     except AttributeError:
         pass
     return Pose3d(list_to_vec3d(pos),
-                  list_to_quat(euler))
+                  euler_list_to_quat(euler))
 
 
 def prefix_name(prefix, name):

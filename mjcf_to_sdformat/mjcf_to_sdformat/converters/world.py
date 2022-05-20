@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from mjcf_to_sdformat.converters.link import add_mjcf_geom_to_sdf
+from mjcf_to_sdformat.converters.link import mjcf_geom_to_sdf
 
 import sdformat as sdf
 
 
-def add_mjcf_worldbody_to_sdf(mjcf_model, world):
+def mjcf_worldbody_to_sdf(mjcf_model, world):
     """
     Convert a MJCF worldbody to a SDFormat world
 
@@ -30,14 +30,14 @@ def add_mjcf_worldbody_to_sdf(mjcf_model, world):
     else:
         model.set_name("model")
 
-    link = add_mjcf_geom_to_sdf(mjcf_model.worldbody)
+    link = mjcf_geom_to_sdf(mjcf_model.worldbody)
     model.add_link(link)
 
     body = mjcf_model.worldbody.body
 
     def iterate_bodies(input_body, model):
         for body in input_body:
-            link = add_mjcf_geom_to_sdf(body)
+            link = mjcf_geom_to_sdf(body)
             model.add_link(link)
             iterate_bodies(body.body, model)
     iterate_bodies(body, model)

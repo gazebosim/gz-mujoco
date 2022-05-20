@@ -14,7 +14,7 @@
 
 from dm_control import mjcf
 
-from mjcf_to_sdformat.converters.model import add_mjcf_worldbody_to_sdf
+from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
 
 import sdformat as sdf
 
@@ -30,7 +30,7 @@ def mjcf_file_to_sdformat(input_file, output_file):
     world = sdf.World()
     world.set_name("default")
 
-    add_mjcf_worldbody_to_sdf(mjcf_model, world)
+    mjcf_worldbody_to_sdf(mjcf_model, world)
 
     root.add_world(world)
 
