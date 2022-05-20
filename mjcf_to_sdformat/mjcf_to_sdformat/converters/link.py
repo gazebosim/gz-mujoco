@@ -64,7 +64,7 @@ def mjcf_geom_to_sdf(body):
 
         if inertial.pos is not None:
             inertial_pos = inertial.pos
-        inertial_euler = su.get_angle(inertial)
+        inertial_euler = su.get_rotation(inertial)
         if inertial.fullinertia is not None:
             fullinertia = inertial.fullinertia
         if inertial.diaginertia is not None:

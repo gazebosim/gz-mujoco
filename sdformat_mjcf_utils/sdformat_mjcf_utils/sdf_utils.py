@@ -41,7 +41,7 @@ def list_to_vec3d(list):
     return Vector3d(list[0], list[1], list[2])
 
 
-def get_angle(element):
+def get_rotation(element):
     """Get the angles from a MJCF element
     :param mjcf.Element element: Element to extract the angles
     :rtype: ignition.math.Quateriond

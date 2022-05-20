@@ -17,23 +17,23 @@ from mjcf_to_sdformat.converters.link import mjcf_geom_to_sdf
 import sdformat as sdf
 
 
-def mjcf_worldbody_to_sdf(mjcf_model, world):
+def mjcf_worldbody_to_sdf(mjcf_root, world):
     """
     Convert a MJCF worldbody to a SDFormat world
 
-    :param mjcf.Element mjcf_model: The MJCF model
+    :param mjcf.RootElement mjcf_root: The MJCF root element
     :param sdf.World world: SDF World to add the models
     """
     model = sdf.Model()
-    if mjcf_model.model is not None:
-        model.set_name(mjcf_model.model)
+    if mjcf_root.model is not None:
+        model.set_name(mjcf_root.model)
     else:
         model.set_name("model")
 
-    link = mjcf_geom_to_sdf(mjcf_model.worldbody)
+    link = mjcf_geom_to_sdf(mjcf_root.worldbody)
     model.add_link(link)
 
-    body = mjcf_model.worldbody.body
+    body = mjcf_root.worldbody.body
 
     def iterate_bodies(input_body, model):
         for body in input_body:
