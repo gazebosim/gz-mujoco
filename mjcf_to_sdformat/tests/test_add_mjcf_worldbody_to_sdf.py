@@ -22,13 +22,14 @@ import sdformat as sdf
 from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
 import sdformat_mjcf_utils.sdf_utils as su
 
+from tests.helpers import TEST_RESOURCES_DIR
 
 class ModelTest(unittest.TestCase):
 
     def test_add_model(self):
-        mjcf_model = mjcf.from_path(os.path.join(
-                                    os.path.dirname(os.path.abspath(__file__)),
-                                    "resources/test_mujoco.xml"))
+        mjcf_model = mjcf.from_path(
+            str(TEST_RESOURCES_DIR / "test_mujoco.xml"))
+
         world = sdf.World()
         world.set_name("default")
 
