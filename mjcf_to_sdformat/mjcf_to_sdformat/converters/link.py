@@ -17,6 +17,8 @@ from ignition.math import Inertiald, MassMatrix3d, Vector3d, Pose3d
 from mjcf_to_sdformat.converters.geometry import (mjcf_visual_to_sdf,
                                                   mjcf_collision_to_sdf)
 
+from mjcf_to_sdformat.converters.material import mjcf_material_to_sdf
+
 import sdformat as sdf
 import sdformat_mjcf_utils.sdf_utils as su
 
@@ -96,34 +98,33 @@ def mjcf_geom_to_sdf(body):
 
     link.set_raw_pose(su.get_pose_from_mjcf(body))
 
+    def set_visual(geom):
+        visual = mjcf_visual_to_sdf(geom)
+        if visual is not None:
+            visual.set_name(su.prefix_name_with_index(
+                "visual", geom.name, NUMBER_OF_VISUAL))
+            material = mjcf_material_to_sdf(geom)
+            if material is not None:
+                visual.set_material(material)
+            visual.set_raw_pose(su.get_pose_from_mjcf(geom))
+            link.add_visual(visual)
+
+    def set_collision(geom):
+        col = mjcf_collision_to_sdf(geom)
+        if col is not None:
+            col.set_name(su.prefix_name_with_index(
+                "collision", geom.name, NUMBER_OF_COLLISION))
+            col.set_raw_pose(su.get_pose_from_mjcf(geom))
+            link.add_collision(col)
+
     for geom in body.geom:
         # If the group is not defined then visual and collision is added
         if geom.group is None:
-            visual = mjcf_visual_to_sdf(geom)
-            if visual is not None:
-                visual.set_name(su.prefix_name_with_index(
-                    "visual", geom.name, NUMBER_OF_VISUAL))
-                visual.set_raw_pose(su.get_pose_from_mjcf(geom))
-                link.add_visual(visual)
-
-            col = mjcf_collision_to_sdf(geom)
-            if col is not None:
-                col.set_name(su.prefix_name_with_index(
-                    "collision", geom.name, NUMBER_OF_COLLISION))
-                col.set_raw_pose(su.get_pose_from_mjcf(geom))
-                link.add_collision(col)
+            set_visual(geom)
+            set_collision(geom)
         elif geom.group == VISUAL_GEOM_GROUP:
-            visual = mjcf_visual_to_sdf(geom)
-            if visual is not None:
-                visual.set_name(su.prefix_name_with_index(
-                    "visual", geom.name, NUMBER_OF_VISUAL))
-                visual.set_raw_pose(su.get_pose_from_mjcf(geom))
-                link.add_visual(visual)
+            set_visual(geom)
         elif geom.group == COLLISION_GEOM_GROUP:
-            col = mjcf_collision_to_sdf(geom)
-            if col is not None:
-                col.set_name(su.prefix_name_with_index(
-                    "collision", geom.name, NUMBER_OF_COLLISION))
-                col.set_raw_pose(su.get_pose_from_mjcf(geom))
-                link.add_collision(col)
+            set_collision(geom)
+
     return link

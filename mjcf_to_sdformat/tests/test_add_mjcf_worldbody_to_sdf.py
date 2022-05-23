@@ -16,6 +16,8 @@ import unittest
 from numpy.testing import assert_allclose
 from dm_control import mjcf
 
+from ignition.math import Color
+
 import sdformat as sdf
 
 from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
@@ -88,6 +90,13 @@ class ModelTest(unittest.TestCase):
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(visual_2.raw_pose().rot().euler()))
 
+        material = visual_2.material()
+        self.assertNotEqual(None, material)
+        self.assertEqual(Color(0.36, 0.36, 0.36, 1.0), material.diffuse())
+        self.assertEqual(Color(0.36, 0.36, 0.36, 1.0), material.ambient())
+        self.assertEqual(Color(0.36, 0.36, 0.36, 1.0), material.specular())
+        self.assertEqual(Color(0.36, 0.36, 0.36, 1.0), material.emissive())
+
         collision_2 = link_2.collision_by_index(0)
         self.assertNotEqual(None, collision_2)
         self.assertEqual("collision_0", collision_2.name())
@@ -122,6 +131,12 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(visual_3.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(visual_3.raw_pose().rot().euler()))
+        material = visual_3.material()
+        self.assertNotEqual(None, material)
+        self.assertEqual(Color(0, 0.9, 0, 1.0), material.diffuse())
+        self.assertEqual(Color(0, 0.9, 0, 1.0), material.ambient())
+        self.assertEqual(Color(0, 0.9, 0, 1.0), material.specular())
+        self.assertEqual(Color(0, 0.9, 0, 1.0), material.emissive())
 
         collision_3 = link_3.collision_by_index(0)
         self.assertNotEqual(None, collision_3)

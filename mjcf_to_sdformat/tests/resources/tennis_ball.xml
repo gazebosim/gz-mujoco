@@ -1,0 +1,19 @@
+<mujoco model="dog">
+  <asset>
+    <texture name="tennis_ball" file="tennis_ball.png" gridsize="3 4" gridlayout=".U..LFRB.D.."/>
+    <material name="tennis_ball" texture="tennis_ball"/>
+  </asset>
+  <default>
+    <default class="bouncy">
+      <geom condim="6" priority="1" friction="0.5 0.001 0.001" solref="-5000 -5" solimp="0.5 0.9 0.01"/>
+    </default>
+  </default>
+  <worldbody>
+    <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1"/>
+    <geom type="plane" size="1 1 0.1" rgba=".2 0.2 0.2 1"/>
+    <body name="ball" pos="0.5 0 0.1">
+      <freejoint name="ball_root"/>
+      <geom name="ball" type="sphere" class="bouncy" size="0.03" material="tennis_ball" mass="0.056"/>
+    </body>
+  </worldbody>
+</mujoco>
