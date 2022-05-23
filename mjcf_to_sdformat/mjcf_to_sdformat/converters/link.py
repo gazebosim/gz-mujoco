@@ -16,6 +16,7 @@ from ignition.math import Inertiald, MassMatrix3d, Vector3d, Pose3d
 
 from mjcf_to_sdformat.converters.geometry import (mjcf_visual_to_sdf,
                                                   mjcf_collision_to_sdf)
+from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 
 import sdformat as sdf
 import sdformat_mjcf_utils.sdf_utils as su
@@ -126,4 +127,9 @@ def mjcf_geom_to_sdf(body):
                     "collision", geom.name, NUMBER_OF_COLLISION))
                 col.set_raw_pose(su.get_pose_from_mjcf(geom))
                 link.add_collision(col)
+
+    for light in body.light:
+        light_sdf = mjcf_light_to_sdf(light)
+        link.add_light(light_sdf)
+
     return link
