@@ -37,7 +37,7 @@ class GeometryTest(unittest.TestCase):
                          specular=[0.2, 0.2, 0.2],
                          directional="true",
                          dir=[0, -1, -1])
-        sdf_light = light_conv.add_mjcf_light_to_sdf(light)
+        sdf_light = light_conv.mjcf_light_to_sdf(light)
         self.assertEqual("light_mujoco", sdf_light.name())
         self.assertEqual(Vector3d(0, 1, 2), sdf_light.raw_pose().pos())
         self.assertEqual(0.1, sdf_light.constant_attenuation_factor())
@@ -60,7 +60,7 @@ class GeometryTest(unittest.TestCase):
                          specular=[0.2, 0.2, 0.2],
                          directional="false",
                          dir=[0, -1, -1])
-        sdf_light = light_conv.add_mjcf_light_to_sdf(light)
+        sdf_light = light_conv.mjcf_light_to_sdf(light)
 
         self.assertEqual("light_0", sdf_light.name())
         self.assertEqual(Vector3d(0, 1, 2), sdf_light.raw_pose().pos())
