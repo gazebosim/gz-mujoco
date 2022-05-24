@@ -35,7 +35,7 @@ def add_light(body, light):
     light = body.add("light",
                      name=light.name(),
                      pos=su.vec3d_to_list(pose.pos()),
-                     directional=sdf.Light.LightType.DIRECTIONAL == type,
+                     directional=sdf.LightType.DIRECTIONAL == type,
                      castshadow=light.cast_shadows(),
                      attenuation=[light.constant_attenuation_factor(),
                                   light.linear_attenuation_factor(),

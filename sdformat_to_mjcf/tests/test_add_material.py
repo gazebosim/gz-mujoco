@@ -30,7 +30,7 @@ class MaterialTest(helpers.TestCase):
     def test_material_pbr(self):
         pbr = sdf.Pbr()
         workflow = sdf.PbrWorkflow()
-        workflow.set_type(sdf.PbrWorkflow.PbrWorkflowType.METAL)
+        workflow.set_type(sdf.PbrWorkflowType.METAL)
         workflow.set_albedo_map(os.path.join(
                                 os.path.dirname(os.path.abspath(__file__)),
                                 "resources/box_obj/textures/albedo_map.png"))
@@ -67,7 +67,7 @@ class MaterialTest(helpers.TestCase):
     def test_material_pbr_bad_extension(self):
         pbr = sdf.Pbr()
         workflow = sdf.PbrWorkflow()
-        workflow.set_type(sdf.PbrWorkflow.PbrWorkflowType.METAL)
+        workflow.set_type(sdf.PbrWorkflowType.METAL)
         workflow.set_albedo_map(os.path.join(
                                 os.path.dirname(os.path.abspath(__file__)),
                                 "resources/box_obj/textures/albedo_map"))

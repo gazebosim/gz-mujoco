@@ -20,7 +20,6 @@ import sdformat as sdf
 from ignition.math import Pose3d, Vector3d
 from dm_control import mjcf
 
-from sdformat_to_mjcf.converters.joint import JointType
 from sdformat_to_mjcf.converters.joint import add_joint
 import sdformat_mjcf_utils.sdf_utils as su
 from tests import helpers
@@ -77,13 +76,13 @@ class JointTest(helpers.TestCase):
 
     def test_fixed_joint(self):
         joint = sdf.Joint()
-        joint.set_type(JointType.FIXED)
+        joint.set_type(sdf.JointType.FIXED)
         mj_joint = add_joint(self.body, joint)
         self.assertIsNone(mj_joint)
 
     def test_revolute_joint(self):
         joint = self.create_sdf_joint("joint1",
-                                      JointType.REVOLUTE,
+                                      sdf.JointType.REVOLUTE,
                                       self.test_pose,
                                       xyz=[1, 0, 0])
 
@@ -100,7 +99,7 @@ class JointTest(helpers.TestCase):
 
     def test_revolute_joint_with_limits(self):
         joint = self.create_sdf_joint("joint1",
-                                      JointType.REVOLUTE,
+                                      sdf.JointType.REVOLUTE,
                                       self.test_pose,
                                       xyz=[1, 0, 0],
                                       limits=(-pi / 4, pi / 2))
@@ -117,7 +116,7 @@ class JointTest(helpers.TestCase):
             'spring_reference': pi / 6
         }
         joint = self.create_sdf_joint("joint1",
-                                      JointType.REVOLUTE,
+                                      sdf.JointType.REVOLUTE,
                                       self.test_pose,
                                       xyz=[1, 0, 0],
                                       dynamics=joint_dynamics)
@@ -131,7 +130,7 @@ class JointTest(helpers.TestCase):
 
     def test_continuous_joint(self):
         joint = self.create_sdf_joint("joint1",
-                                      JointType.CONTINUOUS,
+                                      sdf.JointType.CONTINUOUS,
                                       self.test_pose,
                                       xyz=[1, 0, 0],
                                       limits=(-pi / 4, pi / 2))
@@ -156,7 +155,7 @@ class JointTest(helpers.TestCase):
             'spring_reference': pi / 6
         }
         joint = self.create_sdf_joint("joint1",
-                                      JointType.CONTINUOUS,
+                                      sdf.JointType.CONTINUOUS,
                                       self.test_pose,
                                       xyz=[1, 0, 0],
                                       dynamics=joint_dynamics)
@@ -170,7 +169,7 @@ class JointTest(helpers.TestCase):
 
     def test_prismatic_joint(self):
         joint = self.create_sdf_joint("joint1",
-                                      JointType.PRISMATIC,
+                                      sdf.JointType.PRISMATIC,
                                       self.test_pose,
                                       xyz=[1, 0, 0])
 
@@ -186,7 +185,7 @@ class JointTest(helpers.TestCase):
 
     def test_prismatic_joint_with_limits(self):
         joint = self.create_sdf_joint("joint1",
-                                      JointType.PRISMATIC,
+                                      sdf.JointType.PRISMATIC,
                                       self.test_pose,
                                       xyz=[1, 0, 0],
                                       limits=(-5, 10))
@@ -203,7 +202,7 @@ class JointTest(helpers.TestCase):
             'spring_reference': 0.4
         }
         joint = self.create_sdf_joint("joint1",
-                                      JointType.PRISMATIC,
+                                      sdf.JointType.PRISMATIC,
                                       self.test_pose,
                                       xyz=[1, 0, 0],
                                       dynamics=joint_dynamics)
@@ -216,7 +215,7 @@ class JointTest(helpers.TestCase):
 
     def test_ball_joint(self):
         joint = self.create_sdf_joint("joint1",
-                                      JointType.BALL,
+                                      sdf.JointType.BALL,
                                       self.test_pose)
 
         mj_joint = add_joint(self.body, joint)

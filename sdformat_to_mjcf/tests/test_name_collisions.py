@@ -22,9 +22,6 @@ from sdformat_to_mjcf.converters.geometry import add_collision
 from sdformat_to_mjcf.converters.root import add_root
 
 
-GeometryType = sdf.Geometry.GeometryType
-
-
 class NameCollisionTest(helpers.TestCase):
 
     def create_geometry_container(self, ContainerType):
@@ -33,7 +30,7 @@ class NameCollisionTest(helpers.TestCase):
 
         geometry = sdf.Geometry()
         geometry.set_box_shape(sdf.Box())
-        geometry.set_type(GeometryType.BOX)
+        geometry.set_type(sdf.GeometryType.BOX)
         container.set_geometry(geometry)
         return container
 

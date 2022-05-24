@@ -26,9 +26,6 @@ from tests import helpers
 from sdformat_to_mjcf.converters import geometry as geometry_conv
 
 
-GeometryType = sdf.Geometry.GeometryType
-
-
 class GeometryTest(helpers.TestCase):
 
     test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
@@ -41,7 +38,7 @@ class GeometryTest(helpers.TestCase):
         box.set_size(Vector3d(x_size, y_size, z_size))
         geometry = sdf.Geometry()
         geometry.set_box_shape(box)
-        geometry.set_type(GeometryType.BOX)
+        geometry.set_type(sdf.GeometryType.BOX)
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
@@ -62,7 +59,7 @@ class GeometryTest(helpers.TestCase):
 
         geometry = sdf.Geometry()
         geometry.set_capsule_shape(capsule)
-        geometry.set_type(GeometryType.CAPSULE)
+        geometry.set_type(sdf.GeometryType.CAPSULE)
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
@@ -83,7 +80,7 @@ class GeometryTest(helpers.TestCase):
 
         geometry = sdf.Geometry()
         geometry.set_cylinder_shape(cylinder)
-        geometry.set_type(GeometryType.CYLINDER)
+        geometry.set_type(sdf.GeometryType.CYLINDER)
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
@@ -104,7 +101,7 @@ class GeometryTest(helpers.TestCase):
 
         geometry = sdf.Geometry()
         geometry.set_ellipsoid_shape(ellipsoid)
-        geometry.set_type(GeometryType.ELLIPSOID)
+        geometry.set_type(sdf.GeometryType.ELLIPSOID)
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
@@ -128,7 +125,7 @@ class GeometryTest(helpers.TestCase):
 
         geometry = sdf.Geometry()
         geometry.set_mesh_shape(mesh)
-        geometry.set_type(GeometryType.MESH)
+        geometry.set_type(sdf.GeometryType.MESH)
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
@@ -149,7 +146,7 @@ class GeometryTest(helpers.TestCase):
 
         geometry = sdf.Geometry()
         geometry.set_plane_shape(plane)
-        geometry.set_type(GeometryType.PLANE)
+        geometry.set_type(sdf.GeometryType.PLANE)
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
@@ -168,7 +165,7 @@ class GeometryTest(helpers.TestCase):
 
         geometry = sdf.Geometry()
         geometry.set_sphere_shape(sphere)
-        geometry.set_type(GeometryType.SPHERE)
+        geometry.set_type(sdf.GeometryType.SPHERE)
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
@@ -190,7 +187,7 @@ class CollisionTest(helpers.TestCase):
 
         geometry = sdf.Geometry()
         geometry.set_box_shape(sdf.Box())
-        geometry.set_type(GeometryType.BOX)
+        geometry.set_type(sdf.GeometryType.BOX)
         collision.set_geometry(geometry)
 
         mujoco = mjcf.RootElement(model="test")
@@ -211,7 +208,7 @@ class VisualTest(helpers.TestCase):
 
         geometry = sdf.Geometry()
         geometry.set_box_shape(sdf.Box())
-        geometry.set_type(GeometryType.BOX)
+        geometry.set_type(sdf.GeometryType.BOX)
         visual.set_geometry(geometry)
 
         mujoco = mjcf.RootElement(model="test")
