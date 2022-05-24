@@ -75,7 +75,7 @@ def mjcf_light_to_sdf(light):
         light_sdf.set_light_on(light.active == "true")
 
     def set_spot_light(light, light_sdf):
-        light_sdf.set_type(sdf.LightType.SPOT)
+        light_sdf.set_type(sdf.Light.LightType.SPOT)
         if light.cutoff is not None:
             # always in degrees regardless of the global angle setting.
             light_sdf.set_spot_inner_angle(
