@@ -16,10 +16,7 @@
 
 import os
 
-import sdformat as sdf
 import sdformat_mjcf_utils.sdf_utils as su
-
-GeometryType = sdf.Geometry.GeometryType
 
 COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0

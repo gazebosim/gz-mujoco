@@ -24,8 +24,6 @@ from sdformat_to_mjcf.converters.link import add_link
 import sdformat_mjcf_utils.sdf_utils as su
 from tests import helpers
 
-GeometryType = sdf.Geometry.GeometryType
-
 
 class LinkTest(helpers.TestCase):
     test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
@@ -51,7 +49,7 @@ class LinkTest(helpers.TestCase):
         item.set_name(name)
         geometry = sdf.Geometry()
         geometry.set_box_shape(sdf.Box())
-        geometry.set_type(GeometryType.BOX)
+        geometry.set_type(sdf.GeometryType.BOX)
         item.set_geometry(geometry)
         return item
 
@@ -124,7 +122,7 @@ class LinkTest(helpers.TestCase):
 
         geometry = sdf.Geometry()
         geometry.set_box_shape(sdf.Box())
-        geometry.set_type(GeometryType.BOX)
+        geometry.set_type(sdf.GeometryType.BOX)
         visual.set_geometry(geometry)
         collision.set_geometry(geometry)
 

@@ -24,9 +24,6 @@ from sdformat_to_mjcf.converters.model import add_model
 import sdformat_mjcf_utils.sdf_utils as su
 from tests import helpers
 
-GeometryType = sdf.Geometry.GeometryType
-JointType = sdf.Joint.JointType
-
 
 class ModelTest(helpers.TestCase):
     test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
@@ -113,7 +110,7 @@ class ModelTest(helpers.TestCase):
 
         joint = sdf.Joint()
         joint.set_name("joint")
-        joint.set_type(JointType.FIXED)
+        joint.set_type(sdf.JointType.FIXED)
         joint.set_parent_link_name("base_link")
         joint.set_child_link_name("upper_link")
         model.add_joint(joint)

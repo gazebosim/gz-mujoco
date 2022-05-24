@@ -23,8 +23,6 @@ from sdformat_to_mjcf.converters.world import add_world
 from tests import helpers
 import sdformat_mjcf_utils.sdf_utils as su
 
-GeometryType = sdf.Geometry.GeometryType
-
 
 class WorldTest(helpers.TestCase):
 
