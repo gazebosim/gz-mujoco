@@ -85,6 +85,8 @@ class NameCollisionTest(helpers.TestCase):
         name_possibilities = ["base_link", "base_link_0", "base_link_1"]
         for body in bodies:
             self.assertIn(body.name, name_possibilities)
+            # Removed matched name to ensure names are unique.
+            name_possibilities.remove(body.name)
 
     def test_freejoints(self):
         sdf_string = """
@@ -147,6 +149,8 @@ class NameCollisionTest(helpers.TestCase):
         for joint in joints:
             if hasattr(joint, "type") and joint.type == "revolute":
                 self.assertIn(joint.name, name_possibilities)
+                # Removed matched name to ensure names are unique.
+                name_possibilities.remove(joint.name)
 
 
 if __name__ == "__main__":
