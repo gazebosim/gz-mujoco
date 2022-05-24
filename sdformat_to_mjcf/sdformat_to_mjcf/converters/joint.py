@@ -61,20 +61,19 @@ def add_joint(body, joint):
     :param mjcf.Element body: The MJCF body to which the geom is added.
     :param sdformat.Joint joint: The joint to be converted. This would be
     `None` when creating an MJCF freejoint.
-    :param axis_xyz_resolver: Function to resolve the unit vector a joint axis.
     :return: The newly created MJCF joint.
     :rtype: mjcf.Element
     """
     if joint is None:
-        return body.add("freejoint",
-                        name=su.prefix_name(body.name, "freejoint"))
+        return body.add("freejoint")
     elif joint.type() == JointType.FIXED:
         return None
     elif joint.type() in [
             JointType.CONTINUOUS, JointType.REVOLUTE, JointType.PRISMATIC
     ]:
         pose = su.graph_resolver.resolve_pose(joint.semantic_pose())
-        mjcf_joint = body.add("joint", name=joint.name())
+        unique_name = su.find_unique_name(body, "joint", joint.name())
+        mjcf_joint = body.add("joint", name=unique_name)
         mjcf_joint.pos = su.vec3d_to_list(pose.pos())
         joint_axis = joint.axis(0)
         if joint_axis is None:
