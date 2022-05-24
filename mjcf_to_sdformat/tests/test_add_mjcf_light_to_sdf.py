@@ -18,8 +18,6 @@ from dm_control import mjcf
 
 from ignition.math import Color, Vector3d
 
-import math
-
 import sdformat as sdf
 
 from mjcf_to_sdformat.converters import light as light_conv
