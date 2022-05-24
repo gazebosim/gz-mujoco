@@ -46,7 +46,7 @@ class ModelTest(helpers.TestCase):
         self.assertIsNotNone(mj_root)
         mj_bodies = mj_root.worldbody.get_children("body")
         self.assertEqual(1, len(mj_bodies))
-        self.assertEqual("test_model_base_link", mj_bodies[0].name)
+        self.assertEqual("base_link", mj_bodies[0].name)
 
         assert_allclose(self.expected_pos, mj_bodies[0].pos)
         assert_allclose(self.expected_euler, mj_bodies[0].euler)
@@ -70,12 +70,10 @@ class ModelTest(helpers.TestCase):
         mj_root = add_model(self.mujoco, model)
         self.assertIsNotNone(mj_root)
 
-        mj_float_link_1 = mj_root.worldbody.find('body',
-                                                 'test_model_float_link_1')
+        mj_float_link_1 = mj_root.worldbody.find('body', 'float_link_1')
         self.assertIsNotNone(mj_float_link_1)
 
-        mj_float_link_2 = mj_root.worldbody.find('body',
-                                                 'test_model_float_link_2')
+        mj_float_link_2 = mj_root.worldbody.find('body', 'float_link_2')
         self.assertIsNotNone(mj_float_link_2)
 
         float_link_1_expected_pos = su.vec3d_to_list(model_raw_pose.pos())
@@ -118,10 +116,10 @@ class ModelTest(helpers.TestCase):
         mj_root = add_model(self.mujoco, model)
         self.assertIsNotNone(mj_root)
 
-        mj_base_link = mj_root.worldbody.find('body', 'test_model_base_link')
+        mj_base_link = mj_root.worldbody.find('body', 'base_link')
         self.assertIsNotNone(mj_base_link)
 
-        mj_upper_link = mj_root.worldbody.find('body', 'test_model_upper_link')
+        mj_upper_link = mj_root.worldbody.find('body', 'upper_link')
         self.assertIsNotNone(mj_upper_link)
 
         base_link_expected_pos = su.vec3d_to_list(model_raw_pose.pos())
@@ -166,9 +164,9 @@ class ModelTest(helpers.TestCase):
         self.assertIsNotNone(mj_root)
         excludes = mj_root.contact.get_children("exclude")
         self.assertEqual(1, len(excludes))
-        self.assertEqual("test_model_link1_test_model_link2", excludes[0].name)
-        self.assertEqual("test_model_link1", excludes[0].body1)
-        self.assertEqual("test_model_link2", excludes[0].body2)
+        self.assertEqual("link1_link2", excludes[0].name)
+        self.assertEqual("link1", excludes[0].body1)
+        self.assertEqual("link2", excludes[0].body2)
 
 
 if __name__ == "__main__":

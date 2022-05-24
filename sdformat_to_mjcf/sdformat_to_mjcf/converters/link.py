@@ -49,7 +49,7 @@ def add_link(body, link, parent_name="world", model_name="model"):
         pose = su.graph_resolver.resolve_pose(sem_pose, parent_name)
 
     body = body.add("body",
-                    name=su.prefix_name(model_name, link.name()),
+                    name=su.find_unique_name(body, "body", link.name()),
                     pos=su.vec3d_to_list(pose.pos()),
                     euler=su.quat_to_euler_list(pose.rot()))
 

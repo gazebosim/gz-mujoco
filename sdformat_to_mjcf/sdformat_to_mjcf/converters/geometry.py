@@ -37,11 +37,9 @@ def add_geometry(body, name, pose, sdf_geom):
 
     if sdf_geom is None:
         return
-
-    prefixed_name = su.prefix_name(body.name, name)
     geom = body.add(
         "geom",
-        name=prefixed_name,
+        name=su.find_unique_name(body, "geom", name),
         pos=su.vec3d_to_list(pose.pos()),
         euler=su.quat_to_euler_list(pose.rot()),
     )
