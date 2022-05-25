@@ -23,8 +23,6 @@ import sdformat_mjcf_utils.sdf_utils as su
 
 from tests.helpers import TEST_RESOURCES_DIR
 
-GeometryType = sdf.Geometry.GeometryType
-
 
 class ModelTest(unittest.TestCase):
 
@@ -105,7 +103,7 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(collision_2.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_2.raw_pose().rot().euler()))
-        self.assertEqual(GeometryType.CAPSULE,
+        self.assertEqual(sdf.GeometryType.CAPSULE,
                          visual_2.geometry().type())
 
         link_3 = model.link_by_index(2)
