@@ -56,7 +56,7 @@ class MaterialTest(unittest.TestCase):
         self.assertNotEqual(None, material)
         pbr = material.pbr_material()
         self.assertNotEqual(None, pbr)
-        workflow = pbr.workflow(sdf.PbrWorkflow.PbrWorkflowType.METAL)
+        workflow = pbr.workflow(sdf.PbrWorkflowType.METAL)
         self.assertNotEqual(None, workflow)
         self.assertNotEqual(None, workflow.albedo_map())
 
