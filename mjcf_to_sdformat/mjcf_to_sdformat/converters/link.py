@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ignition.math import Inertiald, MassMatrix3d, Vector3d, Pose3d, Quaterniond
+from ignition.math import (Inertiald, MassMatrix3d, Vector3d, Pose3d,
+                           Quaterniond)
 
 import math
 
