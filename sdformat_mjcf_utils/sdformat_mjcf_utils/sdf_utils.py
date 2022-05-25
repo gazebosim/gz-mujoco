@@ -1,19 +1,18 @@
 # Copyright (C) 2022 Open Source Robotics Foundation
-
+#
 # Licensed under the Apache License, version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #       http://www.apache.org/licenses/LICENSE-2.0
-
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Utility functions that aid in converting SDFormat and Gazebo Math types to
-Python"""
+"""Utility functions that aid in conversion between SDFormat and MJCF"""
 
 import math
 from ignition.math import Pose3d, Quaterniond, Vector3d
@@ -118,20 +117,6 @@ def get_pose_from_mjcf(element):
                   euler_list_to_quat(euler))
 
 
-def prefix_name(prefix, name):
-    """
-    Prefixes a given `name` with `prefix`.
-    :param str prefix: The prefix. If this is None or "world", the name is
-    returned without being prefixed.
-    :param str name: Name to prefix.
-    :return: Prefixed name.
-    :rtype: str
-    """
-    if prefix is None or prefix == "world":
-        return name
-    return prefix + NAME_DELIMITER + name
-
-
 def prefix_name_with_index(prefix, name, index):
     """
     Create a new string a given `name` with `prefix` and an `index`
@@ -147,6 +132,40 @@ def prefix_name_with_index(prefix, name, index):
         new_name = prefix + NAME_DELIMITER + str(index)
         index = index + 1
         return new_name
+
+
+def find_unique_name(elem, namespace, name):
+    """
+    Find a unique name in the given `namespace` based on the provided `name`.
+    If the provided name is found in the namespace, a numeric suffix is added
+    to the name. This is again tested for uniqueness and the suffix is
+    incremented until a unique name is found.
+
+    For example, if we want to add a geom to a body and need to find a unique
+    name for it where the starting name is "bumper", we would call this
+    function as:
+
+        unique_name = find_unique_name(body, "geom", "bumper")
+
+    where `body` is the MJCF body to which the geom is being added. If the body
+    already has "bumper", the returned name would be "bumper_0".
+
+
+    :param mjcf.Element elem: The element whose namescope is used for checking
+    name uniqueness.
+    :param str namespace: The namespace (eg. "body", "geom") in the namescope
+    in which the name is searched.
+    :param str name: Starting name to be checked for uniqueness. This will be
+    the prefix of the returned name.
+    :return: The newly created name
+    :rtype: str
+    """
+    index = 0
+    test_name = name
+    while elem.namescope.has_identifier(namespace, test_name):
+        test_name = f"{name}{NAME_DELIMITER}{index}"
+        index += 1
+    return test_name
 
 
 class GraphResolverImplBase:

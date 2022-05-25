@@ -17,6 +17,7 @@
 from ignition.math import clamp
 
 from sdformat import Pbr, PbrWorkflow, Material  # noqa: F401
+import sdformat as sdf
 
 import os
 
@@ -40,7 +41,7 @@ def add_material(geom, material):
     asset = geom.root.asset
     r_mat = None
     if pbr is not None:
-        workflow = pbr.workflow(PbrWorkflow.PbrWorkflowType.METAL)
+        workflow = pbr.workflow(sdf.PbrWorkflowType.METAL)
         if workflow is not None:
             if workflow.albedo_map():
                 f_without_extension, extension = os.path.splitext(

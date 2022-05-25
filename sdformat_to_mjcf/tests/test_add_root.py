@@ -22,9 +22,6 @@ from dm_control import mjcf
 from sdformat_to_mjcf.converters.root import add_root
 from tests import helpers
 
-GeometryType = sdf.Geometry.GeometryType
-JointType = sdf.Joint.JointType
-
 
 class RootTest(helpers.TestCase):
     test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)

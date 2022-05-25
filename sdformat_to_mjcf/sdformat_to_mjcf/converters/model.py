@@ -16,8 +16,9 @@ from dm_control import mjcf
 
 from sdformat_to_mjcf.sdf_kinematics import KinematicHierarchy
 from sdformat_to_mjcf.converters.link import add_link
-from sdformat_to_mjcf.converters.joint import add_joint, JointType
+from sdformat_to_mjcf.converters.joint import add_joint
 from sdformat_mjcf_utils.sdf_utils import graph_resolver
+import sdformat as sdf
 
 
 def add_model(mjcf_root, model):
@@ -55,7 +56,7 @@ def add_model(mjcf_root, model):
         if node.joint is None:
             should_add_exclusions = False
         else:
-            is_fixed_joint = node.joint.type() == JointType.FIXED
+            is_fixed_joint = node.joint.type() == sdf.JointType.FIXED
             is_body_world = body.tag == mjcf.constants.WORLDBODY
             should_add_exclusions = is_fixed_joint and is_body_world
 
