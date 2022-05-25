@@ -99,7 +99,7 @@ class LightTest(helpers.TestCase):
 
         link.add_light(light)
 
-        body_mjcf = add_link(self.body, link, model_name="light_model")
+        body_mjcf = add_link(self.body, link)
 
         self.assertNotEqual(body_mjcf.light[0], None)
         self.assertEqual(body_mjcf.light[0].name, light.name())
