@@ -20,8 +20,6 @@ import sdformat as sdf
 
 import sdformat_mjcf_utils.sdf_utils as su
 
-JointType = sdf.Joint.JointType
-
 JOINT_DEFAULT_UPPER_LIMIT = 1e16
 JOINT_DEFAULT_LOWER_LIMIT = -1e16
 JOINT_DEFAULT_DAMPING = 0.0
@@ -61,20 +59,21 @@ def add_joint(body, joint):
     :param mjcf.Element body: The MJCF body to which the geom is added.
     :param sdformat.Joint joint: The joint to be converted. This would be
     `None` when creating an MJCF freejoint.
-    :param axis_xyz_resolver: Function to resolve the unit vector a joint axis.
     :return: The newly created MJCF joint.
     :rtype: mjcf.Element
     """
     if joint is None:
-        return body.add("freejoint",
-                        name=su.prefix_name(body.name, "freejoint"))
-    elif joint.type() == JointType.FIXED:
+        return body.add("freejoint")
+    elif joint.type() == sdf.JointType.FIXED:
         return None
     elif joint.type() in [
-            JointType.CONTINUOUS, JointType.REVOLUTE, JointType.PRISMATIC
+            sdf.JointType.CONTINUOUS,
+            sdf.JointType.REVOLUTE,
+            sdf.JointType.PRISMATIC
     ]:
         pose = su.graph_resolver.resolve_pose(joint.semantic_pose())
-        mjcf_joint = body.add("joint", name=joint.name())
+        unique_name = su.find_unique_name(body, "joint", joint.name())
+        mjcf_joint = body.add("joint", name=unique_name)
         mjcf_joint.pos = su.vec3d_to_list(pose.pos())
         joint_axis = joint.axis(0)
         if joint_axis is None:
@@ -106,10 +105,10 @@ def add_joint(body, joint):
                 mjcf_joint.springref = convert_value(
                     joint_axis.spring_reference())
 
-        if joint.type() in [JointType.CONTINUOUS, JointType.REVOLUTE]:
+        if joint.type() in [sdf.JointType.CONTINUOUS, sdf.JointType.REVOLUTE]:
             mjcf_joint.type = "hinge"
             add_dynamics(math.degrees)
-            if joint.type() == JointType.REVOLUTE:
+            if joint.type() == sdf.JointType.REVOLUTE:
                 add_limits(math.degrees)
         else:
             mjcf_joint.type = "slide"
@@ -119,7 +118,7 @@ def add_joint(body, joint):
         mjcf_joint.axis = _compute_joint_axis(joint_axis, pose)
 
         return mjcf_joint
-    elif joint.type() == JointType.BALL:
+    elif joint.type() == sdf.JointType.BALL:
         pose = su.graph_resolver.resolve_pose(joint.semantic_pose())
         mjcf_joint = body.add("joint", name=joint.name())
         mjcf_joint.pos = su.vec3d_to_list(pose.pos())

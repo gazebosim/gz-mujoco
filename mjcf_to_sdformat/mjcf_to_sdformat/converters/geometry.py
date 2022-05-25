@@ -40,7 +40,7 @@ def mjcf_geom_to_sdf(geom):
         box = sdf.Box()
         box.set_size(su.list_to_vec3d(geom.size) * 2)
         sdf_geometry.set_box_shape(box)
-        sdf_geometry.set_type(sdf.Geometry.GeometryType.BOX)
+        sdf_geometry.set_type(sdf.GeometryType.BOX)
         # TODO(ahcorde): Add fromto
     elif geom.type == "capsule":
         capsule = sdf.Capsule()
@@ -53,7 +53,7 @@ def mjcf_geom_to_sdf(geom):
             length = v1.distance(v2)
             capsule.set_length(length)
         sdf_geometry.set_capsule_shape(capsule)
-        sdf_geometry.set_type(sdf.Geometry.GeometryType.CAPSULE)
+        sdf_geometry.set_type(sdf.GeometryType.CAPSULE)
     elif geom.type == "cylinder":
         cylinder = sdf.Cylinder()
         cylinder.set_radius(geom.size[0])
@@ -65,23 +65,23 @@ def mjcf_geom_to_sdf(geom):
             length = v1.distance(v2)
             cylinder.set_length(length)
         sdf_geometry.set_cylinder_shape(cylinder)
-        sdf_geometry.set_type(sdf.Geometry.GeometryType.CYLINDER)
+        sdf_geometry.set_type(sdf.GeometryType.CYLINDER)
     elif geom.type == "ellipsoid":
         ellipsoid = sdf.Ellipsoid()
         ellipsoid.set_radii(su.list_to_vec3d(geom.size))
         sdf_geometry.set_ellipsoid_shape(ellipsoid)
-        sdf_geometry.set_type(sdf.Geometry.GeometryType.ELLIPSOID)
+        sdf_geometry.set_type(sdf.GeometryType.ELLIPSOID)
         # TODO(ahcorde): Add fromto
     elif geom.type == "sphere":
         sphere = sdf.Sphere()
         sphere.set_radius(geom.size[0])
         sdf_geometry.set_sphere_shape(sphere)
-        sdf_geometry.set_type(sdf.Geometry.GeometryType.SPHERE)
+        sdf_geometry.set_type(sdf.GeometryType.SPHERE)
     elif geom.type == "plane":
         plane = sdf.Plane()
         plane.set_size(Vector2d(geom.size[0] * 2, geom.size[1] * 2))
         sdf_geometry.set_plane_shape(plane)
-        sdf_geometry.set_type(sdf.Geometry.GeometryType.PLANE)
+        sdf_geometry.set_type(sdf.GeometryType.PLANE)
     else:
         raise RuntimeError(
             f"Encountered unsupported shape type {geom.type}")

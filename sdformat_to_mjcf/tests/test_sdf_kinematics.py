@@ -18,8 +18,6 @@ import sdformat as sdf
 from sdformat_to_mjcf.sdf_kinematics import KinematicHierarchy
 from tests.helpers import TEST_RESOURCES_DIR
 
-JointType = sdf.Joint.JointType
-
 
 class TreeTest(unittest.TestCase):
 
@@ -40,19 +38,19 @@ class TreeTest(unittest.TestCase):
         self.assertEqual("base", base_node.link.name())
         self.assertEqual(1, len(base_node.child_nodes))
         self.assertEqual("fix_to_world", base_node.joint.name())
-        self.assertEqual(JointType.FIXED, base_node.joint.type())
+        self.assertEqual(sdf.JointType.FIXED, base_node.joint.type())
 
         upper_link_node = base_node.child_nodes[0]
         self.assertEqual("upper_link", upper_link_node.link.name())
         self.assertEqual(1, len(upper_link_node.child_nodes))
         self.assertEqual("upper_joint", upper_link_node.joint.name())
-        self.assertEqual(JointType.REVOLUTE, upper_link_node.joint.type())
+        self.assertEqual(sdf.JointType.REVOLUTE, upper_link_node.joint.type())
 
         lower_link_node = upper_link_node.child_nodes[0]
         self.assertEqual("lower_link", lower_link_node.link.name())
         self.assertEqual(0, len(lower_link_node.child_nodes))
         self.assertEqual("lower_joint", lower_link_node.joint.name())
-        self.assertEqual(JointType.REVOLUTE, lower_link_node.joint.type())
+        self.assertEqual(sdf.JointType.REVOLUTE, lower_link_node.joint.type())
 
 
 if __name__ == "__main__":
