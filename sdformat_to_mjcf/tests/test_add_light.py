@@ -41,7 +41,7 @@ class LightTest(helpers.TestCase):
     def test_light(self):
         light = sdf.Light()
         light.set_name("light")
-        light.set_type(sdf.Light.LightType.DIRECTIONAL)
+        light.set_type(sdf.LightType.DIRECTIONAL)
         light.set_raw_pose(self.test_pose)
         light.set_cast_shadows(True)
         light.set_diffuse(Color(0.4, 0.5, 0.6, 1.0))
@@ -57,7 +57,7 @@ class LightTest(helpers.TestCase):
         self.assertNotEqual(light_mjcf, None)
         self.assertEqual(light_mjcf.name, light.name())
         self.assertEqual(bool(light_mjcf.directional),
-                         light.type() == sdf.Light.LightType.DIRECTIONAL)
+                         light.type() == sdf.LightType.DIRECTIONAL)
         self.assertEqual(bool(light_mjcf.castshadow), light.cast_shadows())
         assert_allclose(self.expected_pos, light_mjcf.pos)
         assert_allclose([light.constant_attenuation_factor(),
@@ -86,7 +86,7 @@ class LightTest(helpers.TestCase):
 
         light = sdf.Light()
         light.set_name("light")
-        light.set_type(sdf.Light.LightType.DIRECTIONAL)
+        light.set_type(sdf.LightType.DIRECTIONAL)
         light.set_raw_pose(self.test_pose)
         light.set_cast_shadows(True)
         light.set_diffuse(Color(0.4, 0.5, 0.6, 1.0))
@@ -104,7 +104,7 @@ class LightTest(helpers.TestCase):
         self.assertNotEqual(body_mjcf.light[0], None)
         self.assertEqual(body_mjcf.light[0].name, light.name())
         self.assertEqual(bool(body_mjcf.light[0].directional),
-                         light.type() == sdf.Light.LightType.DIRECTIONAL)
+                         light.type() == sdf.LightType.DIRECTIONAL)
         self.assertEqual(bool(body_mjcf.light[0].castshadow),
                          light.cast_shadows())
         assert_allclose(self.expected_pos, body_mjcf.light[0].pos)
