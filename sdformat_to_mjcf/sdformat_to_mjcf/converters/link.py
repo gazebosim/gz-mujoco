@@ -15,10 +15,11 @@
 from sdformat_to_mjcf.converters.geometry import add_collision, add_visual
 from sdformat_to_mjcf.converters.light import add_light
 from sdformat_to_mjcf.converters.material import add_material
+from sdformat_to_mjcf.converters.sensor import add_sensor
 import sdformat_mjcf_utils.sdf_utils as su
 
 
-def add_link(body, link, parent_name="world", model_name="model"):
+def add_link(body, link, parent_name="world"):
     """
     Converts a link from SDFormat to MJCF and add it to the given
     body/worldbody.
@@ -92,5 +93,10 @@ def add_link(body, link, parent_name="world", model_name="model"):
         light = link.light_by_index(li)
         if light is not None:
             add_light(body, light)
+
+    for si in range(link.sensor_count()):
+        sensor = link.sensor_by_index(si)
+        if sensor is not None:
+            add_sensor(body, sensor)
 
     return body
