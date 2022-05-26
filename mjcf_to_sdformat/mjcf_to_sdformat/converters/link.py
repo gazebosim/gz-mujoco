@@ -93,12 +93,13 @@ def mjcf_geom_to_sdf(body, physics, body_parent_name=None):
         link.set_inertial(inertial)
     else:
         try:
+            body_inertia = physics.named.model.body_inertia[body.name]
             inertial = Inertiald(
                 MassMatrix3d(physics.named.model.body_mass[body.name],
-                             Vector3d(physics.named.model.body_inertia[body.name][0],
-                                      physics.named.model.body_inertia[body.name][1],
-                                      physics.named.model.body_inertia[body.name][2]),
-                             Vector3d(0,0, 0)),
+                             Vector3d(body_inertia[0],
+                                      body_inertia[1],
+                                      body_inertia[2]),
+                             Vector3d(0, 0, 0)),
                 Pose3d(physics.named.model.body_ipos[body.name][0],
                        physics.named.model.body_ipos[body.name][1],
                        physics.named.model.body_ipos[body.name][2],
