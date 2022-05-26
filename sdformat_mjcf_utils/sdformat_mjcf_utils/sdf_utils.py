@@ -105,16 +105,22 @@ def get_pose_from_mjcf(element):
     :rtype: ignition.math.Pose3d
     """
     pos = [0, 0, 0]
-    euler = [0, 0, 0]
+    quat = Quaterniond()
     try:
         if element.pos is not None:
             pos = element.pos
+        if element.zaxis is not None:
+            z = Vector3d(0, 0, 1)
+            quat.set_from_2_axes(z,
+                                 Vector3d(element.zaxis[0],
+                                          element.zaxis[1],
+                                          element.zaxis[2]))
         if element.euler is not None:
-            euler = element.euler
+            quat = Quaterniond(list_to_vec3d(element.euler))
     except AttributeError:
         pass
     return Pose3d(list_to_vec3d(pos),
-                  euler_list_to_quat(euler))
+                  quat)
 
 
 def prefix_name_with_index(prefix, name, index):
