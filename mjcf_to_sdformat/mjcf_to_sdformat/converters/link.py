@@ -15,8 +15,6 @@
 from ignition.math import (Inertiald, MassMatrix3d, Vector3d, Pose3d,
                            Quaterniond)
 
-import math
-
 from mjcf_to_sdformat.converters.geometry import (mjcf_visual_to_sdf,
                                                   mjcf_collision_to_sdf)
 
@@ -104,36 +102,33 @@ def mjcf_geom_to_sdf(body, body_parent_name=None):
     def get_orientation(geom):
         """
         Get orientation from a MJCF geom when it's defined with "fromto"
+
+        :param mjcf.Element geom: MJCF geom to extract the orientation
+        :return: The newly created quaterion.
+        :rtype ignition.math.Quateriond
         """
         if geom.fromto is not None:
             v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
             v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
             vec = (v1 - v2).normalize()
             z = Vector3d(0, 0, 1)
-            q_real = z.cross(vec)
-            s = q_real.length()
             quat = Quaterniond()
-            if s < 1E-10:
-                quat.set_x(1)
-                quat.set_y(0)
-                quat.set_z(0)
-            ang = math.atan2(s, vec.z())
-            quat.set_w(math.cos(ang / 2.0))
-            quat.set_x(q_real.x() * math.sin(ang / 2.0))
-            quat.set_y(q_real.y() * math.sin(ang / 2.0))
-            quat.set_z(q_real.z() * math.sin(ang / 2.0))
-            return quat.normalized()
+            quat.set_from_2_axes(z, vec)
+            return quat
         return Quaterniond()
 
-    def get_pose(geom):
+    def get_position(geom):
         """
         Get the translattion from a MJCF geom when it's defined with "fromto"
+
+        :param mjcf.Element geom: MJCF geom to extract the position
+        :return: The newly created Vector3d.
+        :rtype ignition.math.Vector3d
         """
         if geom.fromto is not None:
             v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
             v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
-            v_abs = (v2.abs() - v1.abs()) / 2.0
-            return Vector3d(v_abs.x(), v_abs.y(), v_abs.z())
+            return (v1 + v2) / 2.0
         return Vector3d()
 
     def set_visual(geom):
@@ -141,7 +136,7 @@ def mjcf_geom_to_sdf(body, body_parent_name=None):
         if visual is not None:
             visual.set_name(su.prefix_name_with_index(
                 "visual", geom.name, NUMBER_OF_VISUAL))
-            pose_form_to = Pose3d(get_pose(geom), get_orientation(geom))
+            pose_form_to = Pose3d(get_position(geom), get_orientation(geom))
             pose = pose_form_to * su.get_pose_from_mjcf(geom)
             visual.set_raw_pose(pose)
             link.add_visual(visual)
@@ -151,7 +146,7 @@ def mjcf_geom_to_sdf(body, body_parent_name=None):
         if col is not None:
             col.set_name(su.prefix_name_with_index(
                 "collision", geom.name, NUMBER_OF_COLLISION))
-            pose_form_to = Pose3d(get_pose(geom), get_orientation(geom))
+            pose_form_to = Pose3d(get_position(geom), get_orientation(geom))
             pose = pose_form_to * su.get_pose_from_mjcf(geom)
             col.set_raw_pose(pose)
             col.set_raw_pose(su.get_pose_from_mjcf(geom))
