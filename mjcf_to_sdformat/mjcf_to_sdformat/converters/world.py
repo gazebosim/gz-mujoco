@@ -17,11 +17,12 @@ from mjcf_to_sdformat.converters.link import mjcf_geom_to_sdf
 import sdformat as sdf
 
 
-def mjcf_worldbody_to_sdf(mjcf_root, world):
+def mjcf_worldbody_to_sdf(mjcf_root, physics, world):
     """
     Convert a MJCF worldbody to a SDFormat world
 
     :param mjcf.RootElement mjcf_root: The MJCF root element
+    :param mujoco.Physics physics: Mujoco Physics
     :param sdf.World world: SDF World to add the models
     """
     model = sdf.Model()
@@ -30,14 +31,14 @@ def mjcf_worldbody_to_sdf(mjcf_root, world):
     else:
         model.set_name("model")
 
-    link = mjcf_geom_to_sdf(mjcf_root.worldbody)
+    link = mjcf_geom_to_sdf(mjcf_root.worldbody, physics)
     model.add_link(link)
 
     body = mjcf_root.worldbody.body
 
     def iterate_bodies(input_body, model):
         for body in input_body:
-            link = mjcf_geom_to_sdf(body)
+            link = mjcf_geom_to_sdf(body, physics)
             model.add_link(link)
             iterate_bodies(body.body, model)
     iterate_bodies(body, model)

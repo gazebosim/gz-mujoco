@@ -15,6 +15,7 @@
 import unittest
 from numpy.testing import assert_allclose
 from dm_control import mjcf
+from dm_control import mujoco
 
 import sdformat as sdf
 
@@ -27,13 +28,14 @@ from tests.helpers import TEST_RESOURCES_DIR
 class ModelTest(unittest.TestCase):
 
     def test_add_model(self):
-        mjcf_model = mjcf.from_path(
-            str(TEST_RESOURCES_DIR / "test_mujoco.xml"))
+        filename = str(TEST_RESOURCES_DIR / "test_mujoco.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
 
         world = sdf.World()
         world.set_name("default")
 
-        mjcf_worldbody_to_sdf(mjcf_model, world)
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
 
         self.assertEqual("default", world.name())
         self.assertEqual(1, world.model_count())

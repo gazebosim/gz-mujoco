@@ -25,11 +25,12 @@ COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
 
 
-def mjcf_geom_to_sdf(body):
+def mjcf_geom_to_sdf(body, physics, body_parent_name=None):
     """
     Converts an MJCF body to a SDFormat.
 
     :param mjcf.Element body: The MJCF body
+    :param mujoco.Physics physics: Mujoco Physics
     :param mjcf.Element inertial: Inertial of the body
     :return: The newly created SDFormat link.
     :rtype: sdf.Link
@@ -90,7 +91,23 @@ def mjcf_geom_to_sdf(body):
                                     inertial_euler.pitch(),
                                     inertial_euler.yaw()))
         link.set_inertial(inertial)
-
+    else:
+        try:
+            inertial = Inertiald(
+                MassMatrix3d(physics.named.model.body_mass[body.name],
+                             Vector3d(physics.named.model.body_inertia[body.name][0],
+                                      physics.named.model.body_inertia[body.name][1],
+                                      physics.named.model.body_inertia[body.name][2]),
+                             Vector3d(0,0, 0)),
+                Pose3d(physics.named.model.body_ipos[body.name][0],
+                       physics.named.model.body_ipos[body.name][1],
+                       physics.named.model.body_ipos[body.name][2],
+                       0,
+                       0,
+                       0))
+            link.set_inertial(inertial)
+        except AttributeError:
+            pass
     NUMBER_OF_VISUAL = 0
     NUMBER_OF_COLLISION = 0
 
