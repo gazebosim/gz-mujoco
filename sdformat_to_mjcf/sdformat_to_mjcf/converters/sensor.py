@@ -23,7 +23,8 @@ def add_sensor(body, sensor):
 
     :param mjcf.Element body: The MJCF body to which the sensor is added.
     :param sdformat.Sensor sensor: The SDFormat sensor to be converted.
-    :return: One or more of the newly created MJCF sensors.
+    :return: One or more of the newly created MJCF sensors. None if there are
+    no supported sensors to be converted.
     :rtype: [mjcf.Element]
     """
     sem_pose = sensor.semantic_pose()
