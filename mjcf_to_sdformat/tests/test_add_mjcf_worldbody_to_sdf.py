@@ -64,8 +64,8 @@ class ModelTest(unittest.TestCase):
 
         link_2 = model.link_by_index(1)
         self.assertEqual("link_1", link_2.name())
-        self.assertEqual(1, link_2.visual_count())
-        self.assertEqual(1, link_2.collision_count())
+        self.assertEqual(2, link_2.visual_count())
+        self.assertEqual(2, link_2.collision_count())
         assert_allclose([0, 0, 1], su.vec3d_to_list(link_2.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(link_2.raw_pose().rot().euler()))
@@ -95,6 +95,24 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(collision_2.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_2.raw_pose().rot().euler()))
+
+        visual_2 = link_2.visual_by_index(1)
+        self.assertNotEqual(None, visual_2)
+        self.assertEqual("visual_cylinder", visual_2.name())
+        assert_allclose([0.0, 0.0, 0.0],
+                        su.vec3d_to_list(visual_2.raw_pose().pos()))
+        assert_allclose([1.570796, 0, 0],
+                        su.vec3d_to_list(visual_2.raw_pose().rot().euler()),
+                        rtol=1e-5)
+
+        collision_2 = link_2.collision_by_index(1)
+        self.assertNotEqual(None, collision_2)
+        self.assertEqual("collision_cylinder", collision_2.name())
+        assert_allclose([0.0, 0.0, 0.0],
+                        su.vec3d_to_list(collision_2.raw_pose().pos()))
+        assert_allclose([1.570796, 0, 0],
+                        su.vec3d_to_list(collision_2.raw_pose().rot().euler()),
+                        rtol=1e-5)
 
         link_3 = model.link_by_index(2)
         self.assertEqual("body2", link_3.name())

@@ -149,7 +149,6 @@ def mjcf_geom_to_sdf(body, body_parent_name=None):
             pose_form_to = Pose3d(get_position(geom), get_orientation(geom))
             pose = pose_form_to * su.get_pose_from_mjcf(geom)
             col.set_raw_pose(pose)
-            col.set_raw_pose(su.get_pose_from_mjcf(geom))
             link.add_collision(col)
 
     for geom in body.geom:
