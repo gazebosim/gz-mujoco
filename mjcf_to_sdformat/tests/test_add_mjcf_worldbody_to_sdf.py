@@ -40,6 +40,7 @@ class ModelTest(unittest.TestCase):
         model = world.model_by_index(0)
         self.assertNotEqual(None, model)
         self.assertEqual(1, model.link_count())
+        self.assertTrue(model.static())
         link_1 = model.link_by_index(0)
         self.assertEqual("link_0", link_1.name())
         self.assertEqual(1, link_1.visual_count())
