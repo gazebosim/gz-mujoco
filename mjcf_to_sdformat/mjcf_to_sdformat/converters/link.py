@@ -19,6 +19,8 @@ from mjcf_to_sdformat.converters.geometry import (mjcf_visual_to_sdf,
                                                   mjcf_collision_to_sdf)
 from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 
+from mjcf_to_sdformat.converters.material import mjcf_material_to_sdf
+
 import sdformat as sdf
 import sdformat_mjcf_utils.sdf_utils as su
 
@@ -137,6 +139,9 @@ def mjcf_geom_to_sdf(body, body_parent_name=None):
         if visual is not None:
             visual.set_name(su.prefix_name_with_index(
                 "visual", geom.name, NUMBER_OF_VISUAL))
+            material = mjcf_material_to_sdf(geom)
+            if material is not None:
+                visual.set_material(material)
             pose_form_to = Pose3d(get_position(geom), get_orientation(geom))
             pose = pose_form_to * su.get_pose_from_mjcf(geom)
             visual.set_raw_pose(pose)

@@ -15,7 +15,7 @@
 """Utility functions that aid in conversion between SDFormat and MJCF"""
 
 import math
-from ignition.math import Pose3d, Quaterniond, Vector3d
+from ignition.math import Color, Pose3d, Quaterniond, Vector3d
 
 NAME_DELIMITER = '_'
 
@@ -95,6 +95,16 @@ def quat_to_euler_list(quat):
     :rtype: list[float]
     """
     return [math.degrees(val) for val in vec3d_to_list(quat.euler())]
+
+
+def rgba_to_color(rgba):
+    """
+    Convert a MJCF rgba color list to a ignition math Color
+    :param list rgba: List of color (red, green, blue, alpha).
+    :return: The newly created color
+    :rtype: ignition.math.color
+    """
+    return Color(rgba[0], rgba[1], rgba[2], rgba[3])
 
 
 def get_pose_from_mjcf(element):

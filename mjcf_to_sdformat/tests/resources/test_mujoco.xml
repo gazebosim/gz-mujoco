@@ -3,6 +3,11 @@
      <geom type="capsule" mass="1"/>
    </default>
 
+   <asset>
+     <material name="material_1" class="/" emission="0.0" specular="0.3"
+               rgba="0.36 0.36 0.36 1"/>
+   </asset>
+
    <worldbody>
       <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1" cutoff="45" exponent="10"
              attenuation="0.0 0.01 0.001" specular="0.2 0.2 0.2"/>
@@ -10,7 +15,7 @@
       <body pos="0 0 1">
          <joint type="free"/>
          <inertial pos="0 1 0" mass="2" fullinertia="2 2 2 0 0 0"/>
-         <geom type="box" pos="0.1 0.3 0.2" size=".1 .2 .3" rgba="0 .9 0 1"/>
+         <geom type="box" pos="0.1 0.3 0.2" size=".1 .2 .3" material="material_1"/>
          <geom name="cylinder" type="capsule" mass="1" fromto="0 -0.06 0 0 0.06 0" size="0.05"/>
          <geom name="who_is_this" fromto="0 0 0 0 0 1" size="0.05"/>
       </body>
