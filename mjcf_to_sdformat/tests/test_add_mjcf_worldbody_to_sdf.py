@@ -41,7 +41,7 @@ class ModelTest(unittest.TestCase):
         self.assertEqual(1, world.model_count())
         model = world.model_by_index(0)
         self.assertNotEqual(None, model)
-        self.assertEqual(3, model.link_count())
+        self.assertEqual(4, model.link_count())
         link_1 = model.link_by_index(0)
         self.assertEqual("link_0", link_1.name())
         self.assertEqual(1, link_1.visual_count())
@@ -133,6 +133,40 @@ class ModelTest(unittest.TestCase):
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_3.raw_pose().rot().euler()))
 
+        link_4 = model.link_by_index(3)
+        self.assertEqual("body3", link_4.name())
+        self.assertEqual(1, link_4.visual_count())
+        self.assertEqual(1, link_4.collision_count())
+
+        mass_matrix = link_4.inertial().mass_matrix()
+        self.assertAlmostEqual(48, mass_matrix.mass())
+        self.assertEqual([0, 0, 0],
+                         su.vec3d_to_list(link_4.inertial().pose().pos()))
+        self.assertEqual([0, 0, 0],
+                         su.vec3d_to_list(link_4.inertial().pose().rot()))
+        assert_allclose([2.08, 1.6, 0.8],
+                        su.vec3d_to_list(mass_matrix.diagonal_moments()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(mass_matrix.off_diagonal_moments()))
+
+        assert_allclose([0, 0, 1], su.vec3d_to_list(link_4.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(link_4.raw_pose().rot().euler()))
+        visual_4 = link_4.visual_by_index(0)
+        self.assertNotEqual(None, visual_4)
+        self.assertEqual("visual_visual_body3", visual_4.name())
+        assert_allclose([0.0, 0, 0],
+                        su.vec3d_to_list(visual_4.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(visual_4.raw_pose().rot().euler()))
+
+        collision_4 = link_4.collision_by_index(0)
+        self.assertNotEqual(None, collision_4)
+        self.assertEqual("collision_visual_body3", collision_4.name())
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(collision_4.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(collision_4.raw_pose().rot().euler()))
 
 if __name__ == "__main__":
     unittest.main()
