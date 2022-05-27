@@ -174,6 +174,7 @@ class ModelTest(unittest.TestCase):
         self.assertEqual("body3", link_4.name())
         self.assertEqual(1, link_4.visual_count())
         self.assertEqual(1, link_4.collision_count())
+        self.assertEqual("body2", link_4.pose_relative_to())
 
         mass_matrix = link_4.inertial().mass_matrix()
         self.assertEqual(1, mass_matrix.mass())
