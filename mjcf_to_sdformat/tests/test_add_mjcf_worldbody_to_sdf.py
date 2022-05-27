@@ -184,5 +184,6 @@ class ModelTest(unittest.TestCase):
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_4.raw_pose().rot().euler()))
 
+
 if __name__ == "__main__":
     unittest.main()
