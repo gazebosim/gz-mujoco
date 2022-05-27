@@ -16,6 +16,7 @@ import unittest
 import math
 from numpy.testing import assert_allclose
 from dm_control import mjcf
+from dm_control import mujoco
 
 from ignition.math import Color, Vector3d
 
@@ -30,13 +31,14 @@ from tests.helpers import TEST_RESOURCES_DIR
 class ModelTest(unittest.TestCase):
 
     def test_add_model(self):
-        mjcf_model = mjcf.from_path(
-            str(TEST_RESOURCES_DIR / "test_mujoco.xml"))
+        filename = str(TEST_RESOURCES_DIR / "test_mujoco.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
 
         world = sdf.World()
         world.set_name("default")
 
-        mjcf_worldbody_to_sdf(mjcf_model, world)
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
 
         self.assertEqual("default", world.name())
         self.assertEqual(1, world.model_count())
@@ -190,6 +192,41 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(collision_3.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_3.raw_pose().rot().euler()))
+
+        link_4 = model.link_by_index(3)
+        self.assertEqual("body3", link_4.name())
+        self.assertEqual(1, link_4.visual_count())
+        self.assertEqual(1, link_4.collision_count())
+
+        mass_matrix = link_4.inertial().mass_matrix()
+        self.assertAlmostEqual(48, mass_matrix.mass())
+        self.assertEqual([0, 0, 0],
+                         su.vec3d_to_list(link_4.inertial().pose().pos()))
+        self.assertEqual([0, 0, 0],
+                         su.vec3d_to_list(link_4.inertial().pose().rot()))
+        assert_allclose([2.08, 1.6, 0.8],
+                        su.vec3d_to_list(mass_matrix.diagonal_moments()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(mass_matrix.off_diagonal_moments()))
+
+        assert_allclose([0, 0, 1], su.vec3d_to_list(link_4.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(link_4.raw_pose().rot().euler()))
+        visual_4 = link_4.visual_by_index(0)
+        self.assertNotEqual(None, visual_4)
+        self.assertEqual("visual_visual_body3", visual_4.name())
+        assert_allclose([0.0, 0, 0],
+                        su.vec3d_to_list(visual_4.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(visual_4.raw_pose().rot().euler()))
+
+        collision_4 = link_4.collision_by_index(0)
+        self.assertNotEqual(None, collision_4)
+        self.assertEqual("collision_visual_body3", collision_4.name())
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(collision_4.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(collision_4.raw_pose().rot().euler()))
 
 
         self.assertEqual(1, world.light_count())
