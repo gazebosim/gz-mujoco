@@ -23,7 +23,7 @@ import sdformat as sdf
 from mjcf_to_sdformat.converters import light as light_conv
 
 
-class GeometryTest(unittest.TestCase):
+class LightTest(unittest.TestCase):
 
     def test_light_default(self):
         mujoco = mjcf.RootElement(model="test")
