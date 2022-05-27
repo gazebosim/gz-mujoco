@@ -168,30 +168,6 @@ class ModelTest(helpers.TestCase):
         self.assertEqual("link1", excludes[0].body1)
         self.assertEqual("link2", excludes[0].body2)
 
-    def test_static_model(self):
-        test_model_sdf = """
-        <sdf version="1.6">
-            <model name="test_model">
-                <static>true</static>
-                <link name="link1">
-                    <collision name="c1">
-                        <geometry>
-                            <sphere><radius>2</radius></sphere>
-                        </geometry>
-                    </collision>
-                </link>
-            </model>
-        </sdf>
-        """
-        root = sdf.Root()
-        errors = root.load_sdf_string(test_model_sdf)
-        self.assertEqual(0, len(errors))
-        mj_root = add_model(self.mujoco, root.model())
-        self.assertIsNotNone(mj_root)
-        mj_link1 = mj_root.find("body", "link1")
-        self.assertFalse(mj_link1.get_children("joint"))
-        self.assertFalse(mj_link1.get_children("freejoint"))
-
 
 if __name__ == "__main__":
     unittest.main()
