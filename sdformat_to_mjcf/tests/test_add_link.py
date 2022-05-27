@@ -56,7 +56,7 @@ class LinkTest(helpers.TestCase):
         link = sdf.Link()
         link.set_name("base_link")
         link.set_raw_pose(self.test_pose)
-        mj_body = add_link(self.body, link, model_name="base_model")
+        mj_body = add_link(self.body, link)
         self.assertIsNotNone(mj_body)
         assert_allclose(self.expected_pos, mj_body.pos)
         assert_allclose(self.expected_euler, mj_body.euler)
@@ -79,7 +79,7 @@ class LinkTest(helpers.TestCase):
             MassMatrix3d(384, Vector3d(544, 2624, 3104), Vector3d.ZERO),
             self.test_pose)
         link.set_inertial(inertial)
-        mj_body = add_link(self.body, link, model_name="base_model")
+        mj_body = add_link(self.body, link)
         self.assertIsNotNone(mj_body)
         assert_allclose((2604, 2604, 1064, -500, 260 * sqrt(6), 260 * sqrt(6)),
                         mj_body.inertial.fullinertia)
@@ -91,12 +91,12 @@ class LinkTest(helpers.TestCase):
         link1 = sdf.Link()
         link1.set_name("base_link")
         link1.set_raw_pose(Pose3d(-1, -2, -3, 0, 0, 0))
-        mj_body1 = add_link(self.body, link1, model_name="base_model")
+        mj_body1 = add_link(self.body, link1)
 
         link2 = sdf.Link()
         link2.set_name("lower_link")
         link2.set_raw_pose(self.test_pose)
-        mj_body2 = add_link(mj_body1, link2, model_name="base_link")
+        mj_body2 = add_link(mj_body1, link2)
 
         self.assertIsNotNone(mj_body2)
         assert_allclose(self.expected_pos, mj_body2.pos)
@@ -128,7 +128,7 @@ class LinkTest(helpers.TestCase):
         link.add_visual(visual)
         link.add_collision(collision)
 
-        mj_body = add_link(self.body, link, model_name="base_model")
+        mj_body = add_link(self.body, link)
         self.assertIsNotNone(mj_body)
         assert_allclose(self.expected_pos, mj_body.pos)
         assert_allclose(self.expected_euler, mj_body.euler)
@@ -150,8 +150,8 @@ class LinkTest(helpers.TestCase):
         link2 = sdf.Link()
         link2.set_name("link2")
         link2.add_collision(c1)
-        mj_body1 = add_link(self.body, link1, model_name="base_model")
-        mj_body2 = add_link(self.body, link2, model_name="base_model")
+        mj_body1 = add_link(self.body, link1)
+        mj_body2 = add_link(self.body, link2)
         self.assertIsNotNone(mj_body1)
         self.assertIsNotNone(mj_body2)
 
@@ -163,10 +163,28 @@ class LinkTest(helpers.TestCase):
         link2 = sdf.Link()
         link2.set_name("link2")
         link2.add_visual(v1)
-        mj_body1 = add_link(self.body, link1, model_name="base_model")
-        mj_body2 = add_link(self.body, link2, model_name="base_model")
+        mj_body1 = add_link(self.body, link1)
+        mj_body2 = add_link(self.body, link2)
         self.assertIsNotNone(mj_body1)
         self.assertIsNotNone(mj_body2)
+
+    def test_imu_sensor(self):
+        link = sdf.Link()
+        link.set_name("base_link")
+        sensor = sdf.Sensor()
+        sensor.set_name("imu_sensor")
+        sensor.set_type(sdf.Sensortype.IMU)
+        sensor.set_raw_pose(self.test_pose)
+        imu = sdf.IMU()
+        sensor.set_imu_sensor(imu)
+        link.add_sensor(sensor)
+        mj_body = add_link(self.body, link)
+        self.assertIsNotNone(mj_body)
+        self.assertIsNotNone(self.mujoco.sensor)
+        mjcf_accels = self.mujoco.sensor.get_children("accelerometer")
+        self.assertEqual(1, len(mjcf_accels))
+        mjcf_gyros = self.mujoco.sensor.get_children("gyro")
+        self.assertEqual(1, len(mjcf_gyros))
 
 
 if __name__ == "__main__":
