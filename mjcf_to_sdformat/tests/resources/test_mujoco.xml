@@ -1,6 +1,7 @@
 <mujoco>
    <worldbody>
-      <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1"/>
+      <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1" cutoff="45" exponent="10"
+             attenuation="0.0 0.01 0.001" specular="0.2 0.2 0.2"/>
       <geom type="plane" size="1 1 0.1" rgba=".9 0 0 1"/>
       <body pos="0 0 1">
          <joint type="free"/>
@@ -12,6 +13,9 @@
          <inertial pos="1 2 3" euler="0 0 0" mass="2" diaginertia="0.026026 0.023326 0.011595"/>
          <geom type="box" name="col_body2" pos="0 0 0" group="3" size=".1 .2 .3" rgba="0 .9 0 1"/>
          <geom type="box" name="visual_body2" pos="0 0 0" group="0" size=".1 .2 .3" rgba="0 .9 0 1"/>
+         <light name="directional" class="/" directional="true" castshadow="true" pos="0 0 10"
+                dir="0.5 0.2 -0.0" attenuation="0.0 0.01 0.001" diffuse="0.8 0.8 0.8"
+                specular="0.2 0.2 0.2" active="false"/>
       </body>
    </worldbody>
 </mujoco>
