@@ -36,10 +36,9 @@ def add_model(mjcf_root, model):
     kin_hierarchy = KinematicHierarchy(model)
     model_pose = graph_resolver.resolve_pose(model.semantic_pose())
 
-    def convert_node(body, node):
-        child_body = add_link(body,
-                              node.link,
-                              node.parent_node.link.name())
+    def convert_node(body, node, link_pose=None):
+        child_body = add_link(body, node.link, node.parent_node.link.name(),
+                              link_pose)
 
         add_joint(child_body, node.joint)
         # Geoms added to bodies attached to the worldbody without a
@@ -74,8 +73,6 @@ def add_model(mjcf_root, model):
         # Adjust the poses of each of the nodes to account for the model
         link_pose = graph_resolver.resolve_pose(cn.link.semantic_pose())
         new_link_pose = model_pose * link_pose
-        cn.link.set_raw_pose(new_link_pose)
-        cn.link.set_pose_relative_to("")
-        convert_node(mjcf_root.worldbody, cn)
+        convert_node(mjcf_root.worldbody, cn, new_link_pose)
 
     return mjcf_root
