@@ -16,11 +16,25 @@ import sdformat as sdf
 import sdformat_mjcf_utils.sdf_utils as su
 
 
+class StaticFixedJoint(sdf.Joint):
+    """Joint that represents fixed joints created for connect links in static
+    models to the worldbody."""
+    def __init__(self):
+        super().__init__()
+        self.set_type(sdf.JointType.FIXED)
+
+
+class FreeJoint(sdf.Joint):
+    """Joint that represents free joints that are not explicitly in the
+    SDFormat file, but are needed in MJCF."""
+    pass
+
+
 class LinkNode:
     """
     A Node that represents links/bodies in KinematicHierarchy defined below.
     """
-    def __init__(self, link, parent=None, joint=None):
+    def __init__(self, link, parent=None, joint=FreeJoint()):
         """
         Initialize the node with an SDFormat link, an optional parent node and
         an optional joint
@@ -83,11 +97,7 @@ class KinematicHierarchy:
         for li in range(model.link_count()):
             node = LinkNode(model.link_by_index(li), self.world_node)
             link_to_node_dict[node.link] = node
-            if model.static():
-                joint = sdf.Joint()
-                joint.set_type(sdf.JointType.FIXED)
-            else:
-                joint = None
+            joint = StaticFixedJoint() if model.static() else FreeJoint()
             self.world_node.add_child(node, joint)
 
         for ji in range(model.joint_count()):

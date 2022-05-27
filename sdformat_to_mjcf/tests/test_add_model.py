@@ -21,6 +21,7 @@ from ignition.math import Pose3d
 from dm_control import mjcf
 
 from sdformat_to_mjcf.converters.model import add_model
+from sdformat_to_mjcf.converters.root import add_root
 import sdformat_mjcf_utils.sdf_utils as su
 from tests import helpers
 
@@ -168,6 +169,8 @@ class ModelTest(helpers.TestCase):
         self.assertEqual("link1", excludes[0].body1)
         self.assertEqual("link2", excludes[0].body2)
 
+
+class ModelIntegrationTest(unittest.TestCase):
     def test_static_model(self):
         test_model_sdf = """
         <sdf version="1.6">
@@ -186,7 +189,7 @@ class ModelTest(helpers.TestCase):
         root = sdf.Root()
         errors = root.load_sdf_string(test_model_sdf)
         self.assertEqual(0, len(errors))
-        mj_root = add_model(self.mujoco, root.model())
+        mj_root = add_root(root)
         self.assertIsNotNone(mj_root)
         mj_link1 = mj_root.find("body", "link1")
         self.assertFalse(mj_link1.get_children("joint"))
