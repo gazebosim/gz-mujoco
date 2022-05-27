@@ -66,7 +66,7 @@ def add_geometry(body, name, pose, sdf_geom):
         # The third element of size defines the spacing between square grid
         # lines for rendering.
         # TODO (azeey) Consider making this configurable
-        geom.size = su.vec2d_to_list(plane_shape.size() / 2.0) + [0]
+        geom.size = su.vec2d_to_list(plane_shape.size() / 2.0) + [1]
     elif sdf_geom.sphere_shape():
         sphere_shape = sdf_geom.sphere_shape()
         geom.type = "sphere"

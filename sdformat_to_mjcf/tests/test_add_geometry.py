@@ -24,6 +24,7 @@ from dm_control import mjcf
 
 from tests import helpers
 from sdformat_to_mjcf.converters import geometry as geometry_conv
+from sdformat_to_mjcf.converters.root import add_root
 
 
 class GeometryTest(helpers.TestCase):
@@ -154,7 +155,7 @@ class GeometryTest(helpers.TestCase):
                                              self.test_pose, geometry)
         self.assertEqual("plane_shape", mj_geom.name)
         self.assertEqual("plane", mj_geom.type)
-        assert_allclose([x_size / 2., y_size / 2., 0.], mj_geom.size)
+        assert_allclose([x_size / 2., y_size / 2., 1.], mj_geom.size)
         assert_allclose(self.expected_pos, mj_geom.pos)
         assert_allclose(self.expected_euler, mj_geom.euler)
 
@@ -218,6 +219,34 @@ class VisualTest(helpers.TestCase):
         assert_allclose([1., 2., 3.], mj_geom.pos)
         assert_allclose([90., 60., 45.], mj_geom.euler)
         self.assertEqual(geometry_conv.VISUAL_GEOM_GROUP, mj_geom.group)
+
+
+class GeometryIntegrationTest(unittest.TestCase):
+
+    def test_plane_size(self):
+        test_model_sdf = """
+        <sdf version="1.6">
+            <world name="default">
+                <model name="test_model">
+                    <static>true</static>
+                    <link name="link1">
+                        <visual name="c1">
+                            <geometry>
+                                <plane><size>10 10</size></plane>
+                            </geometry>
+                        </visual>
+                    </link>
+                </model>
+            </world>
+        </sdf>
+        """
+
+        root = sdf.Root()
+        root.load_sdf_string(test_model_sdf)
+        mj_root = add_root(root)
+        self.assertIsNotNone(mj_root)
+        physics = mjcf.Physics.from_mjcf_model(mj_root)
+        self.assertIsNotNone(physics)
 
 
 if __name__ == "__main__":
