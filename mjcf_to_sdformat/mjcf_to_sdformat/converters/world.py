@@ -15,10 +15,12 @@
 from mjcf_to_sdformat.converters.link import mjcf_geom_to_sdf
 from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 
+from mjcf_to_sdformat.converters.sensor import mjcf_camera_sensor_to_sdf
+
 import sdformat as sdf
 
 
-def mjcf_worldbody_to_sdf(mjcf_root, physics, world):
+def mjcf_worldbody_to_sdf(mjcf_root, physics, world, export_world_plugins=True):
     """
     Convert a MJCF worldbody to a SDFormat world
 
@@ -37,7 +39,29 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world):
         world.add_light(light_sdf)
 
     link = mjcf_geom_to_sdf(mjcf_root.worldbody, physics)
+    include_sensor_plugins = False
+
+    for camera in mjcf_root.worldbody.camera:
+        sensor = mjcf_camera_sensor_to_sdf(camera)
+        if sensor is not None:
+            link.add_sensor(sensor)
+            include_sensor_plugins = True
     model.add_link(link)
+
+    if include_sensor_plugins and export_world_plugins:
+        plugins = {
+            "ignition-gazebo-physics-system":
+                "ignition::gazebo::systems::Physics",
+            "ignition-gazebo-sensors-system":
+                "ignition::gazebo::systems::Sensors",
+            "ignition-gazebo-user-commands-system":
+                "ignition::gazebo::systems::UserCommands",
+            "ignition-gazebo-scene-broadcaster-system":
+                "ignition::gazebo::systems::SceneBroadcaster"
+        }
+        for [key, value] in plugins.items():
+            plugin = sdf.Plugin(key, value)
+            world.add_plugin(plugin)
 
     body = mjcf_root.worldbody.body
 
