@@ -48,11 +48,11 @@ def mjcf_worldbody_to_sdf(mjcf_root, world):
 
     body = mjcf_root.worldbody.body
 
-    def iterate_bodies(input_body, model):
+    def iterate_bodies(input_body, model, body_parent_name=None):
         for body in input_body:
-            link = mjcf_geom_to_sdf(body)
+            link = mjcf_geom_to_sdf(body, body_parent_name=body_parent_name)
             model.add_link(link)
-            iterate_bodies(body.body, model)
+            iterate_bodies(body.body, model, body.name)
     iterate_bodies(body, model)
 
     world.add_model(model)
