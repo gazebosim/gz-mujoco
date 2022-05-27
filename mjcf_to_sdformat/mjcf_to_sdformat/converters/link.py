@@ -115,6 +115,8 @@ def mjcf_geom_to_sdf(body, body_parent_name=None):
             quat = Quaterniond()
             quat.set_from_2_axes(z, vec)
             return quat
+        else:
+            return su.get_pose_from_mjcf(geom).rot()
         return Quaterniond()
 
     def get_position(geom):
@@ -129,15 +131,15 @@ def mjcf_geom_to_sdf(body, body_parent_name=None):
             v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
             v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
             return (v1 + v2) / 2.0
-        return Vector3d()
+        else:
+            return su.get_pose_from_mjcf(geom).pos()
 
     def set_visual(geom):
         visual = mjcf_visual_to_sdf(geom)
         if visual is not None:
             visual.set_name(su.prefix_name_with_index(
                 "visual", geom.name, NUMBER_OF_VISUAL))
-            pose_form_to = Pose3d(get_position(geom), get_orientation(geom))
-            pose = pose_form_to * su.get_pose_from_mjcf(geom)
+            pose = Pose3d(get_position(geom), get_orientation(geom))
             visual.set_raw_pose(pose)
             link.add_visual(visual)
 
@@ -146,8 +148,7 @@ def mjcf_geom_to_sdf(body, body_parent_name=None):
         if col is not None:
             col.set_name(su.prefix_name_with_index(
                 "collision", geom.name, NUMBER_OF_COLLISION))
-            pose_form_to = Pose3d(get_position(geom), get_orientation(geom))
-            pose = pose_form_to * su.get_pose_from_mjcf(geom)
+            pose = Pose3d(get_position(geom), get_orientation(geom))
             col.set_raw_pose(pose)
             link.add_collision(col)
 

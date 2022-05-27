@@ -31,6 +31,13 @@ def mjcf_geom_to_sdf(geom):
     :return: The newly created SDFormat geometry.
     :rtype: sdf.Geometry
     """
+    if geom.root.default.geom is not None:
+        for k, v in geom.root.default.geom.get_attributes().items():
+            try:
+                geom.get_attributes()[k]
+            except KeyError:
+                geom.set_attributes(**{k: v})
+
     # TODO(ahcorde): we have to adjust the pose of the visual/collision to
     # match the longitudinal axis of the capsule/cylinder and its position
     # Related comment:
