@@ -36,10 +36,10 @@ class ModelTest(unittest.TestCase):
         mjcf_worldbody_to_sdf(mjcf_model, world)
 
         self.assertEqual("default", world.name())
-        self.assertEqual(1, world.model_count())
+        self.assertEqual(2, world.model_count())
         model = world.model_by_index(0)
         self.assertNotEqual(None, model)
-        self.assertEqual(3, model.link_count())
+        self.assertEqual(1, model.link_count())
         link_1 = model.link_by_index(0)
         self.assertEqual("link_0", link_1.name())
         self.assertEqual(1, link_1.visual_count())
@@ -62,7 +62,9 @@ class ModelTest(unittest.TestCase):
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_1.raw_pose().rot().euler()))
 
-        link_2 = model.link_by_index(1)
+        model = world.model_by_index(1)
+        self.assertNotEqual(None, model)
+        link_2 = model.link_by_index(0)
         self.assertEqual("link_1", link_2.name())
         self.assertEqual(1, link_2.visual_count())
         self.assertEqual(1, link_2.collision_count())
@@ -96,7 +98,7 @@ class ModelTest(unittest.TestCase):
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_2.raw_pose().rot().euler()))
 
-        link_3 = model.link_by_index(2)
+        link_3 = model.link_by_index(1)
         self.assertEqual("body2", link_3.name())
         self.assertEqual(1, link_3.visual_count())
         self.assertEqual(1, link_3.collision_count())
