@@ -118,7 +118,6 @@ def mjcf_geom_to_sdf(body, body_parent_name=None):
             return quat
         else:
             return su.get_pose_from_mjcf(geom).rot()
-        return Quaterniond()
 
     def get_position(geom):
         """
