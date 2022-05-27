@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import logging
+import sdformat as sdf
 import sdformat_mjcf_utils.sdf_utils as su
 
 
@@ -41,6 +42,10 @@ def add_sensor(body, sensor):
     if sensor.imu_sensor() is not None:
         return _add_imu(body.root.sensor, sensor.imu_sensor(),
                         site_unique_name)
+    elif sensor.force_torque_sensor() is not None:
+        return _add_force_torque(body.root.sensor,
+                                 sensor.force_torque_sensor(),
+                                 site_unique_name)
 
 
 def _check_noise_equality(noises):
@@ -53,6 +58,24 @@ def _check_noise_equality(noises):
     assert len(noises) > 0
     first_item = noises[0]
     return all(x == first_item for x in noises)
+
+
+class NoiseParameterMismatch (Exception):
+    pass
+
+
+def _convert_noise(sensor, component, sensor_name):
+    noises = [getattr(sensor, f"{component}_{axis}_noise")() for axis in "xyz"]
+
+    # TODO (azeey) Warn about unsupported noise parameters
+    # Check that all the noise parameters are the same for x, y, z axes.
+    if not _check_noise_equality(noises):
+        logging.warning(
+            f"Noise parameter mismatch for {component} of sensor named "
+            f"{sensor_name}. Conversion is supported only if the noise "
+            "parameters are identical.")
+    else:
+        return noises[0].std_dev()
 
 
 def _add_imu(sensor, imu, sensor_name):
@@ -83,33 +106,47 @@ def _add_imu(sensor, imu, sensor_name):
                        site=sensor_name,
                        name=accel_unique_name)
 
-    # TODO (azeey) Warn about unsupported noise parameters
-    accel_noises = [
-        imu.linear_acceleration_x_noise(),
-        imu.linear_acceleration_y_noise(),
-        imu.linear_acceleration_z_noise()
-    ]
-    # Check that all the noise parameters are the same for x, y, z axes.
-    if not _check_noise_equality(accel_noises):
-        logging.warning(
-            "Noise parameter mismatch for linear_acceleration of "
-            f"IMU named {sensor_name}. Conversion is supported only if the "
-            "noise parameters are identical.")
-    else:
-        accel.noise = accel_noises[0].std_dev()
+    accel.noise = _convert_noise(imu, "linear_acceleration", sensor_name)
 
     gyro = sensor.add("gyro", site=sensor_name, name=gyro_unique_name)
-    gyro_noises = [
-        imu.angular_velocity_x_noise(),
-        imu.angular_velocity_y_noise(),
-        imu.angular_velocity_z_noise()
-    ]
-    if not _check_noise_equality(gyro_noises):
-        logging.warning(
-            "Noise parameter mismatch for angular_velocity of "
-            f"IMU named {sensor_name}. Conversion is supported only if the "
-            "noise parameters are identical.")
-    else:
-        gyro.noise = gyro_noises[0].std_dev()
-
+    gyro.noise = _convert_noise(imu, "angular_velocity", sensor_name)
     return [accel, gyro]
+
+
+def _add_force_torque(sensor, ft_sensor, sensor_name):
+    """
+    Converts a Force Torque sensor from SDFormat to MJCF and add it to the
+    given MJCF sensor.
+
+    :param mjcf.Element sensor: The MJCF sensor to which the IMU is added.
+    :param sdformat.ForceTorque ft_sensor: The SDFormat Force/Torque Sensor to
+    be converted.
+    :param str sensor_name: The Name of the SDFormat <sensor> element that
+    contains the Force/Torque Sensor.
+    :return: Converted force and torque sensor elements.
+    :rtype: [mjcf.Element]
+    """
+
+    # Note <frame> is handled in add_joint
+    meas_dir = ft_sensor.measure_direction()
+    if meas_dir != sdf.ForceTorqueMeasureDirection.CHILD_TO_PARENT:
+        logging.warning(
+            "Only 'child_to_parent' is supported in <measure_direction> of "
+            f"Force/Torque sensor named {sensor_name}.")
+
+    force_unique_name = su.find_unique_name(sensor, "sensor",
+                                            f"force_{sensor_name}")
+    torque_unique_name = su.find_unique_name(sensor, "sensor",
+                                             f"torque_{sensor_name}")
+
+    force_sensor = sensor.add("force",
+                              site=sensor_name,
+                              name=force_unique_name)
+    force_sensor.noise = _convert_noise(ft_sensor, "force", sensor_name)
+
+    torque_sensor = sensor.add("torque",
+                               site=sensor_name,
+                               name=torque_unique_name)
+    torque_sensor.noise = _convert_noise(ft_sensor, "torque", sensor_name)
+
+    return [force_sensor, torque_sensor]

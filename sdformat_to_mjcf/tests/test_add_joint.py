@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import unittest
+import numpy as np
 from numpy.testing import assert_allclose
 from math import pi
 
@@ -223,6 +224,78 @@ class JointTest(helpers.TestCase):
         self.assertEqual("joint1", mj_joint.name)
         self.assertEqual("ball", mj_joint.type)
         assert_allclose(self.expected_pos, mj_joint.pos)
+
+    def test_force_torque_sensor(self):
+        joint = self.create_sdf_joint("joint1", sdf.JointType.FIXED,
+                                      self.test_pose)
+        sensor = sdf.Sensor()
+        sensor.set_name("ft_sensor")
+        sensor.set_type(sdf.Sensortype.FORCE_TORQUE)
+        sensor.set_raw_pose(self.test_pose)
+        ft_sensor = sdf.ForceTorque()
+        sensor.set_force_torque_sensor(ft_sensor)
+        joint.add_sensor(sensor)
+
+        add_joint(self.body, joint)
+
+        self.assertIsNotNone(self.mujoco.sensor)
+        mjcf_force_sensors = self.mujoco.sensor.get_children("force")
+        self.assertEqual(1, len(mjcf_force_sensors))
+        mjcf_torque_sensors = self.mujoco.sensor.get_children("torque")
+        self.assertEqual(1, len(mjcf_torque_sensors))
+
+    def test_force_torque_sensor_frames(self):
+        joint = self.create_sdf_joint("joint1", sdf.JointType.FIXED,
+                                      self.test_pose)
+        sensor = sdf.Sensor()
+        sensor.set_name("ft_sensor")
+        sensor.set_type(sdf.Sensortype.FORCE_TORQUE)
+
+        sensor_pos = [0, 0, 1]
+        sensor_euler = np.array([90, 0, 0])
+        sensor.set_raw_pose(Pose3d(*sensor_pos, *(np.radians(sensor_euler))))
+
+        parent_pos = [0, 2, 0]
+        parent_euler = [0, 0, 45]
+        child_pos = [1, 0, 0]
+        child_euler = [0, 90, 0]
+
+        joint_pos = self.expected_pos
+        FTF = sdf.ForceTorqueFrame
+        frames_with_expected_poses = (
+            (FTF.PARENT, joint_pos, parent_euler),
+            (FTF.CHILD, joint_pos, child_euler),
+            (FTF.SENSOR, joint_pos, sensor_euler)
+        )
+
+        force_torque = sdf.ForceTorque()
+
+        for frame, frame_pos, frame_euler in frames_with_expected_poses:
+            self.setUp()
+
+            self.body.pos = parent_pos
+            self.body.euler = parent_euler
+            child_body = self.body.add("body",
+                                       name="child_body",
+                                       pos=child_pos,
+                                       euler=child_euler)
+            joint.clear_sensors()
+
+            force_torque.set_frame(frame)
+            sensor.set_force_torque_sensor(force_torque)
+            joint.add_sensor(sensor)
+            add_joint(child_body, joint)
+
+            self.assertIsNotNone(self.mujoco.sensor)
+            mjcf_force_sensors = self.mujoco.sensor.get_children("force")
+            self.assertEqual(1, len(mjcf_force_sensors))
+            mjcf_torque_sensors = self.mujoco.sensor.get_children("torque")
+            self.assertEqual(1, len(mjcf_torque_sensors))
+
+            sensor_sites = child_body.get_children("site")
+            self.assertEqual(1, len(sensor_sites))
+            assert_allclose(frame_pos, sensor_sites[0].pos)
+            assert_allclose(frame_euler, sensor_sites[0].euler)
 
 
 if __name__ == "__main__":

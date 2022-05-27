@@ -140,5 +140,108 @@ class ImuSensorTest(helpers.TestCase):
         self.assertIsNone(mjcf_gyro.noise)
 
 
+class ForceTorqueSensorTest(helpers.TestCase):
+    test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
+    expected_pos = [1.0, 2.0, 3.0]
+    expected_euler = [90.0, 60.0, 45.0]
+
+    def setUp(self):
+        self.mujoco = mjcf.RootElement(model="test")
+        self.body = self.mujoco.worldbody.add("body", name="test_body")
+        self.sensor = sdf.Sensor()
+        self.sensor.set_name("ft_sensor")
+        self.sensor.set_type(sdf.Sensortype.FORCE_TORQUE)
+        self.sensor.set_raw_pose(self.test_pose)
+
+    def test_default(self):
+        ft_sensor = sdf.ForceTorque()
+        self.sensor.set_force_torque_sensor(ft_sensor)
+        mjcf_sensors = add_sensor(self.body, self.sensor)
+
+        self.assertIsNotNone(mjcf_sensors)
+        self.assertEqual(2, len(mjcf_sensors))
+        self.assertIsNotNone(self.mujoco.sensor)
+
+        mjcf_force_sensors = self.mujoco.sensor.get_children("force")
+        self.assertEqual(1, len(mjcf_force_sensors))
+        mjcf_torque_sensors = self.mujoco.sensor.get_children("torque")
+        self.assertEqual(1, len(mjcf_torque_sensors))
+
+        sensor_sites = self.body.get_children("site")
+        self.assertEqual(1, len(sensor_sites))
+        self.assertEqual(self.sensor.name(), sensor_sites[0].name)
+        assert_allclose(self.expected_pos, sensor_sites[0].pos)
+        assert_allclose(self.expected_euler, sensor_sites[0].euler)
+
+        mjcf_force_sensor, mjcf_torque_sensor = mjcf_sensors
+        self.assertAlmostEqual(f"force_{self.sensor.name()}",
+                               mjcf_force_sensor.name)
+        self.assertAlmostEqual(self.sensor.name(), mjcf_force_sensor.site)
+
+        self.assertAlmostEqual(f"torque_{self.sensor.name()}",
+                               mjcf_torque_sensor.name)
+        self.assertAlmostEqual(self.sensor.name(), mjcf_torque_sensor.site)
+
+    def test_noise(self):
+        force_torque = sdf.ForceTorque()
+        force_noise = sdf.Noise()
+        force_noise.set_type(sdf.NoiseType.GAUSSIAN)
+        force_noise.set_std_dev(0.2)
+
+        torque_noise = sdf.Noise()
+        torque_noise.set_type(sdf.NoiseType.GAUSSIAN)
+        torque_noise.set_std_dev(0.02)
+
+        force_torque.set_force_x_noise(force_noise)
+        force_torque.set_force_y_noise(force_noise)
+        force_torque.set_force_z_noise(force_noise)
+
+        force_torque.set_torque_x_noise(torque_noise)
+        force_torque.set_torque_y_noise(torque_noise)
+        force_torque.set_torque_z_noise(torque_noise)
+        self.sensor.set_force_torque_sensor(force_torque)
+        mjcf_sensors = add_sensor(self.body, self.sensor)
+
+        self.assertIsNotNone(mjcf_sensors)
+        self.assertEqual(2, len(mjcf_sensors))
+        self.assertIsNotNone(self.mujoco.sensor)
+
+        mjcf_force_sensors = self.mujoco.sensor.get_children("force")
+        self.assertEqual(1, len(mjcf_force_sensors))
+        mjcf_torque_sensors = self.mujoco.sensor.get_children("torque")
+        self.assertEqual(1, len(mjcf_torque_sensors))
+
+        sensor_sites = self.body.get_children("site")
+        self.assertEqual(1, len(sensor_sites))
+        self.assertEqual(self.sensor.name(), sensor_sites[0].name)
+        assert_allclose(self.expected_pos, sensor_sites[0].pos)
+        assert_allclose(self.expected_euler, sensor_sites[0].euler)
+
+        mjcf_force_sensor, mjcf_torque_sensor = mjcf_sensors
+        self.assertAlmostEqual(f"force_{self.sensor.name()}",
+                               mjcf_force_sensor.name)
+        self.assertAlmostEqual(self.sensor.name(), mjcf_force_sensor.site)
+        self.assertAlmostEqual(force_noise.std_dev(), mjcf_force_sensor.noise)
+
+        self.assertAlmostEqual(f"torque_{self.sensor.name()}",
+                               mjcf_torque_sensor.name)
+        self.assertAlmostEqual(self.sensor.name(), mjcf_torque_sensor.site)
+        self.assertAlmostEqual(torque_noise.std_dev(),
+                               mjcf_torque_sensor.noise)
+
+    def test_unsupported_measure_direction(self):
+        force_torque = sdf.ForceTorque()
+        force_torque.set_measure_direction(
+            sdf.ForceTorqueMeasureDirection.PARENT_TO_CHILD)
+
+        self.sensor.set_force_torque_sensor(force_torque)
+        with self.assertLogs(level="WARN") as cm:
+            add_sensor(self.body, self.sensor)
+            self.assertEqual(1, len(cm.output))
+            self.assertIn(
+                "Only 'child_to_parent' is supported in <measure_direction>"
+                " of Force/Torque sensor", cm.output[0])
+
+
 if __name__ == "__main__":
     unittest.main()
