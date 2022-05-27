@@ -17,6 +17,8 @@ from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 
 from mjcf_to_sdformat.converters.sensor import mjcf_camera_sensor_to_sdf
 
+import sdformat_mjcf_utils.sdf_utils as su
+
 import sdformat as sdf
 
 
@@ -38,7 +40,14 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world, export_world_plugins=True):
         light_sdf = mjcf_light_to_sdf(light)
         world.add_light(light_sdf)
 
+    model_static = sdf.Model()
     link = mjcf_geom_to_sdf(mjcf_root.worldbody, physics)
+    model_static.set_name(su.find_unique_name(
+        mjcf_root.worldbody, "geom", "static"))
+    model_static.add_link(link)
+    model_static.set_static(True)
+    world.add_model(model_static)
+
     include_sensor_plugins = False
 
     for camera in mjcf_root.worldbody.camera:
@@ -46,7 +55,6 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world, export_world_plugins=True):
         if sensor is not None:
             link.add_sensor(sensor)
             include_sensor_plugins = True
-    model.add_link(link)
 
     if include_sensor_plugins and export_world_plugins:
         plugins = {
