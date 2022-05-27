@@ -17,6 +17,8 @@ import math
 from numpy.testing import assert_allclose
 from dm_control import mjcf
 
+from ignition.math import Color, Vector3d
+
 import sdformat as sdf
 
 from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
@@ -130,6 +132,22 @@ class ModelTest(unittest.TestCase):
         self.assertEqual(1, link_3.visual_count())
         self.assertEqual(1, link_3.collision_count())
 
+        self.assertEqual(1, link_3.light_count())
+        light_link = link_3.light_by_index(0)
+        self.assertNotEqual(None, light_link)
+        self.assertEqual(0, light_link.constant_attenuation_factor())
+        self.assertEqual(0.01, light_link.linear_attenuation_factor())
+        self.assertEqual(0.001, light_link.quadratic_attenuation_factor())
+        self.assertTrue(light_link.cast_shadows())
+        self.assertEqual(Color(0.8, 0.8, 0.8), light_link.diffuse())
+        self.assertEqual(Color(0.2, 0.2, 0.2), light_link.specular())
+        self.assertEqual(sdf.LightType.DIRECTIONAL, light_link.type())
+        self.assertEqual(Vector3d(0.5, 0.2, 0.0), light_link.direction())
+        assert_allclose([0, 0, 10],
+                        su.vec3d_to_list(light_link.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(light_link.raw_pose().rot().euler()))
+
         mass_matrix = link_3.inertial().mass_matrix()
         self.assertEqual(2, mass_matrix.mass())
         self.assertEqual([1, 2, 3],
@@ -159,6 +177,22 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(collision_3.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_3.raw_pose().rot().euler()))
+
+        self.assertEqual(1, world.light_count())
+        light_1 = world.light_by_index(0)
+        self.assertNotEqual(None, light_1)
+        self.assertEqual(0, light_1.constant_attenuation_factor())
+        self.assertEqual(0.01, light_1.linear_attenuation_factor())
+        self.assertEqual(0.001, light_1.quadratic_attenuation_factor())
+        self.assertFalse(light_1.cast_shadows())
+        self.assertEqual(Color(0.5, 0.5, 0.5), light_1.diffuse())
+        self.assertEqual(Color(0.2, 0.2, 0.2), light_1.specular())
+        self.assertEqual(sdf.LightType.SPOT, light_1.type())
+        self.assertEqual(Vector3d(0, 0, -1), light_1.direction())
+        assert_allclose([0, 0, 3],
+                        su.vec3d_to_list(light_1.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(light_1.raw_pose().rot().euler()))
 
 
 if __name__ == "__main__":

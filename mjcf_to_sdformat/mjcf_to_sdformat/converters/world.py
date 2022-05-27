@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from mjcf_to_sdformat.converters.link import mjcf_geom_to_sdf
+from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 
 import sdformat as sdf
 
@@ -29,6 +30,10 @@ def mjcf_worldbody_to_sdf(mjcf_root, world):
         model.set_name(mjcf_root.model)
     else:
         model.set_name("model")
+
+    for light in mjcf_root.worldbody.light:
+        light_sdf = mjcf_light_to_sdf(light)
+        world.add_light(light_sdf)
 
     link = mjcf_geom_to_sdf(mjcf_root.worldbody)
     model.add_link(link)
