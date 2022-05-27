@@ -83,7 +83,12 @@ class KinematicHierarchy:
         for li in range(model.link_count()):
             node = LinkNode(model.link_by_index(li), self.world_node)
             link_to_node_dict[node.link] = node
-            self.world_node.add_child(node, None)
+            if model.static():
+                joint = sdf.Joint()
+                joint.set_type(sdf.JointType.FIXED)
+            else:
+                joint = None
+            self.world_node.add_child(node, joint)
 
         for ji in range(model.joint_count()):
             joint = model.joint_by_index(ji)
