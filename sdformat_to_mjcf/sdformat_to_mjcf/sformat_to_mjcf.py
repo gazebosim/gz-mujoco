@@ -34,6 +34,7 @@ def sdformat_file_to_mjcf(input_file, output_file):
         return 1
     else:
         mjcf_root = add_root(root)
-        export_with_assets(mjcf_root, os.path.dirname(output_file),
+        export_with_assets(mjcf_root,
+                           os.path.dirname(os.path.abspath(output_file)),
                            output_file)
         return 0

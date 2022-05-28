@@ -39,8 +39,7 @@ def add_model(mjcf_root, model):
     def convert_node(body, node):
         child_body = add_link(body,
                               node.link,
-                              node.parent_node.link.name(),
-                              model.name())
+                              node.parent_node.link.name())
 
         add_joint(child_body, node.joint)
         # Geoms added to bodies attached to the worldbody without a
