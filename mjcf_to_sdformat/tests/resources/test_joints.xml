@@ -1,10 +1,10 @@
 <mujoco model="two-link planar reacher">
   <default>
-    <joint type="hinge" axis="0 0 1" damping="0.01" stiffness="10" limited="false"/>
+    <joint type="hinge" axis="0 0 1" limited="false"/>
     <default class="joint_class1">
-      <joint type="slide" range="-10 10"/>
+      <joint type="slide" range="-10 10" stiffness="10" damping="0.01"/>
       <default class="joint_class2">
-        <joint type="slide" axis="1 0 0"/>
+        <joint type="slide" axis="1 0 0" pos="0 1 1"/>
       </default>
     </default>
   </default>
@@ -14,6 +14,7 @@
     <body name="body1">
       <geom name="geom1" type="capsule" fromto="0 0 0 0.12 0 0" size=".01"/>
       <joint name="shoulder"/>
+      <joint axis="0 1 0" limited="true"/>
       <body name="body2">
         <geom name="geom2" type="capsule" fromto="0 0 0 0.12 0 0" size=".1"/>
         <geom name="geom3" type="capsule" fromto="0 0 0 0.12 0 0" size=".1"/>

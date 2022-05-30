@@ -14,6 +14,8 @@
 
 import unittest
 
+from ignition.math import Vector3d
+
 from dm_control import mjcf
 
 from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
@@ -45,24 +47,46 @@ class DefaultsTest(unittest.TestCase):
         self.assertNotEqual(None, model)
         self.assertEqual("two-link planar reacher", model.name())
 
-        self.assertEqual(3, model.joint_count())
+        self.assertEqual(4, model.joint_count())
         joint = model.joint_by_index(0)
         self.assertNotEqual(None, joint)
         self.assertEqual(sdf.JointType.REVOLUTE, joint.type())
         self.assertEqual("world", joint.parent_link_name())
         self.assertEqual("body1", joint.child_link_name())
+        self.assertNotEqual(None, joint.axis(0))
+        self.assertEqual(Vector3d(0, 0, 1), joint.axis(0).xyz())
+        self.assertEqual(0, joint.axis(0).damping())
+        self.assertEqual(0, joint.axis(0).stiffness())
 
         joint = model.joint_by_index(1)
         self.assertNotEqual(None, joint)
-        self.assertEqual(sdf.JointType.PRISMATIC, joint.type())
-        self.assertEqual("body1", joint.parent_link_name())
-        self.assertEqual("body2", joint.child_link_name())
+        self.assertEqual(sdf.JointType.REVOLUTE, joint.type())
+        self.assertEqual("world", joint.parent_link_name())
+        self.assertEqual("body1", joint.child_link_name())
+        self.assertNotEqual(None, joint.axis(0))
+        self.assertEqual(Vector3d(0, 1, 0), joint.axis(0).xyz())
+        self.assertEqual(0, joint.axis(0).damping())
+        self.assertEqual(0, joint.axis(0).stiffness())
 
         joint = model.joint_by_index(2)
         self.assertNotEqual(None, joint)
         self.assertEqual(sdf.JointType.PRISMATIC, joint.type())
+        self.assertEqual("body1", joint.parent_link_name())
+        self.assertEqual("body2", joint.child_link_name())
+        self.assertNotEqual(None, joint.axis(0))
+        self.assertEqual(Vector3d(0, 0, 1), joint.axis(0).xyz())
+        self.assertEqual(0, joint.axis(0).damping())
+        self.assertEqual(0, joint.axis(0).stiffness())
+
+        joint = model.joint_by_index(3)
+        self.assertNotEqual(None, joint)
+        self.assertEqual(sdf.JointType.PRISMATIC, joint.type())
         self.assertEqual("body2", joint.parent_link_name())
         self.assertEqual("body3", joint.child_link_name())
+        self.assertNotEqual(None, joint.axis(0))
+        self.assertEqual(Vector3d(1, 0, 0), joint.axis(0).xyz())
+        self.assertEqual(0.01, joint.axis(0).damping())
+        self.assertEqual(10, joint.axis(0).stiffness())
 
 
 if __name__ == "__main__":
