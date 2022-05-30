@@ -123,9 +123,9 @@ def mjcf_joint_to_sdf(joint, parent_name, child_name, default_classes=None):
     joint_sdf.set_child_link_name(child_name)
 
     if joint.axis is not None:
-        errors = joint_axis_sdf.set_xyz(Vector3d(joint.axis[0],
-                                                 joint.axis[1],
-                                                 joint.axis[2]))
+        joint_axis_sdf.set_xyz(Vector3d(joint.axis[0],
+                                        joint.axis[1],
+                                        joint.axis[2]))
     joint_sdf.set_axis(0, joint_axis_sdf)
     if joint.type == "hinge":
         joint_sdf.set_type(sdf.JointType.REVOLUTE)
