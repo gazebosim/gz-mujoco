@@ -132,9 +132,9 @@ def mjcf_joint_to_sdf(joint, parent_name, child_name, default_classes=None):
         return joint_sdf
     if joint.type == "slide":
         joint_sdf.set_type(sdf.JointType.PRISMATIC)
-        errors = joint_axis_sdf.set_xyz(Vector3d(joint.axis[0],
-                                                 joint.axis[1],
-                                                 joint.axis[2]))
+        joint_axis_sdf.set_xyz(Vector3d(joint.axis[0],
+                                        joint.axis[1],
+                                        joint.axis[2]))
         return joint_sdf
     else:
         print("Not able to process this type of joint ", joint.type)
