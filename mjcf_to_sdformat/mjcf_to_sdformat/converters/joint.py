@@ -89,7 +89,7 @@ def mjcf_joint_to_sdf(joint, parent_name, child_name, default_classes=None):
     joint_sdf = sdf.Joint()
     joint_axis_sdf = sdf.JointAxis()
     # default value
-    errors = joint_axis_sdf.set_xyz(Vector3d(0, 0, 1))
+    joint_axis_sdf.set_xyz(Vector3d(0, 0, 1))
 
     if joint.stiffness is not None:
         joint_axis_sdf.set_stiffness(joint.stiffness)
