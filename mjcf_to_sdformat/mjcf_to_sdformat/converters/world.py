@@ -48,11 +48,24 @@ def mjcf_worldbody_to_sdf(mjcf_root, world):
 
     body = mjcf_root.worldbody.body
 
-    def iterate_bodies(input_body, model, body_parent_name=None):
+    def iterate_bodies(input_body,
+                       model,
+                       body_parent_name=None,
+                       default_classes=[]):
         for body in input_body:
-            link = mjcf_geom_to_sdf(body, body_parent_name=body_parent_name)
+            try:
+                if body.childclass is not None:
+                    default_classes = default_classes + [body.childclass]
+            except AttributeError:
+                pass
+            link = mjcf_geom_to_sdf(body,
+                                    body_parent_name=body_parent_name,
+                                    default_classes=default_classes)
             model.add_link(link)
-            iterate_bodies(body.body, model, body.name)
+            iterate_bodies(body.body,
+                           model,
+                           body.name,
+                           default_classes=default_classes)
     iterate_bodies(body, model)
 
     world.add_model(model)
