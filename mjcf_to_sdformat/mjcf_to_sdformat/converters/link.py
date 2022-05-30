@@ -29,7 +29,33 @@ COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
 
 
-def mjcf_geom_to_sdf(body, physics, body_parent_name=None):
+def _set_defaults(geom, default_classes=None):
+    if geom.root.default.geom is not None:
+        for k, v in geom.root.default.geom.get_attributes().items():
+            try:
+                geom.get_attributes()[k]
+            except KeyError:
+                geom.set_attributes(**{k: v})
+
+    if default_classes is not None:
+        for default_class in default_classes:
+            if default_class.geom is not None:
+                for k, v in default_class.geom.get_attributes().items():
+                    try:
+                        geom.get_attributes()[k]
+                    except:
+                        geom.set_attributes(**{k:v})
+    if geom.dclass is not None:
+        if geom.dclass.geom is not None:
+            for k, v in geom.dclass.geom.get_attributes().items():
+                try:
+                    geom.get_attributes()[k]
+                    geom.set_attributes(**{k:v})
+                except:
+                    geom.set_attributes(**{k:v})
+    return geom
+
+def mjcf_geom_to_sdf(body, physics, body_parent_name=None, default_class=None):
     """
     Converts an MJCF body to a SDFormat.
 
@@ -177,6 +203,7 @@ def mjcf_geom_to_sdf(body, physics, body_parent_name=None):
             link.add_collision(col)
 
     for geom in body.geom:
+        geom = _set_defaults(geom, default_class)
         # If the group is not defined then visual and collision is added
         if geom.group is None:
             set_visual(geom)

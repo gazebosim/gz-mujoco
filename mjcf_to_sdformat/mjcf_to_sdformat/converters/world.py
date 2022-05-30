@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ignition.math import Vector3d
+
+from mjcf_to_sdformat.converters.joint import mjcf_joint_to_sdf, add_fix_joint
 from mjcf_to_sdformat.converters.link import mjcf_geom_to_sdf
 from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 
@@ -73,11 +76,42 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world, export_world_plugins=True):
 
     body = mjcf_root.worldbody.body
 
-    def iterate_bodies(input_body, model, body_parent_name=None):
+    if mjcf_root.option is not None:
+        if mjcf_root.option.flag.gravity == "disable":
+            world.set_gravity(Vector3d(0, 0, 0))
+
+    default_class = None
+    def iterate_bodies(input_body,
+                       model,
+                       body_parent_name=None,
+                       default_class=[]):
+
         for body in input_body:
-            link = mjcf_geom_to_sdf(body, physics, body_parent_name=body_parent_name)
+            try:
+                if body.childclass is not None:
+                    default_class = default_class + [body.childclass]
+            except AttributeError:
+                pass
+
+            link = mjcf_geom_to_sdf(
+                body,
+                physics,
+                body_parent_name=body_parent_name,
+                default_class=default_class)
+            for joint in body.joint:
+                joint_sdf = mjcf_joint_to_sdf(
+                    joint, body_parent_name, body.name, default_classes=default_class)
+                if joint_sdf is not None:
+                    model.add_joint(joint_sdf)
+            if len(body.joint) == 0 and body.freejoint is None:
+                joint_sdf = add_fix_joint(body_parent_name, body.name)
+                model.add_joint(joint_sdf)
+
             model.add_link(link)
-            iterate_bodies(body.body, model, body.name)
+            iterate_bodies(body.body,
+                           model,
+                           body.name,
+                           default_class=default_class)
     iterate_bodies(body, model)
 
     world.add_model(model)

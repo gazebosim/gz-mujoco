@@ -43,7 +43,6 @@ def mjcf_material_to_sdf(geom):
                 pbr = sdf.Pbr()
                 workflow = sdf.PbrWorkflow()
                 workflow.set_type(sdf.PbrWorkflowType.METAL)
-                print(geom.material.texture.file.get_vfs_filename())
                 workflow.set_albedo_map(
                     geom.material.texture.file.get_vfs_filename())
                 pbr.set_workflow(workflow.type(), workflow)
