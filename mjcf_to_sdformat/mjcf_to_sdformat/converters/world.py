@@ -53,11 +53,8 @@ def mjcf_worldbody_to_sdf(mjcf_root, world):
                        body_parent_name=None,
                        default_classes=[]):
         for body in input_body:
-            try:
-                if body.childclass is not None:
-                    default_classes = default_classes + [body.childclass]
-            except AttributeError:
-                pass
+            if body.childclass is not None:
+                default_classes = default_classes + [body.childclass]
             link = mjcf_geom_to_sdf(body,
                                     body_parent_name=body_parent_name,
                                     default_classes=default_classes)
