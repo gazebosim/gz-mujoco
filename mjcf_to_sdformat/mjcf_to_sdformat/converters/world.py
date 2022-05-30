@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from mjcf_to_sdformat.converters.joint import mjcf_joint_to_sdf, add_fix_joint
 from mjcf_to_sdformat.converters.link import mjcf_geom_to_sdf
 from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 
@@ -58,6 +59,17 @@ def mjcf_worldbody_to_sdf(mjcf_root, world):
             link = mjcf_geom_to_sdf(body,
                                     body_parent_name=body_parent_name,
                                     default_classes=default_classes)
+            for joint in body.joint:
+                joint_sdf = mjcf_joint_to_sdf(joint,
+                                              body_parent_name,
+                                              body.name,
+                                              default_classes=default_classes)
+                if joint_sdf is not None:
+                    model.add_joint(joint_sdf)
+            if len(body.joint) == 0 and body.freejoint is None:
+                joint_sdf = add_fix_joint(body_parent_name, body.name)
+                model.add_joint(joint_sdf)
+
             model.add_link(link)
             iterate_bodies(body.body,
                            model,

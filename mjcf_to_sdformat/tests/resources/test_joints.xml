@@ -1,0 +1,29 @@
+<mujoco model="two-link planar reacher">
+  <default>
+    <joint type="hinge" axis="0 0 1" damping="0.01" stiffness="10" limited="false"/>
+    <default class="joint_class1">
+      <joint type="slide" range="-10 10"/>
+      <default class="joint_class2">
+        <joint type="slide" axis="1 0 0"/>
+      </default>
+    </default>
+  </default>
+
+  <worldbody>
+    <geom name="ground" type="plane" pos="0 0 0" size=".3 .3 10" material="grid"/>
+    <body name="body1">
+      <geom name="geom1" type="capsule" fromto="0 0 0 0.12 0 0" size=".01"/>
+      <joint name="shoulder"/>
+      <body name="body2">
+        <geom name="geom2" type="capsule" fromto="0 0 0 0.12 0 0" size=".1"/>
+        <geom name="geom3" type="capsule" fromto="0 0 0 0.12 0 0" size=".1"/>
+        <joint type="slide" axis="0 0 1" limited="true" range="-5 5"/>
+        <body name="body3" childclass="joint_class1">
+          <geom name="geom4" type="capsule" fromto="0 0 0 0.12 0 0" size=".1"/>
+          <joint type="slide" limited="true" range="-7 7" class="joint_class2"/>
+          <joint type="ball"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>

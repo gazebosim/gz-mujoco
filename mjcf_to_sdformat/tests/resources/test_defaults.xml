@@ -3,9 +3,9 @@
     <geom rgba="0 1 0 1"/>
     <default class="walker">
       <geom material="self" type="capsule"/>
-        <default class="class_arm">
-          <geom size="0.01 0.1" solimp=".9 .99 .003" solref=".015 1"/>
-        </default>
+      <default class="class_arm">
+        <geom size="0.01 0.1" solimp=".9 .99 .003" solref=".015 1"/>
+      </default>
     </default>
   </default>
 
