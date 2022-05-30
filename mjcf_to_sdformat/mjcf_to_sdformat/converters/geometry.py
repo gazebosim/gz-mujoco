@@ -23,7 +23,7 @@ VISUAL_NUMBER = 0
 COLLISION_NUMBER = 0
 
 
-def mjcf_geom_to_sdf(geom):
+def mjcf_body_to_sdf(geom):
     """
     Converts an MJCF geom to a SDFormat geometry.
 
@@ -104,7 +104,7 @@ def mjcf_visual_to_sdf(geom):
         global VISUAL_NUMBER
         visual.set_name("visual_" + str(VISUAL_NUMBER))
         VISUAL_NUMBER = VISUAL_NUMBER + 1
-    sdf_geometry = mjcf_geom_to_sdf(geom)
+    sdf_geometry = mjcf_body_to_sdf(geom)
     if sdf_geometry is not None:
         visual.set_geometry(sdf_geometry)
     else:
@@ -128,7 +128,7 @@ def mjcf_collision_to_sdf(geom):
         global COLLISION_NUMBER
         col.set_name("collision_" + str(COLLISION_NUMBER))
         COLLISION_NUMBER = COLLISION_NUMBER + 1
-    sdf_geometry = mjcf_geom_to_sdf(geom)
+    sdf_geometry = mjcf_body_to_sdf(geom)
     if sdf_geometry is not None:
         col.set_geometry(sdf_geometry)
     else:

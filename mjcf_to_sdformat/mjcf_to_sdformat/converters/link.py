@@ -27,7 +27,7 @@ COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
 
 
-def mjcf_geom_to_sdf(body, physics, body_parent_name=None):
+def mjcf_body_to_sdf(body, physics, body_parent_name=None):
     """
     Converts an MJCF body to a SDFormat.
 
@@ -107,9 +107,10 @@ def mjcf_geom_to_sdf(body, physics, body_parent_name=None):
                 Pose3d(physics.named.model.body_ipos[body.name][0],
                        physics.named.model.body_ipos[body.name][1],
                        physics.named.model.body_ipos[body.name][2],
-                       0,
-                       0,
-                       0))
+                       physics.named.model.body_iquat[body.name][0],
+                       physics.named.model.body_iquat[body.name][1],
+                       physics.named.model.body_iquat[body.name][2],
+                       physics.named.model.body_iquat[body.name][3]))
             link.set_inertial(inertial)
         except AttributeError:
             pass
