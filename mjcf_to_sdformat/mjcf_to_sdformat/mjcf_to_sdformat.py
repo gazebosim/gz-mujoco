@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from dm_control import mjcf
+from dm_control import mujoco
 
 from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
 
@@ -26,11 +27,13 @@ def mjcf_file_to_sdformat(input_file, output_file):
     :param str output_file: Path to output SDFormat file.
     """
     mjcf_model = mjcf.from_path(input_file)
+    physics = mujoco.Physics.from_xml_path(input_file)
+
     root = sdf.Root()
     world = sdf.World()
     world.set_name("default")
 
-    mjcf_worldbody_to_sdf(mjcf_model, world)
+    mjcf_worldbody_to_sdf(mjcf_model, physics, world)
 
     root.add_world(world)
 
