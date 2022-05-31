@@ -98,7 +98,7 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None):
     else:
         try:
             body_inertia = physics.named.model.body_inertia[body.name]
-            inertia_pose = physics.named.model.body_ipos[body.name]
+            inertia_pos = physics.named.model.body_ipos[body.name]
             inertia_quat = physics.named.model.body_iquat[body.name]
             inertial = Inertiald(
                 MassMatrix3d(physics.named.model.body_mass[body.name],
@@ -106,7 +106,7 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None):
                                       body_inertia[1],
                                       body_inertia[2]),
                              Vector3d(0, 0, 0)),
-                Pose3d(su.list_to_vec3d(inertia_pose),
+                Pose3d(su.list_to_vec3d(inertia_pos),
                        su.wxyz_list_to_quat(inertia_quat)))
             link.set_inertial(inertial)
         except AttributeError:
