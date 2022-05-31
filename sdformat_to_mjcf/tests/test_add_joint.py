@@ -22,6 +22,7 @@ from ignition.math import Pose3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_to_mjcf.converters.joint import add_joint
+from sdformat_to_mjcf.sdf_kinematics import FreeJoint, StaticFixedJoint
 import sdformat_mjcf_utils.sdf_utils as su
 from tests import helpers
 
@@ -63,22 +64,26 @@ class JointTest(helpers.TestCase):
         return joint
 
     def test_free_joint(self):
-        mj_joint = add_joint(self.body, None)
+        mj_joint = add_joint(self.body, FreeJoint())
         self.assertIsNotNone(mj_joint)
         self.assertEqual("freejoint", mj_joint.tag)
 
     def test_multiple_free_joints(self):
-        mj_joint1 = add_joint(self.body, None)
+        mj_joint1 = add_joint(self.body, FreeJoint())
         self.assertIsNotNone(mj_joint1)
         # Add another body with a free joint to worldbody
         body2 = self.mujoco.worldbody.add("body", name="test_body")
-        mj_joint2 = add_joint(body2, None)
+        mj_joint2 = add_joint(body2, FreeJoint())
         self.assertIsNotNone(mj_joint2)
 
     def test_fixed_joint(self):
         joint = sdf.Joint()
         joint.set_type(sdf.JointType.FIXED)
         mj_joint = add_joint(self.body, joint)
+        self.assertIsNone(mj_joint)
+
+    def test_static_fixed_joint(self):
+        mj_joint = add_joint(self.body, StaticFixedJoint())
         self.assertIsNone(mj_joint)
 
     def test_revolute_joint(self):

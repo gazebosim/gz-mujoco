@@ -97,6 +97,16 @@ def quat_to_euler_list(quat):
     return [math.degrees(val) for val in vec3d_to_list(quat.euler())]
 
 
+def wxyz_list_to_quat(quat):
+    """
+    Convert a Quaternion list defined as wxyz to a gz.math.Quateriond.
+    :param gz.math.Quaterniond quat: Quaternion defined as a list.
+    :return: Return a Quaterniond
+    :rtype: gz.math.Quaterniond
+    """
+    return Quaterniond(quat[0], quat[1], quat[2], quat[3])
+
+
 def get_pose_from_mjcf(element):
     """
     Get the pose from a MJCF element

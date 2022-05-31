@@ -1,0 +1,9 @@
+<mujoco>
+  <option>
+    <flag gravity="disable"/>
+  </option>
+
+  <worldbody>
+    <geom type="plane" size="1 1 0.1" rgba=".9 0 0 1"/>
+  </worldbody>
+</mujoco>

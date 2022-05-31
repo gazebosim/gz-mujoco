@@ -1,4 +1,6 @@
 <mujoco>
+   <option gravity="0 0 -9.8000000000000007" wind="2 1 7.6" magnetic="5.5644999999999998e-06 2.2875799999999999e-05 -4.2388400000000002e-05"/>
+
    <worldbody>
       <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1" cutoff="45" exponent="10"
              attenuation="0.0 0.01 0.001" specular="0.2 0.2 0.2"/>
@@ -8,7 +10,7 @@
          <joint type="free"/>
          <inertial pos="0 1 0" mass="2" fullinertia="2 2 2 0 0 0"/>
          <geom type="box" pos="0.1 0.3 0.2" size=".1 .2 .3" rgba="0 .9 0 1"/>
-         <geom name="cylinder" type="capsule" pos="1 2 3" mass="1" fromto="0 -0.06 0 0 0.06 0" size="0.05"/>
+         <geom name="capsule" type="capsule" mass="1" fromto="0 -0.06 0 0 0.06 0" size="0.05"/>
       </body>
       <body pos="0 1 0" name="body2" quat="0.5 0 0.5 0">
          <joint type="free"/>
@@ -18,7 +20,7 @@
          <body pos="0 0 1" name="body3">
            <geom type="box" name="visual_body3" pos="0 0 0" size=".1 .2 .3" rgba="0 .9 0 1"/>
          </body>
-         <light name="directional" class="/" directional="true" castshadow="true" pos="0 0 10"
+         <light name="directional" directional="true" castshadow="true" pos="0 0 10"
                 dir="0.5 0.2 -0.0" attenuation="0.0 0.01 0.001" diffuse="0.8 0.8 0.8"
                 specular="0.2 0.2 0.2" active="false"/>
       </body>
