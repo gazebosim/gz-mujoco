@@ -17,7 +17,7 @@ import sdformat_mjcf_utils.sdf_utils as su
 
 
 class StaticFixedJoint(sdf.Joint):
-    """Joint that represents fixed joints created for connect links in static
+    """Joint that represents fixed joints created to connect links in static
     models to the worldbody."""
     def __init__(self):
         super().__init__()

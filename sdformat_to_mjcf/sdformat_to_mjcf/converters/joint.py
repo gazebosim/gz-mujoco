@@ -69,6 +69,9 @@ def add_joint(body, joint):
         return body.add("freejoint")
 
     if isinstance(joint, StaticFixedJoint):
+        # The pose of this joint can be chosen arbitrarily since the purpose
+        # of the joint is to anchor static objects to the world. Any choice of
+        # poses will have the same effect, so we choose the identity pose here.
         pose = Pose3d()
     else:
         pose = su.graph_resolver.resolve_pose(joint.semantic_pose())
