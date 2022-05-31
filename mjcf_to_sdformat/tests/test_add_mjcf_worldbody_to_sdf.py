@@ -37,6 +37,11 @@ class ModelTest(unittest.TestCase):
 
         mjcf_worldbody_to_sdf(mjcf_model, world)
 
+        self.assertEqual(Vector3d(0, 0, -9.8), world.gravity())
+        self.assertEqual(Vector3d(0.5645e-06, 2.28758e-05, -4.23884e-05),
+                         world.magnetic_field())
+        self.assertEqual(Vector3d(2, 1, 7.6), world.wind_linear_velocity())
+
         self.assertEqual("default", world.name())
         self.assertEqual(2, world.model_count())
         model = world.model_by_index(0)
@@ -221,6 +226,16 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(light_1.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(light_1.raw_pose().rot().euler()))
+
+    def test_option_no_gravity(self):
+        mjcf_model = mjcf.from_path(
+            str(TEST_RESOURCES_DIR / "test_no_gravity.xml"))
+
+        world = sdf.World()
+        world.set_name("default")
+
+        mjcf_worldbody_to_sdf(mjcf_model, world)
+        self.assertEqual(Vector3d(0, 0, 0), world.gravity())
 
 
 if __name__ == "__main__":
