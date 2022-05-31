@@ -127,10 +127,7 @@ def get_pose_from_mjcf(element):
             quat.set_from_2_axes(z, list_to_vec3d(element.zaxis))
             euler = vec3d_to_list(quat.euler())
         if element.quat is not None:
-            euler = vec3d_to_list(Quaterniond(element.quat[0],
-                                              element.quat[1],
-                                              element.quat[2],
-                                              element.quat[3]).euler())
+            euler = vec3d_to_list(wxyz_list_to_quat(element.quat).euler())
     except AttributeError:
         pass
     return Pose3d(list_to_vec3d(pos),
