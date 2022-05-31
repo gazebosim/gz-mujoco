@@ -1,6 +1,6 @@
 <mujoco model="two-link planar reacher">
   <default>
-    <joint type="hinge" axis="0 0 1" limited="false"/>
+    <joint axis="0 0 1" limited="false"/>
     <default class="joint_class1">
       <joint type="slide" range="-10 10" stiffness="10" damping="0.01"/>
       <default class="joint_class2">
