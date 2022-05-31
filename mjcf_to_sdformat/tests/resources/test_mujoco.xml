@@ -1,4 +1,6 @@
 <mujoco>
+   <option gravity="0 0 -9.8000000000000007" wind="2 1 7.6" magnetic="5.5644999999999998e-06 2.2875799999999999e-05 -4.2388400000000002e-05"/>
+
    <worldbody>
       <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1" cutoff="45" exponent="10"
              attenuation="0.0 0.01 0.001" specular="0.2 0.2 0.2"/>
