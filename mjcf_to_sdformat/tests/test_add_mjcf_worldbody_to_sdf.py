@@ -230,13 +230,14 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(light_1.raw_pose().rot().euler()))
 
     def test_option_no_gravity(self):
-        mjcf_model = mjcf.from_path(
-            str(TEST_RESOURCES_DIR / "test_no_gravity.xml"))
+        filename = str(TEST_RESOURCES_DIR / "test_no_gravity.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
 
         world = sdf.World()
         world.set_name("default")
 
-        mjcf_worldbody_to_sdf(mjcf_model, world)
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
         self.assertEqual(Vector3d(0, 0, 0), world.gravity())
 
 
