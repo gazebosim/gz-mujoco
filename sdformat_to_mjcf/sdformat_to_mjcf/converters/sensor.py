@@ -31,21 +31,27 @@ def add_sensor(body, sensor):
     sem_pose = sensor.semantic_pose()
     pose = su.graph_resolver.resolve_pose(sem_pose)
 
-    # Creates a site inside the body with the same name as sensor. This site
-    # will be used to attach the actual sensor to the body.
-    site_unique_name = su.find_unique_name(body, "site", sensor.name())
-    body.add("site",
-             name=site_unique_name,
-             pos=su.vec3d_to_list(pose.pos()),
-             euler=su.quat_to_euler_list(pose.rot()))
+    if sensor.camera_sensor() is not None:
+        # Camera sensors don't map directly to MJCF sensors, instead we map
+        # them to MJCF cameras rigidly attached to bodies.
+        return _add_camera_sensor(body, sensor.camera_sensor(), sensor.name(),
+                                  pose)
+    else:
+        # Creates a site inside the body with the same name as sensor. This
+        # site will be used to attach the actual sensor to the body.
+        site_unique_name = su.find_unique_name(body, "site", sensor.name())
+        body.add("site",
+                 name=site_unique_name,
+                 pos=su.vec3d_to_list(pose.pos()),
+                 euler=su.quat_to_euler_list(pose.rot()))
 
-    if sensor.imu_sensor() is not None:
-        return _add_imu(body.root.sensor, sensor.imu_sensor(),
-                        site_unique_name)
-    elif sensor.force_torque_sensor() is not None:
-        return _add_force_torque(body.root.sensor,
-                                 sensor.force_torque_sensor(),
-                                 site_unique_name)
+        if sensor.imu_sensor() is not None:
+            return _add_imu(body.root.sensor, sensor.imu_sensor(),
+                            site_unique_name)
+        elif sensor.force_torque_sensor() is not None:
+            return _add_force_torque(body.root.sensor,
+                                     sensor.force_torque_sensor(),
+                                     site_unique_name)
 
 
 def _check_noise_equality(noises):
@@ -118,7 +124,8 @@ def _add_force_torque(sensor, ft_sensor, sensor_name):
     Converts a Force Torque sensor from SDFormat to MJCF and add it to the
     given MJCF sensor.
 
-    :param mjcf.Element sensor: The MJCF sensor to which the IMU is added.
+    :param mjcf.Element sensor: The MJCF sensor to which the Force/Torque
+    Sensor is added.
     :param sdformat.ForceTorque ft_sensor: The SDFormat Force/Torque Sensor to
     be converted.
     :param str sensor_name: The Name of the SDFormat <sensor> element that
@@ -150,3 +157,33 @@ def _add_force_torque(sensor, ft_sensor, sensor_name):
     torque_sensor.noise = _convert_noise(ft_sensor, "torque", sensor_name)
 
     return [force_sensor, torque_sensor]
+
+
+def _add_camera_sensor(body, camera_sensor, sensor_name, sensor_pose):
+    """
+    Converts a Camera sensor from SDFormat to MJCF and adds it to the given
+    MJCF body.
+
+    :param mjcf.Element body: The MJCF body to which the Camera is added.
+    :param sdformat.Camera camera_sensor: The SDFormat Camera Sensor to be
+    converted.
+    :param str sensor_name: The name of the SDFormat <sensor> element that
+    contains the Camera Sensor.
+    :param str sensor_pose: The pose of the SDFormat <sensor> element that
+    contains the Camera Sensor.
+    :return: Converted camera element.
+    :rtype: [mjcf.Element]
+    """
+
+    camera_name = su.find_unique_name(body, "camera", sensor_name)
+    # The SDFormat camera sensor has a lot of parameters that cannot be mapped
+    # to MJCF.
+    logging.warning(
+        "Converting an SDFormat Camera sensor. Beware that the conversion is "
+        "very rudimentary and most SDFormat parameters are not mapped to MJCF."
+    )
+    mj_camera = body.add("camera",
+                         name=camera_name,
+                         pos=su.vec3d_to_list(sensor_pose.pos()),
+                         euler=su.quat_to_euler_list(sensor_pose.rot()))
+    return mj_camera

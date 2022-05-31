@@ -187,6 +187,20 @@ class LinkTest(helpers.TestCase):
         mjcf_gyros = self.mujoco.sensor.get_children("gyro")
         self.assertEqual(1, len(mjcf_gyros))
 
+    def test_camera_sensor(self):
+        link = sdf.Link()
+        link.set_name("base_link")
+        sensor = sdf.Sensor()
+        sensor.set_name("camera_sensor")
+        sensor.set_type(sdf.Sensortype.CAMERA)
+        sensor.set_raw_pose(self.test_pose)
+        camera = sdf.Camera()
+        sensor.set_camera_sensor(camera)
+        link.add_sensor(sensor)
+        mj_body = add_link(self.body, link)
+        self.assertIsNotNone(mj_body)
+        self.assertEqual(1, len(mj_body.get_children("camera")))
+
 
 class LinkIntegration(unittest.TestCase):
     expected_pos = [1.0, 2.0, 3.0]
