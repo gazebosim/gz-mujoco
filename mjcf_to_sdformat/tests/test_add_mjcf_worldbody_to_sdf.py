@@ -15,6 +15,7 @@
 import unittest
 from numpy.testing import assert_allclose
 from dm_control import mjcf
+from dm_control import mujoco
 
 from ignition.math import Color, Vector3d
 
@@ -29,13 +30,14 @@ from tests.helpers import TEST_RESOURCES_DIR
 class ModelTest(unittest.TestCase):
 
     def test_add_model(self):
-        mjcf_model = mjcf.from_path(
-            str(TEST_RESOURCES_DIR / "test_mujoco.xml"))
+        filename = str(TEST_RESOURCES_DIR / "test_mujoco.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
 
         world = sdf.World()
         world.set_name("default")
 
-        mjcf_worldbody_to_sdf(mjcf_model, world)
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
 
         self.assertEqual(Vector3d(0, 0, -9.8), world.gravity())
         self.assertEqual(Vector3d(0.5645e-06, 2.28758e-05, -4.23884e-05),
@@ -108,7 +110,7 @@ class ModelTest(unittest.TestCase):
 
         visual_2 = link_2.visual_by_index(1)
         self.assertNotEqual(None, visual_2)
-        self.assertEqual("visual_cylinder", visual_2.name())
+        self.assertEqual("visual_capsule", visual_2.name())
         assert_allclose([0.0, 0.0, 0.0],
                         su.vec3d_to_list(visual_2.raw_pose().pos()))
         assert_allclose([1.570796, 0, 0],
@@ -117,7 +119,7 @@ class ModelTest(unittest.TestCase):
 
         collision_2 = link_2.collision_by_index(1)
         self.assertNotEqual(None, collision_2)
-        self.assertEqual("collision_cylinder", collision_2.name())
+        self.assertEqual("collision_capsule", collision_2.name())
         assert_allclose([0.0, 0.0, 0.0],
                         su.vec3d_to_list(collision_2.raw_pose().pos()))
         assert_allclose([1.570796, 0, 0],
@@ -182,12 +184,12 @@ class ModelTest(unittest.TestCase):
         self.assertEqual("body2", link_4.pose_relative_to())
 
         mass_matrix = link_4.inertial().mass_matrix()
-        self.assertEqual(1, mass_matrix.mass())
+        self.assertAlmostEqual(48, mass_matrix.mass())
         self.assertEqual([0, 0, 0],
                          su.vec3d_to_list(link_4.inertial().pose().pos()))
         self.assertEqual([0, 0, 0],
                          su.vec3d_to_list(link_4.inertial().pose().rot()))
-        assert_allclose([1, 1, 1],
+        assert_allclose([2.08, 1.6, 0.8],
                         su.vec3d_to_list(mass_matrix.diagonal_moments()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(mass_matrix.off_diagonal_moments()))
