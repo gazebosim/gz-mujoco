@@ -45,8 +45,8 @@ class ModelTest(unittest.TestCase):
         self.assertTrue(model.static())
         link_1 = model.link_by_index(0)
         self.assertEqual("link_0", link_1.name())
-        self.assertEqual(1, link_1.visual_count())
-        self.assertEqual(1, link_1.collision_count())
+        self.assertEqual(2, link_1.visual_count())
+        self.assertEqual(2, link_1.collision_count())
         assert_allclose([0, 0, 0], su.vec3d_to_list(link_1.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(link_1.raw_pose().rot().euler()))
@@ -64,6 +64,24 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(collision_1.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_1.raw_pose().rot().euler()))
+
+        visual_1 = link_1.visual_by_index(1)
+        self.assertNotEqual(None, visual_1)
+        self.assertEqual("visual_rail1", visual_1.name())
+        assert_allclose([0, 0.07, 1],
+                        su.vec3d_to_list(visual_1.raw_pose().pos()))
+        assert_allclose([0, 1.570796, 0],
+                        su.vec3d_to_list(visual_1.raw_pose().rot().euler()),
+                        rtol=1e-6)
+
+        collision_1 = link_1.collision_by_index(1)
+        self.assertNotEqual(None, collision_1)
+        self.assertEqual("collision_rail1", collision_1.name())
+        assert_allclose([0, 0.07, 1],
+                        su.vec3d_to_list(collision_1.raw_pose().pos()))
+        assert_allclose([0, 1.570796, 0],
+                        su.vec3d_to_list(collision_1.raw_pose().rot().euler()),
+                        rtol=1e-6)
 
         model = world.model_by_index(1)
         self.assertNotEqual(None, model)
@@ -152,8 +170,9 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(mass_matrix.off_diagonal_moments()))
 
         assert_allclose([0, 1, 0], su.vec3d_to_list(link_3.raw_pose().pos()))
-        assert_allclose([0, 0, 0],
-                        su.vec3d_to_list(link_3.raw_pose().rot().euler()))
+        assert_allclose([0, 1.570796, 0],
+                        su.vec3d_to_list(link_3.raw_pose().rot().euler()),
+                        rtol=1e-6)
         visual_3 = link_3.visual_by_index(0)
         self.assertNotEqual(None, visual_3)
         self.assertEqual("visual_visual_body2", visual_3.name())
