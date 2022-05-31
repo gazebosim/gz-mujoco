@@ -105,7 +105,7 @@ class ModelTest(unittest.TestCase):
 
         visual_2 = link_2.visual_by_index(1)
         self.assertNotEqual(None, visual_2)
-        self.assertEqual("visual_cylinder", visual_2.name())
+        self.assertEqual("visual_capsule", visual_2.name())
         assert_allclose([0.0, 0.0, 0.0],
                         su.vec3d_to_list(visual_2.raw_pose().pos()))
         assert_allclose([1.570796, 0, 0],
@@ -114,7 +114,7 @@ class ModelTest(unittest.TestCase):
 
         collision_2 = link_2.collision_by_index(1)
         self.assertNotEqual(None, collision_2)
-        self.assertEqual("collision_cylinder", collision_2.name())
+        self.assertEqual("collision_capsule", collision_2.name())
         assert_allclose([0.0, 0.0, 0.0],
                         su.vec3d_to_list(collision_2.raw_pose().pos()))
         assert_allclose([1.570796, 0, 0],
