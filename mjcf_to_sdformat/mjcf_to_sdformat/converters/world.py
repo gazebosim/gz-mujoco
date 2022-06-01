@@ -12,11 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from mjcf_to_sdformat.converters.joint import mjcf_joint_to_sdf, add_fix_joint
-from mjcf_to_sdformat.converters.link import mjcf_body_to_sdf
-
 from ignition.math import Vector3d
 
+from mjcf_to_sdformat.converters.joint import mjcf_joint_to_sdf, add_fix_joint
 from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 from mjcf_to_sdformat.converters.link import mjcf_body_to_sdf
 
