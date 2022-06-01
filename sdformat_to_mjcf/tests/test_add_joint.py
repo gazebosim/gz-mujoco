@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import unittest
+import numpy as np
 from numpy.testing import assert_allclose
 from math import pi
 
@@ -21,6 +22,7 @@ from ignition.math import Pose3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_to_mjcf.converters.joint import add_joint
+from sdformat_to_mjcf.sdf_kinematics import FreeJoint, StaticFixedJoint
 import sdformat_mjcf_utils.sdf_utils as su
 from tests import helpers
 
@@ -62,22 +64,26 @@ class JointTest(helpers.TestCase):
         return joint
 
     def test_free_joint(self):
-        mj_joint = add_joint(self.body, None)
+        mj_joint = add_joint(self.body, FreeJoint())
         self.assertIsNotNone(mj_joint)
         self.assertEqual("freejoint", mj_joint.tag)
 
     def test_multiple_free_joints(self):
-        mj_joint1 = add_joint(self.body, None)
+        mj_joint1 = add_joint(self.body, FreeJoint())
         self.assertIsNotNone(mj_joint1)
         # Add another body with a free joint to worldbody
         body2 = self.mujoco.worldbody.add("body", name="test_body")
-        mj_joint2 = add_joint(body2, None)
+        mj_joint2 = add_joint(body2, FreeJoint())
         self.assertIsNotNone(mj_joint2)
 
     def test_fixed_joint(self):
         joint = sdf.Joint()
         joint.set_type(sdf.JointType.FIXED)
         mj_joint = add_joint(self.body, joint)
+        self.assertIsNone(mj_joint)
+
+    def test_static_fixed_joint(self):
+        mj_joint = add_joint(self.body, StaticFixedJoint())
         self.assertIsNone(mj_joint)
 
     def test_revolute_joint(self):
@@ -223,6 +229,78 @@ class JointTest(helpers.TestCase):
         self.assertEqual("joint1", mj_joint.name)
         self.assertEqual("ball", mj_joint.type)
         assert_allclose(self.expected_pos, mj_joint.pos)
+
+    def test_force_torque_sensor(self):
+        joint = self.create_sdf_joint("joint1", sdf.JointType.FIXED,
+                                      self.test_pose)
+        sensor = sdf.Sensor()
+        sensor.set_name("ft_sensor")
+        sensor.set_type(sdf.Sensortype.FORCE_TORQUE)
+        sensor.set_raw_pose(self.test_pose)
+        ft_sensor = sdf.ForceTorque()
+        sensor.set_force_torque_sensor(ft_sensor)
+        joint.add_sensor(sensor)
+
+        add_joint(self.body, joint)
+
+        self.assertIsNotNone(self.mujoco.sensor)
+        mjcf_force_sensors = self.mujoco.sensor.get_children("force")
+        self.assertEqual(1, len(mjcf_force_sensors))
+        mjcf_torque_sensors = self.mujoco.sensor.get_children("torque")
+        self.assertEqual(1, len(mjcf_torque_sensors))
+
+    def test_force_torque_sensor_frames(self):
+        joint = self.create_sdf_joint("joint1", sdf.JointType.FIXED,
+                                      self.test_pose)
+        sensor = sdf.Sensor()
+        sensor.set_name("ft_sensor")
+        sensor.set_type(sdf.Sensortype.FORCE_TORQUE)
+
+        sensor_pos = [0, 0, 1]
+        sensor_euler = np.array([90, 0, 0])
+        sensor.set_raw_pose(Pose3d(*sensor_pos, *(np.radians(sensor_euler))))
+
+        parent_pos = [0, 2, 0]
+        parent_euler = [0, 0, 45]
+        child_pos = [1, 0, 0]
+        child_euler = [0, 90, 0]
+
+        joint_pos = self.expected_pos
+        FTF = sdf.ForceTorqueFrame
+        frames_with_expected_poses = (
+            (FTF.PARENT, joint_pos, parent_euler),
+            (FTF.CHILD, joint_pos, child_euler),
+            (FTF.SENSOR, joint_pos, sensor_euler)
+        )
+
+        force_torque = sdf.ForceTorque()
+
+        for frame, frame_pos, frame_euler in frames_with_expected_poses:
+            self.setUp()
+
+            self.body.pos = parent_pos
+            self.body.euler = parent_euler
+            child_body = self.body.add("body",
+                                       name="child_body",
+                                       pos=child_pos,
+                                       euler=child_euler)
+            joint.clear_sensors()
+
+            force_torque.set_frame(frame)
+            sensor.set_force_torque_sensor(force_torque)
+            joint.add_sensor(sensor)
+            add_joint(child_body, joint)
+
+            self.assertIsNotNone(self.mujoco.sensor)
+            mjcf_force_sensors = self.mujoco.sensor.get_children("force")
+            self.assertEqual(1, len(mjcf_force_sensors))
+            mjcf_torque_sensors = self.mujoco.sensor.get_children("torque")
+            self.assertEqual(1, len(mjcf_torque_sensors))
+
+            sensor_sites = child_body.get_children("site")
+            self.assertEqual(1, len(sensor_sites))
+            assert_allclose(frame_pos, sensor_sites[0].pos)
+            assert_allclose(frame_euler, sensor_sites[0].euler)
 
 
 if __name__ == "__main__":

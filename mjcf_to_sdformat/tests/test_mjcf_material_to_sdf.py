@@ -32,7 +32,7 @@ class MaterialTest(unittest.TestCase):
             str(TEST_RESOURCES_DIR / "test_mujoco.xml"))
 
         material = mjcf_material_to_sdf(mjcf_model.worldbody.geom[0])
-        self.assertEqual(None, material)
+        self.assertNotEqual(None, material)
 
         material = mjcf_material_to_sdf(mjcf_model.worldbody.body[0].geom[0])
         self.assertNotEqual(None, material)

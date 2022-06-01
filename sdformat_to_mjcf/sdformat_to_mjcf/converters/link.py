@@ -15,10 +15,11 @@
 from sdformat_to_mjcf.converters.geometry import add_collision, add_visual
 from sdformat_to_mjcf.converters.light import add_light
 from sdformat_to_mjcf.converters.material import add_material
+from sdformat_to_mjcf.converters.sensor import add_sensor
 import sdformat_mjcf_utils.sdf_utils as su
 
 
-def add_link(body, link, parent_name="world", model_name="model"):
+def add_link(body, link, parent_name="world", link_pose=None):
     """
     Converts a link from SDFormat to MJCF and add it to the given
     body/worldbody.
@@ -26,8 +27,8 @@ def add_link(body, link, parent_name="world", model_name="model"):
     :param mjcf.Element body: The MJCF body to which the body is added.
     :param sdformat.Link link: The SDFormat link to be converted.
     :param str parent_name: Name of parent link.
-    :param str mode_name: Name of the model who contains the link. This is used
-    to generate the name and avoid collisions in the names
+    :param ignition.math.Pose3d link_pose: Pose of link. This is optional and
+    if set to None, the pose will be resolved from the link.
     :return: The newly created MJCF body.
     :rtype: mjcf.Element
     """
@@ -42,11 +43,14 @@ def add_link(body, link, parent_name="world", model_name="model"):
     #     - audio_source
     #     - battery
     #     - particle_emitter
-    sem_pose = link.semantic_pose()
-    if parent_name == 'world':
-        pose = su.graph_resolver.resolve_pose(sem_pose)
+    if link_pose is not None:
+        pose = link_pose
     else:
-        pose = su.graph_resolver.resolve_pose(sem_pose, parent_name)
+        sem_pose = link.semantic_pose()
+        if parent_name == 'world':
+            pose = su.graph_resolver.resolve_pose(sem_pose)
+        else:
+            pose = su.graph_resolver.resolve_pose(sem_pose, parent_name)
 
     body = body.add("body",
                     name=su.find_unique_name(body, "body", link.name()),
@@ -92,5 +96,10 @@ def add_link(body, link, parent_name="world", model_name="model"):
         light = link.light_by_index(li)
         if light is not None:
             add_light(body, light)
+
+    for si in range(link.sensor_count()):
+        sensor = link.sensor_by_index(si)
+        if sensor is not None:
+            add_sensor(body, sensor)
 
     return body

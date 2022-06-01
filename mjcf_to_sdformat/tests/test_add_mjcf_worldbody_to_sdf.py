@@ -15,6 +15,9 @@
 import unittest
 from numpy.testing import assert_allclose
 from dm_control import mjcf
+from dm_control import mujoco
+
+from ignition.math import Color, Vector3d
 
 from ignition.math import Color
 
@@ -29,23 +32,30 @@ from tests.helpers import TEST_RESOURCES_DIR
 class ModelTest(unittest.TestCase):
 
     def test_add_model(self):
-        mjcf_model = mjcf.from_path(
-            str(TEST_RESOURCES_DIR / "test_mujoco.xml"))
+        filename = str(TEST_RESOURCES_DIR / "test_mujoco.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
 
         world = sdf.World()
         world.set_name("default")
 
-        mjcf_worldbody_to_sdf(mjcf_model, world)
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+
+        self.assertEqual(Vector3d(0, 0, -9.8), world.gravity())
+        self.assertEqual(Vector3d(0.5645e-06, 2.28758e-05, -4.23884e-05),
+                         world.magnetic_field())
+        self.assertEqual(Vector3d(2, 1, 7.6), world.wind_linear_velocity())
 
         self.assertEqual("default", world.name())
-        self.assertEqual(1, world.model_count())
+        self.assertEqual(2, world.model_count())
         model = world.model_by_index(0)
         self.assertNotEqual(None, model)
-        self.assertEqual(3, model.link_count())
+        self.assertEqual(1, model.link_count())
+        self.assertTrue(model.static())
         link_1 = model.link_by_index(0)
         self.assertEqual("link_0", link_1.name())
-        self.assertEqual(1, link_1.visual_count())
-        self.assertEqual(1, link_1.collision_count())
+        self.assertEqual(2, link_1.visual_count())
+        self.assertEqual(2, link_1.collision_count())
         assert_allclose([0, 0, 0], su.vec3d_to_list(link_1.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(link_1.raw_pose().rot().euler()))
@@ -64,10 +74,30 @@ class ModelTest(unittest.TestCase):
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_1.raw_pose().rot().euler()))
 
-        link_2 = model.link_by_index(1)
+        visual_1 = link_1.visual_by_index(1)
+        self.assertNotEqual(None, visual_1)
+        self.assertEqual("visual_rail1", visual_1.name())
+        assert_allclose([0, 0.07, 1],
+                        su.vec3d_to_list(visual_1.raw_pose().pos()))
+        assert_allclose([0, 1.570796, 0],
+                        su.vec3d_to_list(visual_1.raw_pose().rot().euler()),
+                        rtol=1e-6)
+
+        collision_1 = link_1.collision_by_index(1)
+        self.assertNotEqual(None, collision_1)
+        self.assertEqual("collision_rail1", collision_1.name())
+        assert_allclose([0, 0.07, 1],
+                        su.vec3d_to_list(collision_1.raw_pose().pos()))
+        assert_allclose([0, 1.570796, 0],
+                        su.vec3d_to_list(collision_1.raw_pose().rot().euler()),
+                        rtol=1e-6)
+
+        model = world.model_by_index(1)
+        self.assertNotEqual(None, model)
+        link_2 = model.link_by_index(0)
         self.assertEqual("link_1", link_2.name())
-        self.assertEqual(1, link_2.visual_count())
-        self.assertEqual(1, link_2.collision_count())
+        self.assertEqual(2, link_2.visual_count())
+        self.assertEqual(2, link_2.collision_count())
         assert_allclose([0, 0, 1], su.vec3d_to_list(link_2.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(link_2.raw_pose().rot().euler()))
@@ -105,10 +135,44 @@ class ModelTest(unittest.TestCase):
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_2.raw_pose().rot().euler()))
 
-        link_3 = model.link_by_index(2)
+        visual_2 = link_2.visual_by_index(1)
+        self.assertNotEqual(None, visual_2)
+        self.assertEqual("visual_capsule", visual_2.name())
+        assert_allclose([0.0, 0.0, 0.0],
+                        su.vec3d_to_list(visual_2.raw_pose().pos()))
+        assert_allclose([1.570796, 0, 0],
+                        su.vec3d_to_list(visual_2.raw_pose().rot().euler()),
+                        rtol=1e-5)
+
+        collision_2 = link_2.collision_by_index(1)
+        self.assertNotEqual(None, collision_2)
+        self.assertEqual("collision_capsule", collision_2.name())
+        assert_allclose([0.0, 0.0, 0.0],
+                        su.vec3d_to_list(collision_2.raw_pose().pos()))
+        assert_allclose([1.570796, 0, 0],
+                        su.vec3d_to_list(collision_2.raw_pose().rot().euler()),
+                        rtol=1e-5)
+
+        link_3 = model.link_by_index(1)
         self.assertEqual("body2", link_3.name())
         self.assertEqual(1, link_3.visual_count())
         self.assertEqual(1, link_3.collision_count())
+
+        self.assertEqual(1, link_3.light_count())
+        light_link = link_3.light_by_index(0)
+        self.assertNotEqual(None, light_link)
+        self.assertEqual(0, light_link.constant_attenuation_factor())
+        self.assertEqual(0.01, light_link.linear_attenuation_factor())
+        self.assertEqual(0.001, light_link.quadratic_attenuation_factor())
+        self.assertTrue(light_link.cast_shadows())
+        self.assertEqual(Color(0.8, 0.8, 0.8), light_link.diffuse())
+        self.assertEqual(Color(0.2, 0.2, 0.2), light_link.specular())
+        self.assertEqual(sdf.LightType.DIRECTIONAL, light_link.type())
+        self.assertEqual(Vector3d(0.5, 0.2, 0.0), light_link.direction())
+        assert_allclose([0, 0, 10],
+                        su.vec3d_to_list(light_link.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(light_link.raw_pose().rot().euler()))
 
         mass_matrix = link_3.inertial().mass_matrix()
         self.assertEqual(2, mass_matrix.mass())
@@ -122,8 +186,9 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(mass_matrix.off_diagonal_moments()))
 
         assert_allclose([0, 1, 0], su.vec3d_to_list(link_3.raw_pose().pos()))
-        assert_allclose([0, 0, 0],
-                        su.vec3d_to_list(link_3.raw_pose().rot().euler()))
+        assert_allclose([0, 1.570796, 0],
+                        su.vec3d_to_list(link_3.raw_pose().rot().euler()),
+                        rtol=1e-6)
         visual_3 = link_3.visual_by_index(0)
         self.assertNotEqual(None, visual_3)
         self.assertEqual("visual_visual_body2", visual_3.name())
@@ -145,6 +210,69 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(collision_3.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_3.raw_pose().rot().euler()))
+
+        link_4 = model.link_by_index(2)
+        self.assertEqual("body3", link_4.name())
+        self.assertEqual(1, link_4.visual_count())
+        self.assertEqual(1, link_4.collision_count())
+        self.assertEqual("body2", link_4.pose_relative_to())
+
+        mass_matrix = link_4.inertial().mass_matrix()
+        self.assertAlmostEqual(48, mass_matrix.mass())
+        self.assertEqual([0, 0, 0],
+                         su.vec3d_to_list(link_4.inertial().pose().pos()))
+        self.assertEqual([0, 0, 0],
+                         su.vec3d_to_list(link_4.inertial().pose().rot()))
+        assert_allclose([2.08, 1.6, 0.8],
+                        su.vec3d_to_list(mass_matrix.diagonal_moments()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(mass_matrix.off_diagonal_moments()))
+
+        assert_allclose([0, 0, 1], su.vec3d_to_list(link_4.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(link_4.raw_pose().rot().euler()))
+        visual_4 = link_4.visual_by_index(0)
+        self.assertNotEqual(None, visual_4)
+        self.assertEqual("visual_visual_body3", visual_4.name())
+        assert_allclose([0.0, 0, 0],
+                        su.vec3d_to_list(visual_4.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(visual_4.raw_pose().rot().euler()))
+
+        collision_4 = link_4.collision_by_index(0)
+        self.assertNotEqual(None, collision_4)
+        self.assertEqual("collision_visual_body3", collision_4.name())
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(collision_4.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(collision_4.raw_pose().rot().euler()))
+
+        self.assertEqual(1, world.light_count())
+        light_1 = world.light_by_index(0)
+        self.assertNotEqual(None, light_1)
+        self.assertEqual(0, light_1.constant_attenuation_factor())
+        self.assertEqual(0.01, light_1.linear_attenuation_factor())
+        self.assertEqual(0.001, light_1.quadratic_attenuation_factor())
+        self.assertFalse(light_1.cast_shadows())
+        self.assertEqual(Color(0.5, 0.5, 0.5), light_1.diffuse())
+        self.assertEqual(Color(0.2, 0.2, 0.2), light_1.specular())
+        self.assertEqual(sdf.LightType.SPOT, light_1.type())
+        self.assertEqual(Vector3d(0, 0, -1), light_1.direction())
+        assert_allclose([0, 0, 3],
+                        su.vec3d_to_list(light_1.raw_pose().pos()))
+        assert_allclose([0, 0, 0],
+                        su.vec3d_to_list(light_1.raw_pose().rot().euler()))
+
+    def test_option_no_gravity(self):
+        filename = str(TEST_RESOURCES_DIR / "test_no_gravity.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
+
+        world = sdf.World()
+        world.set_name("default")
+
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+        self.assertEqual(Vector3d(0, 0, 0), world.gravity())
 
 
 if __name__ == "__main__":
