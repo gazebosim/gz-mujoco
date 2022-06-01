@@ -60,13 +60,13 @@ def _set_defaults(geom, default_classes=None):
         if geom.dclass.geom is not None:
             geom.set_attributes(**geom.dclass.geom.get_attributes())
     elif default_classes is not None:
-            for default_class in default_classes:
-                if default_class.geom is not None:
-                    for k, v in default_class.geom.get_attributes().items():
-                        geom = _set_attribute(geom, k, v)
+        for default_class in default_classes:
+            if default_class.geom is not None:
+                for k, v in default_class.geom.get_attributes().items():
+                    geom = _set_attribute(geom, k, v)
     elif geom.root.default.geom is not None:
-            for k, v in geom.root.default.geom.get_attributes().items():
-                geom = _set_attribute(geom, k, v)
+        for k, v in geom.root.default.geom.get_attributes().items():
+            geom = _set_attribute(geom, k, v)
 
     _set_attribute(geom, "type", "sphere")
 
