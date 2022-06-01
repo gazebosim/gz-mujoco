@@ -34,7 +34,9 @@ def add_sensor(body, sensor):
     if sensor.camera_sensor() is not None:
         # Camera sensors don't map directly to MJCF sensors, instead we map
         # them to MJCF cameras rigidly attached to bodies.
-        return _add_camera_sensor(body, sensor.camera_sensor(), sensor.name(),
+        return _add_camera_sensor(body,
+                                  sensor.camera_sensor(),
+                                  sensor.name(),
                                   pose)
     else:
         # Creates a site inside the body with the same name as sensor. This
@@ -46,7 +48,8 @@ def add_sensor(body, sensor):
                  euler=su.quat_to_euler_list(pose.rot()))
 
         if sensor.imu_sensor() is not None:
-            return _add_imu(body.root.sensor, sensor.imu_sensor(),
+            return _add_imu(body.root.sensor,
+                            sensor.imu_sensor(),
                             site_unique_name)
         elif sensor.force_torque_sensor() is not None:
             return _add_force_torque(body.root.sensor,
@@ -66,7 +69,7 @@ def _check_noise_equality(noises):
     return all(x == first_item for x in noises)
 
 
-class NoiseParameterMismatch (Exception):
+class NoiseParameterMismatch(Exception):
     pass
 
 
