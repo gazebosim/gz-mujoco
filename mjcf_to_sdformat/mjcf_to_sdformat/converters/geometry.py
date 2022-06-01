@@ -102,7 +102,7 @@ def mjcf_visual_to_sdf(geom):
         visual.set_name("visual_" + geom.name)
     else:
         global VISUAL_NUMBER
-        visual.set_name("visual_" + str(VISUAL_NUMBER))
+        visual.set_name("unnamed_visual_" + str(VISUAL_NUMBER))
         VISUAL_NUMBER = VISUAL_NUMBER + 1
     sdf_geometry = mjcf_geom_to_sdf(geom)
     if sdf_geometry is not None:
@@ -126,7 +126,7 @@ def mjcf_collision_to_sdf(geom):
         col.set_name("collision_" + geom.name)
     else:
         global COLLISION_NUMBER
-        col.set_name("collision_" + str(COLLISION_NUMBER))
+        col.set_name("unnamed_collision_" + str(COLLISION_NUMBER))
         COLLISION_NUMBER = COLLISION_NUMBER + 1
     sdf_geometry = mjcf_geom_to_sdf(geom)
     if sdf_geometry is not None:
