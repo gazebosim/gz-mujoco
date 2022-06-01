@@ -66,10 +66,12 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world):
     def iterate_bodies(input_body,
                        model,
                        body_parent_name=None,
-                       default_classes=[]):
+                       default_classes=None):
         for body in input_body:
             if body.childclass is not None:
-                default_classes = default_classes + [body.childclass]
+                if default_classes is None:
+                    default_classes = []
+                default_classes.append(body.childclass)
             link = mjcf_body_to_sdf(body,
                                     physics,
                                     body_parent_name=body_parent_name,

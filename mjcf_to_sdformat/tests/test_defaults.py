@@ -58,11 +58,10 @@ class DefaultsTest(unittest.TestCase):
         link = model.link_by_index(1)
         self.assertNotEqual(None, link)
         visual = link.visual_by_index(0)
-        self.assertEqual(sdf.GeometryType.CAPSULE, visual.geometry().type())
-        capsule_shape = visual.geometry().capsule_shape()
-        self.assertNotEqual(None, capsule_shape)
-        self.assertEqual(0.2, capsule_shape.length())
-        self.assertEqual(0.01, capsule_shape.radius())
+        self.assertEqual(sdf.GeometryType.SPHERE, visual.geometry().type())
+        sphere_shape = visual.geometry().sphere_shape()
+        self.assertNotEqual(None, sphere_shape)
+        self.assertEqual(0.01, sphere_shape.radius())
 
 
 if __name__ == "__main__":
