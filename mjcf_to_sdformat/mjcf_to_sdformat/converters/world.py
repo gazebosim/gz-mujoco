@@ -18,6 +18,7 @@ from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 from mjcf_to_sdformat.converters.link import mjcf_body_to_sdf
 
 import sdformat_mjcf_utils.sdf_utils as su
+from sdformat_mjcf_utils.defaults import MjcfModifiers
 
 import sdformat as sdf
 
@@ -36,13 +37,16 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world):
     else:
         model.set_name("model")
 
+    modifiers = MjcfModifiers(mjcf_root)
+
     model_static = sdf.Model()
 
     for light in mjcf_root.worldbody.light:
+        modifiers.apply_modifiers_to_element(light)
         light_sdf = mjcf_light_to_sdf(light)
         world.add_light(light_sdf)
 
-    link = mjcf_body_to_sdf(mjcf_root.worldbody, physics)
+    link = mjcf_body_to_sdf(mjcf_root.worldbody, physics, modifiers=modifiers)
     model_static.set_name(su.find_unique_name(
         mjcf_root.worldbody, "geom", "static"))
     model_static.add_link(link)
@@ -65,22 +69,16 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world):
 
     def iterate_bodies(input_body,
                        model,
-                       body_parent_name=None,
-                       default_classes=None):
+                       body_parent_name=None):
         for body in input_body:
-            if body.childclass is not None:
-                if default_classes is None:
-                    default_classes = []
-                default_classes.append(body.childclass)
             link = mjcf_body_to_sdf(body,
                                     physics,
                                     body_parent_name=body_parent_name,
-                                    default_classes=default_classes)
+                                    modifiers=modifiers)
             model.add_link(link)
             iterate_bodies(body.body,
                            model,
-                           body.name,
-                           default_classes=default_classes)
+                           body.name)
     iterate_bodies(body, model)
 
     world.add_model(model)
