@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ignition.math import Inertiald, MassMatrix3d, Vector3d, Pose3d
+from ignition.math import (Inertiald, MassMatrix3d, Vector3d, Pose3d,
+                           Quaterniond)
 
 from mjcf_to_sdformat.converters.geometry import (mjcf_visual_to_sdf,
                                                   mjcf_collision_to_sdf)
+from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 
 import sdformat as sdf
 import sdformat_mjcf_utils.sdf_utils as su
@@ -25,16 +27,19 @@ COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
 
 
-def mjcf_geom_to_sdf(body):
+def mjcf_body_to_sdf(body, physics, body_parent_name=None):
     """
     Converts an MJCF body to a SDFormat.
 
     :param mjcf.Element body: The MJCF body
+    :param mujoco.Physics physics: Mujoco Physics
     :param mjcf.Element inertial: Inertial of the body
     :return: The newly created SDFormat link.
     :rtype: sdf.Link
     """
     link = sdf.Link()
+    if body_parent_name is not None:
+        link.set_pose_relative_to(body_parent_name)
 
     body_name = None
     try:
@@ -90,40 +95,90 @@ def mjcf_geom_to_sdf(body):
                                     inertial_euler.pitch(),
                                     inertial_euler.yaw()))
         link.set_inertial(inertial)
-
+    else:
+        try:
+            body_inertia = physics.named.model.body_inertia[body.name]
+            inertia_pos = physics.named.model.body_ipos[body.name]
+            inertia_quat = physics.named.model.body_iquat[body.name]
+            inertial = Inertiald(
+                MassMatrix3d(physics.named.model.body_mass[body.name],
+                             Vector3d(body_inertia[0],
+                                      body_inertia[1],
+                                      body_inertia[2]),
+                             Vector3d(0, 0, 0)),
+                Pose3d(su.list_to_vec3d(inertia_pos),
+                       su.wxyz_list_to_quat(inertia_quat)))
+            link.set_inertial(inertial)
+        except AttributeError:
+            pass
     NUMBER_OF_VISUAL = 0
     NUMBER_OF_COLLISION = 0
 
     link.set_raw_pose(su.get_pose_from_mjcf(body))
 
+    def get_orientation(geom):
+        """
+        Get orientation from a MJCF geom when it's defined with "fromto"
+
+        :param mjcf.Element geom: MJCF geom to extract the orientation
+        :return: The newly created quaterion.
+        :rtype ignition.math.Quateriond
+        """
+        if geom.fromto is not None:
+            v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
+            v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
+            vec = (v1 - v2).normalize()
+            z = Vector3d(0, 0, 1)
+            quat = Quaterniond()
+            quat.set_from_2_axes(z, vec)
+            return quat
+        else:
+            return su.get_pose_from_mjcf(geom).rot()
+
+    def get_position(geom):
+        """
+        Get the translattion from a MJCF geom when it's defined with "fromto"
+
+        :param mjcf.Element geom: MJCF geom to extract the position
+        :return: The newly created Vector3d.
+        :rtype ignition.math.Vector3d
+        """
+        if geom.fromto is not None:
+            v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
+            v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
+            return (v1 + v2) / 2.0
+        else:
+            return su.get_pose_from_mjcf(geom).pos()
+
+    def set_visual(geom):
+        visual = mjcf_visual_to_sdf(geom)
+        if visual is not None:
+            visual.set_name(su.prefix_name_with_index(
+                "visual", geom.name, NUMBER_OF_VISUAL))
+            pose = Pose3d(get_position(geom), get_orientation(geom))
+            visual.set_raw_pose(pose)
+            link.add_visual(visual)
+
+    def set_collision(geom):
+        col = mjcf_collision_to_sdf(geom)
+        if col is not None:
+            col.set_name(su.prefix_name_with_index(
+                "collision", geom.name, NUMBER_OF_COLLISION))
+            pose = Pose3d(get_position(geom), get_orientation(geom))
+            col.set_raw_pose(pose)
+            link.add_collision(col)
+
     for geom in body.geom:
         # If the group is not defined then visual and collision is added
         if geom.group is None:
-            visual = mjcf_visual_to_sdf(geom)
-            if visual is not None:
-                visual.set_name(su.prefix_name_with_index(
-                    "visual", geom.name, NUMBER_OF_VISUAL))
-                visual.set_raw_pose(su.get_pose_from_mjcf(geom))
-                link.add_visual(visual)
-
-            col = mjcf_collision_to_sdf(geom)
-            if col is not None:
-                col.set_name(su.prefix_name_with_index(
-                    "collision", geom.name, NUMBER_OF_COLLISION))
-                col.set_raw_pose(su.get_pose_from_mjcf(geom))
-                link.add_collision(col)
+            set_visual(geom)
+            set_collision(geom)
         elif geom.group == VISUAL_GEOM_GROUP:
-            visual = mjcf_visual_to_sdf(geom)
-            if visual is not None:
-                visual.set_name(su.prefix_name_with_index(
-                    "visual", geom.name, NUMBER_OF_VISUAL))
-                visual.set_raw_pose(su.get_pose_from_mjcf(geom))
-                link.add_visual(visual)
+            set_visual(geom)
         elif geom.group == COLLISION_GEOM_GROUP:
-            col = mjcf_collision_to_sdf(geom)
-            if col is not None:
-                col.set_name(su.prefix_name_with_index(
-                    "collision", geom.name, NUMBER_OF_COLLISION))
-                col.set_raw_pose(su.get_pose_from_mjcf(geom))
-                link.add_collision(col)
+            set_collision(geom)
+
+    for light in body.light:
+        light_sdf = mjcf_light_to_sdf(light)
+        link.add_light(light_sdf)
     return link

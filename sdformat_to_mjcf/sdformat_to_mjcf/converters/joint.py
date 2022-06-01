@@ -17,7 +17,10 @@
 import math
 
 import sdformat as sdf
+from ignition.math import Pose3d
 
+from sdformat_to_mjcf.converters.sensor import add_sensor
+from sdformat_to_mjcf.sdf_kinematics import FreeJoint, StaticFixedJoint
 import sdformat_mjcf_utils.sdf_utils as su
 
 JOINT_DEFAULT_UPPER_LIMIT = 1e16
@@ -62,16 +65,50 @@ def add_joint(body, joint):
     :return: The newly created MJCF joint.
     :rtype: mjcf.Element
     """
-    if joint is None:
+    if isinstance(joint, FreeJoint):
         return body.add("freejoint")
-    elif joint.type() == sdf.JointType.FIXED:
+
+    if isinstance(joint, StaticFixedJoint):
+        # The pose of this joint can be chosen arbitrarily since the purpose
+        # of the joint is to anchor static objects to the world. Any choice of
+        # poses will have the same effect, so we choose the identity pose here.
+        pose = Pose3d()
+    else:
+        pose = su.graph_resolver.resolve_pose(joint.semantic_pose())
+
+    for si in range(joint.sensor_count()):
+        sensor = joint.sensor_by_index(si)
+        if sensor is not None:
+            mjcf_sensors = add_sensor(body, sensor)
+            if mjcf_sensors and sensor.force_torque_sensor() is not None:
+                ft_sensor = sensor.force_torque_sensor()
+                # The SDFormat spec says:
+                # "Note that for each option the point with respect to which
+                # the torque component of the wrench is expressed is the joint
+                # origin." Therefore, we set the site's position to the
+                # position of the joint.
+                site = body.find('site', mjcf_sensors[0].site)
+                site.pos = su.vec3d_to_list(pose.pos())
+
+                # The orientation of the site depends on the <frame> element.
+                # PARENT and CHILD frames imply using the rotation of the
+                # parent and child bodies respectively. SENSOR implies using
+                # the rotation of the sensor frame, but since this is set in
+                # `add_sensor`, we do nothing here.
+                if (ft_sensor.frame() == sdf.ForceTorqueFrame.PARENT
+                        and body.parent.euler is not None):  # noqa
+                    site.euler = body.parent.euler
+                elif (ft_sensor.frame() == sdf.ForceTorqueFrame.CHILD
+                      and body.euler is not None):  # noqa
+                    site.euler = body.euler
+
+    if joint.type() == sdf.JointType.FIXED:
         return None
     elif joint.type() in [
             sdf.JointType.CONTINUOUS,
             sdf.JointType.REVOLUTE,
             sdf.JointType.PRISMATIC
     ]:
-        pose = su.graph_resolver.resolve_pose(joint.semantic_pose())
         unique_name = su.find_unique_name(body, "joint", joint.name())
         mjcf_joint = body.add("joint", name=unique_name)
         mjcf_joint.pos = su.vec3d_to_list(pose.pos())
