@@ -17,14 +17,25 @@ from dm_control import mjcf
 
 
 class MjcfModifiers:
-    """Process default classes and their inheritence and applies the resulting
+    """Process default classes and their inheritance and apply the resulting
     default class to a given element."""
 
     def __init__(self, root):
+        """
+        Initialize the class with the root element. Note that this class
+        mutates the default element (root.default) and its descendants in order
+        to processes the inheritance hierarchy.
+        :param mjcf.RootElement root: The MJCF root element
+        """
         self.root = root
         self._apply_inherited_default(self.root.default, None)
 
     def apply_modifiers_to_element(self, elem):
+        """
+        Given an element, e.g., geom, body, etc, this copies into the element
+        the attributes of the default class associated with the element.
+        :param mjcf.Element elem: The MJCF element to process.
+        """
         dclass = self._get_default_class(elem)
         def_elem = dclass.get_children(elem.tag)
         self._copy_attributes(def_elem, elem)
@@ -64,7 +75,7 @@ class MjcfModifiers:
 # degugging purposes.
 if __name__ == "__main__":
     import sys
-    model = mjcf.from_file(sys.argv[1])
+    model = mjcf.from_path(sys.argv[1])
     modifiers = MjcfModifiers(model)
     for geom in model.find_all("geom"):
         modifiers.apply_modifiers_to_element(geom)
