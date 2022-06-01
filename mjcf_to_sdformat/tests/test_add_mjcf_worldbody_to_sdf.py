@@ -19,8 +19,6 @@ from dm_control import mujoco
 
 from ignition.math import Color, Vector3d
 
-from ignition.math import Color
-
 import sdformat as sdf
 
 from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
