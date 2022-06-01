@@ -23,7 +23,8 @@ import sdformat_mjcf_utils.sdf_utils as su
 import sdformat as sdf
 
 
-def mjcf_worldbody_to_sdf(mjcf_root, physics, world, export_world_plugins=True):
+def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
+                          export_world_plugins=True):
     """
     Convert a MJCF worldbody to a SDFormat world
 
