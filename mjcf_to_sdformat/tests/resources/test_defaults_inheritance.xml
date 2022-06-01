@@ -1,0 +1,25 @@
+<mujoco>
+    <default class="main">
+        <geom rgba="0 1 0 1" type="sphere" size="2"/>
+        <default class="sub">
+            <geom type="cylinder" size="2 3"/>
+        </default>
+        <default class="small_shape">
+            <geom size="0.5 0.5 0.5" />
+        </default>
+    </default>
+
+    <worldbody>
+        <body name="body1" childclass="sub">
+            <geom name="shape1" />
+            <geom name="shape2" pos="5 0 0" class="main"/>
+            <geom name="shape3" pos="10 0 0" class="small_shape"/>
+        </body>
+        <body name="body2" pos="0 -5 0">
+            <geom name="shape4" />
+            <geom name="shape5" pos="5 0 0" class="main"/>
+            <geom name="shape6" pos="10 0 0" class="small_shape"/>
+        </body>
+    </worldbody>
+</mujoco>
+

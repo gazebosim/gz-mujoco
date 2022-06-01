@@ -27,62 +27,15 @@ COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
 
 
-def _set_attribute(geom, key, value):
-    """
-    Set attribute to a MJCF Element
-    :param mjcf.Element geom: The MJCF geom to set the attributes
-    :param str key: Key name
-    :param str value: Value
-    :return: The modfied MJCF geometry.
-    :rtype: mjcf.Element
-    """
-    try:
-        geom.get_attributes()[key]
-    except KeyError:
-        geom.set_attributes(**{key: value})
-    return geom
-
-
-def _set_defaults(geom, default_classes=None):
-    """
-    Set default values to the MCJF geom
-    :param mjcf.Element geom: The MJCF geom
-    :param list[mjcf.Default] default_classes: List of default classes setted
-    to the body and parent bodies
-    :return: The modfied MJCF geometry.
-    :rtype: mjcf.Element
-    """
-    if geom.dclass is not None:
-        if geom.dclass.geom is not None:
-            print(geom.dclass.geom)
-
-    if geom.dclass is not None:
-        if geom.dclass.geom is not None:
-            geom.set_attributes(**geom.dclass.geom.get_attributes())
-    elif default_classes is not None:
-        for default_class in default_classes:
-            if default_class.geom is not None:
-                for k, v in default_class.geom.get_attributes().items():
-                    geom = _set_attribute(geom, k, v)
-    elif geom.root.default.geom is not None:
-        for k, v in geom.root.default.geom.get_attributes().items():
-            geom = _set_attribute(geom, k, v)
-
-    _set_attribute(geom, "type", "sphere")
-
-    return geom
-
-
-def mjcf_body_to_sdf(body, physics, body_parent_name=None,
-                     default_classes=None):
+def mjcf_body_to_sdf(body, physics, body_parent_name=None, modifiers=None):
     """
     Converts an MJCF body to a SDFormat.
 
     :param mjcf.Element body: The MJCF body
     :param mujoco.Physics physics: Mujoco Physics
     :param mjcf.Element inertial: Inertial of the body
-    :param list[mjcf.Default] default_classes: List of default classes set
-    to the body and parent bodies
+    :param sdformat_mjcf_utils.MjcfModifiers modifiers: Modifiers that apply
+    default classes to elements.
     :return: The newly created SDFormat link.
     :rtype: sdf.Link
     """
@@ -223,7 +176,8 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None,
             link.add_collision(col)
 
     for geom in body.geom:
-        geom = _set_defaults(geom, default_classes)
+        if modifiers is not None:
+            modifiers.apply_modifiers_to_element(geom)
         # If the group is not defined then visual and collision is added
         if geom.group is None:
             set_visual(geom)
@@ -234,6 +188,8 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None,
             set_collision(geom)
 
     for light in body.light:
+        if modifiers is not None:
+            modifiers.apply_modifiers_to_element(light)
         light_sdf = mjcf_light_to_sdf(light)
         link.add_light(light_sdf)
     return link

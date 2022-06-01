@@ -243,5 +243,30 @@ class ForceTorqueSensorTest(helpers.TestCase):
                 " of Force/Torque sensor", cm.output[0])
 
 
+class CameraTest(helpers.TestCase):
+    test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
+    expected_pos = [1.0, 2.0, 3.0]
+    expected_euler = [90.0, 60.0, 45.0]
+
+    def setUp(self):
+        self.mujoco = mjcf.RootElement(model="test")
+        self.body = self.mujoco.worldbody.add("body", name="test_body")
+        self.sensor = sdf.Sensor()
+        self.sensor.set_name("camera_sensor")
+        self.sensor.set_type(sdf.Sensortype.CAMERA)
+        self.sensor.set_raw_pose(self.test_pose)
+
+    def test_default(self):
+        camera_sensor = sdf.Camera()
+        self.sensor.set_camera_sensor(camera_sensor)
+        mjcf_sensor = add_sensor(self.body, self.sensor)
+
+        self.assertIsNotNone(mjcf_sensor)
+        mj_cameras = self.body.get_children("camera")
+        self.assertEqual(1, len(mj_cameras))
+        assert_allclose(self.expected_pos, mjcf_sensor.pos)
+        assert_allclose(self.expected_euler, mjcf_sensor.euler)
+
+
 if __name__ == "__main__":
     unittest.main()

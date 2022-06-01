@@ -17,40 +17,6 @@ import math
 import sdformat as sdf
 
 
-def _set_defaults(joint, default_classes=None):
-    """
-    Set default values to the MCJF joint
-    :param mjcf.Element geom: The MJCF joint
-    :param list[mjcf.Default] default_classes: List of default classes setted
-    to the body and parent bodies
-    :return: The modified MJCF geometry.
-    :rtype: mjcf.Element
-    """
-    if joint.root.default.joint is not None:
-        for k, v in joint.root.default.joint.get_attributes().items():
-            try:
-                joint.get_attributes()[k]
-            except KeyError:
-                joint.set_attributes(**{k: v})
-    if default_classes is not None:
-        for default_class in default_classes:
-            if default_class.joint is not None:
-                for k, v in default_class.joint.get_attributes().items():
-                    try:
-                        joint.get_attributes()[k]
-                    except KeyError:
-                        joint.set_attributes(**{k: v})
-    if joint.dclass is not None:
-        if joint.dclass.joint is not None:
-            for k, v in joint.dclass.joint.get_attributes().items():
-                try:
-                    joint.get_attributes()[k]
-                    joint.set_attributes(**{k: v})
-                except KeyError:
-                    joint.set_attributes(**{k: v})
-    return joint
-
-
 def add_fix_joint(parent_name, child_name):
     """
     Return an SDFormat fixed joint
@@ -80,7 +46,6 @@ def mjcf_joint_to_sdf(joint, parent_name, child_name, default_classes=None):
     :return: The newly created SDFormat joint.
     :rtype: sdf.Joint
     """
-    joint = _set_defaults(joint, default_classes)
     try:
         joint.get_attributes()["type"]
     except KeyError:
