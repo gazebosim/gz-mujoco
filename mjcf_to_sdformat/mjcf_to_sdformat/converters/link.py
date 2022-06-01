@@ -29,13 +29,15 @@ COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
 
 
-def mjcf_body_to_sdf(body, physics, body_parent_name=None):
+def mjcf_body_to_sdf(body, physics, body_parent_name=None, modifiers=None):
     """
     Converts an MJCF body to a SDFormat.
 
     :param mjcf.Element body: The MJCF body
     :param mujoco.Physics physics: Mujoco Physics
     :param mjcf.Element inertial: Inertial of the body
+    :param sdformat_mjcf_utils.MjcfModifiers modifiers: Modifiers that apply
+    default classes to elements.
     :return: The newly created SDFormat link.
     :rtype: sdf.Link
     """
@@ -174,6 +176,8 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None):
             link.add_collision(col)
 
     for geom in body.geom:
+        if modifiers is not None:
+            modifiers.apply_modifiers_to_element(geom)
         # If the group is not defined then visual and collision is added
         if geom.group is None:
             set_visual(geom)
@@ -184,6 +188,8 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None):
             set_collision(geom)
 
     for light in body.light:
+        if modifiers is not None:
+            modifiers.apply_modifiers_to_element(light)
         light_sdf = mjcf_light_to_sdf(light)
         link.add_light(light_sdf)
     return link
