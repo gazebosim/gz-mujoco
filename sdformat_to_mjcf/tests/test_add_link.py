@@ -21,6 +21,7 @@ from ignition.math import Color, Inertiald, Pose3d, MassMatrix3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_to_mjcf.converters.link import add_link
+from sdformat_to_mjcf.converters.root import add_root
 from tests import helpers
 
 
@@ -185,6 +186,30 @@ class LinkTest(helpers.TestCase):
         self.assertEqual(1, len(mjcf_accels))
         mjcf_gyros = self.mujoco.sensor.get_children("gyro")
         self.assertEqual(1, len(mjcf_gyros))
+
+
+class LinkIntegration(unittest.TestCase):
+    expected_pos = [1.0, 2.0, 3.0]
+    expected_euler = [90.0, 60.0, 45.0]
+
+    # Test that the model pose is correctly reflected in the converted MJCF
+    # body pose.
+    def test_link_pose(self):
+        model_string = """
+        <sdf version="1.9">
+            <model name="M1">
+                <pose degrees="true">{} {} {} {} {} {}</pose>
+                <link name="L1"/>
+            </model>
+        </sdf>""".format(*self.expected_pos, *self.expected_euler)
+
+        root = sdf.Root()
+        errors = root.load_sdf_string(model_string)
+        self.assertEqual(0, len(errors))
+        mjcf_root = add_root(root)
+        mj_link = mjcf_root.find("body", "L1")
+        assert_allclose(self.expected_pos, mj_link.pos)
+        assert_allclose(self.expected_euler, mj_link.euler)
 
 
 if __name__ == "__main__":

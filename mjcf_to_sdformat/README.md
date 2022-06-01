@@ -34,7 +34,7 @@ pip install -e path/to/mjcf_to_sdformat
 To convert an SDFormat file to mjcf:
 
 ```
-python -m mjcf_to_sdformat.mjcf2sdformat path/to/file.xml | tee new_file.sdf
+mjcf2sdformat path/to/file.xml new_file.sdf
 ```
 
 To run the sdf file in GazeboSim, follow [this instructions to install Gazebo Sim](https://gazebosim.org/docs/latest/install)

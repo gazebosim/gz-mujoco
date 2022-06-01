@@ -27,6 +27,22 @@ COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
 
 
+def _set_attribute(geom, key, value):
+    """
+    Set attribute to a MJCF Element
+    :param mjcf.Element geom: The MJCF geom to set the attributes
+    :param str key: Key name
+    :param str value: Value
+    :return: The modfied MJCF geometry.
+    :rtype: mjcf.Element
+    """
+    try:
+        geom.get_attributes()[key]
+    except KeyError:
+        geom.set_attributes(**{key: value})
+    return geom
+
+
 def _set_defaults(geom, default_classes=None):
     """
     Set default values to the MCJF geom
@@ -36,39 +52,36 @@ def _set_defaults(geom, default_classes=None):
     :return: The modfied MJCF geometry.
     :rtype: mjcf.Element
     """
-    if geom.root.default.geom is not None:
-        for k, v in geom.root.default.geom.get_attributes().items():
-            try:
-                geom.get_attributes()[k]
-            except KeyError:
-                geom.set_attributes(**{k: v})
+    if geom.dclass is not None:
+        if geom.dclass.geom is not None:
+            print(geom.dclass.geom)
 
-    if default_classes is not None:
+    if geom.dclass is not None:
+        if geom.dclass.geom is not None:
+            geom.set_attributes(**geom.dclass.geom.get_attributes())
+    elif default_classes is not None:
         for default_class in default_classes:
             if default_class.geom is not None:
                 for k, v in default_class.geom.get_attributes().items():
-                    try:
-                        geom.get_attributes()[k]
-                    except KeyError:
-                        geom.set_attributes(**{k: v})
-    if geom.dclass is not None:
-        if geom.dclass.geom is not None:
-            for k, v in geom.dclass.geom.get_attributes().items():
-                try:
-                    geom.get_attributes()[k]
-                    geom.set_attributes(**{k: v})
-                except KeyError:
-                    geom.set_attributes(**{k: v})
+                    geom = _set_attribute(geom, k, v)
+    elif geom.root.default.geom is not None:
+        for k, v in geom.root.default.geom.get_attributes().items():
+            geom = _set_attribute(geom, k, v)
+
+    _set_attribute(geom, "type", "sphere")
+
     return geom
 
 
-def mjcf_geom_to_sdf(body, body_parent_name=None, default_classes=None):
+def mjcf_body_to_sdf(body, physics, body_parent_name=None,
+                     default_classes=None):
     """
     Converts an MJCF body to a SDFormat.
 
     :param mjcf.Element body: The MJCF body
+    :param mujoco.Physics physics: Mujoco Physics
     :param mjcf.Element inertial: Inertial of the body
-    :param list[mjcf.Default] default_classes: List of default classes setted
+    :param list[mjcf.Default] default_classes: List of default classes set
     to the body and parent bodies
     :return: The newly created SDFormat link.
     :rtype: sdf.Link
@@ -136,7 +149,22 @@ def mjcf_geom_to_sdf(body, body_parent_name=None, default_classes=None):
                                     inertial_euler.pitch(),
                                     inertial_euler.yaw()))
         link.set_inertial(inertial)
-
+    else:
+        try:
+            body_inertia = physics.named.model.body_inertia[body.name]
+            inertia_pos = physics.named.model.body_ipos[body.name]
+            inertia_quat = physics.named.model.body_iquat[body.name]
+            inertial = Inertiald(
+                MassMatrix3d(physics.named.model.body_mass[body.name],
+                             Vector3d(body_inertia[0],
+                                      body_inertia[1],
+                                      body_inertia[2]),
+                             Vector3d(0, 0, 0)),
+                Pose3d(su.list_to_vec3d(inertia_pos),
+                       su.wxyz_list_to_quat(inertia_quat)))
+            link.set_inertial(inertial)
+        except AttributeError:
+            pass
     NUMBER_OF_VISUAL = 0
     NUMBER_OF_COLLISION = 0
 

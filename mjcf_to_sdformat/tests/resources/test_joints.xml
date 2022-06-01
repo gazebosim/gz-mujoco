@@ -10,11 +10,11 @@
   </default>
 
   <worldbody>
-    <geom name="ground" type="plane" pos="0 0 0" size=".3 .3 10" material="grid"/>
+    <geom name="ground" type="plane" pos="0 0 0" size=".3 .3 10"/>
     <body name="body1">
       <geom name="geom1" type="capsule" fromto="0 0 0 0.12 0 0" size=".01"/>
       <joint name="shoulder"/>
-      <joint axis="0 1 0" limited="true"/>
+      <joint axis="0 1 0" limited="true" range="-10 10"/>
       <body name="body2">
         <geom name="geom2" type="capsule" fromto="0 0 0 0.12 0 0" size=".1"/>
         <geom name="geom3" type="capsule" fromto="0 0 0 0.12 0 0" size=".1"/>

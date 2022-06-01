@@ -15,6 +15,7 @@
 import unittest
 
 from dm_control import mjcf
+from dm_control import mujoco
 
 from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
 
@@ -26,13 +27,14 @@ from tests.helpers import TEST_RESOURCES_DIR
 class DefaultsTest(unittest.TestCase):
 
     def test_defaults(self):
-        mjcf_model = mjcf.from_path(
-            str(TEST_RESOURCES_DIR / "test_defaults.xml"))
+        filename = str(TEST_RESOURCES_DIR / "test_defaults.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
 
         world = sdf.World()
         world.set_name("default")
 
-        mjcf_worldbody_to_sdf(mjcf_model, world)
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
 
         self.assertEqual("default", world.name())
         self.assertEqual(2, world.model_count())
@@ -56,11 +58,10 @@ class DefaultsTest(unittest.TestCase):
         link = model.link_by_index(1)
         self.assertNotEqual(None, link)
         visual = link.visual_by_index(0)
-        self.assertEqual(sdf.GeometryType.CAPSULE, visual.geometry().type())
-        capsule_shape = visual.geometry().capsule_shape()
-        self.assertNotEqual(None, capsule_shape)
-        self.assertEqual(0.2, capsule_shape.length())
-        self.assertEqual(0.01, capsule_shape.radius())
+        self.assertEqual(sdf.GeometryType.SPHERE, visual.geometry().type())
+        sphere_shape = visual.geometry().sphere_shape()
+        self.assertNotEqual(None, sphere_shape)
+        self.assertEqual(0.01, sphere_shape.radius())
 
 
 if __name__ == "__main__":

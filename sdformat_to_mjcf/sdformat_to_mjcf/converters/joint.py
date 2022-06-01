@@ -17,8 +17,10 @@
 import math
 
 import sdformat as sdf
+from ignition.math import Pose3d
 
 from sdformat_to_mjcf.converters.sensor import add_sensor
+from sdformat_to_mjcf.sdf_kinematics import FreeJoint, StaticFixedJoint
 import sdformat_mjcf_utils.sdf_utils as su
 
 JOINT_DEFAULT_UPPER_LIMIT = 1e16
@@ -63,10 +65,16 @@ def add_joint(body, joint):
     :return: The newly created MJCF joint.
     :rtype: mjcf.Element
     """
-    if joint is None:
+    if isinstance(joint, FreeJoint):
         return body.add("freejoint")
 
-    pose = su.graph_resolver.resolve_pose(joint.semantic_pose())
+    if isinstance(joint, StaticFixedJoint):
+        # The pose of this joint can be chosen arbitrarily since the purpose
+        # of the joint is to anchor static objects to the world. Any choice of
+        # poses will have the same effect, so we choose the identity pose here.
+        pose = Pose3d()
+    else:
+        pose = su.graph_resolver.resolve_pose(joint.semantic_pose())
 
     for si in range(joint.sensor_count()):
         sensor = joint.sensor_by_index(si)

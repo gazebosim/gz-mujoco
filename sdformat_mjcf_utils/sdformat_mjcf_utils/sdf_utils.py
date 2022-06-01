@@ -97,6 +97,16 @@ def quat_to_euler_list(quat):
     return [math.degrees(val) for val in vec3d_to_list(quat.euler())]
 
 
+def wxyz_list_to_quat(quat):
+    """
+    Convert a Quaternion list defined as wxyz to a gz.math.Quateriond.
+    :param gz.math.Quaterniond quat: Quaternion defined as a list.
+    :return: Return a Quaterniond
+    :rtype: gz.math.Quaterniond
+    """
+    return Quaterniond(quat[0], quat[1], quat[2], quat[3])
+
+
 def get_pose_from_mjcf(element):
     """
     Get the pose from a MJCF element
@@ -111,6 +121,13 @@ def get_pose_from_mjcf(element):
             pos = element.pos
         if element.euler is not None:
             euler = element.euler
+        if element.zaxis is not None:
+            z = Vector3d(0, 0, 1)
+            quat = Quaterniond()
+            quat.set_from_2_axes(z, list_to_vec3d(element.zaxis))
+            euler = vec3d_to_list(quat.euler())
+        if element.quat is not None:
+            euler = vec3d_to_list(wxyz_list_to_quat(element.quat).euler())
     except AttributeError:
         pass
     return Pose3d(list_to_vec3d(pos),
