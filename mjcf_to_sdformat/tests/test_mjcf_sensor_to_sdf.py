@@ -77,8 +77,8 @@ class SensorTest(unittest.TestCase):
         self.assertNotEqual(None, model)
         link = model.link_by_index(0)
         self.assertEqual(2, link.sensor_count())
-        self.assertEqual("unmanedcamera_2", link.sensor_by_index(0).name())
-        self.assertEqual("unmanedcamera_3", link.sensor_by_index(1).name())
+        self.assertEqual("unmanedcamera_3", link.sensor_by_index(0).name())
+        self.assertEqual("unmanedcamera_4", link.sensor_by_index(1).name())
 
 
 if __name__ == "__main__":
