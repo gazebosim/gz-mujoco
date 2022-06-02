@@ -14,6 +14,8 @@
 
 from ignition.math import Vector3d
 
+from mjcf_to_sdformat.converters.joint import (mjcf_joint_to_sdf,
+                                               add_fixed_joint)
 from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 from mjcf_to_sdformat.converters.link import mjcf_body_to_sdf
 
@@ -75,6 +77,18 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world):
                                     physics,
                                     body_parent_name=body_parent_name,
                                     modifiers=modifiers)
+            for joint in body.joint:
+                if modifiers is not None:
+                    modifiers.apply_modifiers_to_element(joint)
+                joint_sdf = mjcf_joint_to_sdf(joint,
+                                              body_parent_name,
+                                              body.name)
+                if joint_sdf is not None:
+                    model.add_joint(joint_sdf)
+            if len(body.joint) == 0 and body.freejoint is None:
+                joint_sdf = add_fixed_joint(body_parent_name, body.name)
+                model.add_joint(joint_sdf)
+
             model.add_link(link)
             iterate_bodies(body.body,
                            model,
