@@ -151,7 +151,7 @@ def get_pose_from_mjcf(element):
                 quat.set_y(0.25 * (mat(2, 0) - mat(0, 2)) / quat.q())
                 quat.set_z(0.25 * (mat(0, 1) - mat(1, 0)) / quat.q())
             # q1 largest
-            elif mat(0,0) > mat(1, 1) and mat(0, 0) > mat(2, 2):
+            elif mat(0, 0) > mat(1, 1) and mat(0, 0) > mat(2, 2):
                 quat.set_x(
                     0.5 * math.sqrt(1 + mat(0, 0) - mat(1, 1) - mat(2, 2)))
                 quat.set_w(0.25 * (mat(1, 2) - mat(2, 1)) / quat.x())
