@@ -144,7 +144,7 @@ def get_pose_from_mjcf(element):
             quat = Quaterniond()
             # TODO(ahcorde): Move this to gz-math
             # q0 largest
-            if mat(0, 0) + mat(1, 1) + mat(2, 2)>0:
+            if mat(0, 0) + mat(1, 1) + mat(2, 2) > 0:
                 quat.set_w(
                     0.5 * math.sqrt(1 + mat(0, 0) + mat(1, 1) + mat(2, 2)))
                 quat.set_x(0.25 * (mat(1, 2) - mat(2, 1)) / quat.q())
@@ -172,7 +172,6 @@ def get_pose_from_mjcf(element):
                 quat.set_x(0.25 * (mat(2, 0) + mat(0, 2)) / quat.z())
                 quat.set_y(0.25 * (mat(2, 1) + mat(1, 2)) / quat.z())
             euler = vec3d_to_list(quat.euler())
-            print(euler)
 
     except AttributeError:
         pass
