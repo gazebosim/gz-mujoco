@@ -25,13 +25,16 @@ import sdformat as sdf
 
 
 def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
-                          export_world_plugins=True):
+                          export_world_plugins=False):
     """
     Convert a MJCF worldbody to a SDFormat world
 
     :param mjcf.RootElement mjcf_root: The MJCF root element
     :param mujoco.Physics physics: Mujoco Physics
     :param sdf.World world: SDF World to add the models
+    :param boolean export_world_plugins: If this this flag is True then
+    system plugin will be exported (SceneBroadcaster, UserCommands, Physics,
+    Sensors), otherwise no system plugin will be exported.
     """
     model = sdf.Model()
     if mjcf_root.model is not None:

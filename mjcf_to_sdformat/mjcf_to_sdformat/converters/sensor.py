@@ -40,7 +40,7 @@ def mjcf_camera_sensor_to_sdf(sensor):
         sensor_sdf.set_name(sensor.name)
     else:
         global CAMERA_INDEX
-        sensor_sdf.set_name("unmanedcamera_" + str(CAMERA_INDEX))
+        sensor_sdf.set_name("unnamedcamera_" + str(CAMERA_INDEX))
         CAMERA_INDEX = CAMERA_INDEX + 1
 
     sensor_sdf.set_type(sdf.Sensortype.CAMERA)
@@ -52,6 +52,7 @@ def mjcf_camera_sensor_to_sdf(sensor):
     adapt_pose = Pose3d(Vector3d(), Quaterniond(-math.pi / 2, math.pi / 2, 0))
     pose = su.get_pose_from_mjcf(sensor) * adapt_pose
     sensor_sdf.set_raw_pose(pose)
+    sensor_sdf.set_update_rate(25)
     camera = sdf.Camera()
     sensor_sdf.set_camera_sensor(camera)
     return sensor_sdf

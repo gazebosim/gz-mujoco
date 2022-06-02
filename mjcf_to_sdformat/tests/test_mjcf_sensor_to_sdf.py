@@ -36,7 +36,7 @@ class SensorTest(unittest.TestCase):
         camera = body.add('camera')
 
         sensor_sdf = sensor_conv.mjcf_camera_sensor_to_sdf(camera)
-        self.assertEqual("unmanedcamera_2", sensor_sdf.name())
+        self.assertEqual("unnamedcamera_2", sensor_sdf.name())
         self.assertEqual(sdf.Sensortype.CAMERA, sensor_sdf.type())
         self.assertNotEqual(None, sensor_sdf.camera_sensor())
         self.assertEqual(Vector3d(), sensor_sdf.raw_pose().pos())
@@ -77,8 +77,8 @@ class SensorTest(unittest.TestCase):
         self.assertNotEqual(None, model)
         link = model.link_by_index(0)
         self.assertEqual(2, link.sensor_count())
-        self.assertEqual("unmanedcamera_3", link.sensor_by_index(0).name())
-        self.assertEqual("unmanedcamera_4", link.sensor_by_index(1).name())
+        self.assertEqual("unnamedcamera_3", link.sensor_by_index(0).name())
+        self.assertEqual("unnamedcamera_4", link.sensor_by_index(1).name())
 
 
 if __name__ == "__main__":

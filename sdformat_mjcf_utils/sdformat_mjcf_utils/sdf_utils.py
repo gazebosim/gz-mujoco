@@ -15,7 +15,7 @@
 """Utility functions that aid in conversion between SDFormat and MJCF"""
 
 import math
-from ignition.math import Pose3d, Quaterniond, Vector3d
+from ignition.math import Pose3d, Quaterniond, Vector3d, Matrix3d
 
 NAME_DELIMITER = '_'
 
@@ -129,6 +129,46 @@ def get_pose_from_mjcf(element):
             euler = vec3d_to_list(quat.euler())
         if element.quat is not None:
             euler = vec3d_to_list(wxyz_list_to_quat(element.quat).euler())
+        if element.xyaxes is not None:
+            v1 = list_to_vec3d(element.xyaxes)
+            v2 = list_to_vec3d(element.xyaxes[-3:])
+            z = v1.cross(v2);
+            d = v1.dot(v2)
+            v2 = Vector3d(v2.x() - v1.x() * d,
+                          v2.y() - v1.y() * d,
+                          v2.z() - v1.z() * d)
+            mat = Matrix3d(v1.x(), v1.y(), v1.z(),
+                         v2.x(), v2.y(), v2.z(),
+                         z.x(),  z.y(), z.z())
+
+            quat = Quaterniond()
+            # TODO(ahcorde): Move this to gz-math
+            # q0 largest
+            if mat(0,0)+mat(1,1)+mat(2,2)>0:
+                quat.set_w(0.5 * math.sqrt(1 + mat(0,0) + mat(1,1) + mat(2,2)))
+                quat.set_x(0.25 * (mat(1,2) - mat(2,1)) / quat.q())
+                quat.set_y(0.25 * (mat(2,0) - mat(0,2)) / quat.q())
+                quat.set_z(0.25 * (mat(0,1) - mat(1,0)) / quat.q())
+            # q1 largest
+            elif mat(0,0)>mat(1,1) and mat(0,0)>mat(2,2):
+                quat.set_x(0.5 * math.sqrt(1 + mat(0,0) - mat(1,1) - mat(2,2)))
+                quat.set_w(0.25 * (mat(1,2) - mat(2,1)) / quat.x())
+                quat.set_y(0.25 * (mat(1,0) + mat(0,1)) / quat.x())
+                quat.set_z(0.25 * (mat(2,0) + mat(0,2)) / quat.x())
+            # q2 largest
+            elif mat(1,1)>mat(2,2):
+                quat.set_y(0.5 * math.sqrt(1 - mat(0,0) + mat(1,1) - mat(2,2)))
+                quat.set_w(0.25 * (mat(2,0) - mat(0,2)) / quat.y())
+                quat.set_x(0.25 * (mat(1,0) + mat(0,1)) / quat.y())
+                quat.set_z(0.25 * (mat(2,1) + mat(1,2)) / quat.y())
+            # q3 largest
+            else:
+                quat.set_z(0.5 * math.sqrt(1 - mat(0,0) - mat(1,1) + mat(2,2)))
+                quat.set_w(0.25 * (mat(0,1) - mat(1,0)) / quat.z())
+                quat.set_x(0.25 * (mat(2,0) + mat(0,2)) / quat.z())
+                quat.set_y(0.25 * (mat(2,1) + mat(1,2)) / quat.z())
+            euler = vec3d_to_list(quat.euler())
+
     except AttributeError:
         pass
     return Pose3d(list_to_vec3d(pos),

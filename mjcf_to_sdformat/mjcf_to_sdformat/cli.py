@@ -29,7 +29,7 @@ def main(argv=None):
     parser.add_argument("output_file",
                         help="Desired path for the output SDFormat file")
     parser.add_argument('--export_world_plugins',
-                        default="False",
+                        default=False,
                         action='store_true',
                         help="Export world plugins")
     args = parser.parse_args(argv)
