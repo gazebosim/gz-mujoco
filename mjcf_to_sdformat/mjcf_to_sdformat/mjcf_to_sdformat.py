@@ -20,11 +20,12 @@ from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
 import sdformat as sdf
 
 
-def mjcf_file_to_sdformat(input_file, output_file):
+def mjcf_file_to_sdformat(input_file, output_file, export_world_plugins=True):
     """
     Loads a MJCF input file and converts to SDFormat.
     :param str input_file: Path to input MJCF file
     :param str output_file: Path to output SDFormat file.
+    :param str export_world_plugins: If true SDFormat will export world plugins
     """
     mjcf_model = mjcf.from_path(input_file)
     physics = mujoco.Physics.from_xml_path(input_file)
@@ -33,7 +34,7 @@ def mjcf_file_to_sdformat(input_file, output_file):
     world = sdf.World()
     world.set_name("default")
 
-    mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+    mjcf_worldbody_to_sdf(mjcf_model, physics, world, export_world_plugins)
 
     root.add_world(world)
 
