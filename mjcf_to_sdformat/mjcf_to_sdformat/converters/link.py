@@ -56,10 +56,6 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None, modifiers=None):
         global NUMBER_OF_SDF_LINK
         link_name = "link_" + str(NUMBER_OF_SDF_LINK)
         link.set_name(link_name)
-        try:
-            body.set_attributes(**{"name": link_name})
-        except AttributeError:
-            pass
         NUMBER_OF_SDF_LINK = NUMBER_OF_SDF_LINK + 1
 
     inertial = None

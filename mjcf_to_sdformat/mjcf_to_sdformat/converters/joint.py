@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 from ignition.math import Vector3d
 import math
 import sdformat as sdf
+import sdformat_mjcf_utils.sdf_utils as su
 
 
-def add_fix_joint(parent_name, child_name):
+def add_fixed_joint(parent_name, child_name):
     """
     Return an SDFormat fixed joint
     :param str parent_name: Name of the parent
@@ -56,19 +58,36 @@ def mjcf_joint_to_sdf(joint, parent_name, child_name, default_classes=None):
     # default value
     joint_axis_sdf.set_xyz(Vector3d(0, 0, 1))
 
+    joint_sdf.set_raw_pose(su.get_pose_from_mjcf(joint))
+
     if joint.stiffness is not None:
-        joint_axis_sdf.set_stiffness(joint.stiffness)
+        joint_axis_sdf.set_spring_stiffness(joint.stiffness)
     else:
-        joint_axis_sdf.set_stiffness(0)
+        joint_axis_sdf.set_spring_stiffness(0)
+
+    if joint.springref is not None:
+        joint_axis_sdf.set_spring_reference(joint.springref)
+    else:
+        joint_axis_sdf.set_spring_reference(0)
+
+    if joint.frictionloss is not None:
+        joint_axis_sdf.set_friction(joint.frictionloss)
+    else:
+        joint_axis_sdf.set_friction(0)
 
     if joint.limited is not None:
         if joint.limited == "true":
             if joint.range is not None:
-                joint_axis_sdf.set_lower(joint.range[0] * math.pi / 180.0)
-                joint_axis_sdf.set_upper(joint.range[1] * math.pi / 180.0)
+                if joint.root.compiler.angle == "degree":
+                    joint_axis_sdf.set_lower(joint.range[0])
+                    joint_axis_sdf.set_upper(joint.range[1])
+                else:
+                    joint_axis_sdf.set_lower(math.radians(joint.range[0]))
+                    joint_axis_sdf.set_upper(math.radians(joint.range[1]))
             else:
-                joint_axis_sdf.set_lower(-1)
-                joint_axis_sdf.set_upper(1)
+                joint_axis_sdf.set_lower(0)
+                joint_axis_sdf.set_upper(0)
+
     if joint.damping is not None:
         joint_axis_sdf.set_damping(joint.damping)
     else:
@@ -78,7 +97,7 @@ def mjcf_joint_to_sdf(joint, parent_name, child_name, default_classes=None):
         joint_sdf.set_name(joint.name + "_joint")
     else:
         joint_sdf.set_name(
-            joint_sdf.parent_link_name() + "_" + child_name + "_joint")
+            "joint_" + joint_sdf.parent_link_name() + "_" + child_name)
 
     if parent_name is None:
         joint_sdf.set_parent_link_name("world")
@@ -97,10 +116,8 @@ def mjcf_joint_to_sdf(joint, parent_name, child_name, default_classes=None):
         return joint_sdf
     if joint.type == "slide":
         joint_sdf.set_type(sdf.JointType.PRISMATIC)
-        joint_axis_sdf.set_xyz(Vector3d(joint.axis[0],
-                                        joint.axis[1],
-                                        joint.axis[2]))
         return joint_sdf
     else:
-        print("Not able to process this type of joint ", joint.type)
+        logging.warning(f"Not able to process this type of joint "
+                        f"{joint.type}.")
         return None

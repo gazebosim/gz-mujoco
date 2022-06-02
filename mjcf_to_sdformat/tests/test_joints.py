@@ -14,7 +14,7 @@
 
 import unittest
 
-from ignition.math import Vector3d
+from ignition.math import Pose3d, Vector3d
 
 from dm_control import mjcf
 from dm_control import mujoco
@@ -58,7 +58,11 @@ class DefaultsTest(unittest.TestCase):
         self.assertNotEqual(None, joint.axis(0))
         self.assertEqual(Vector3d(0, 0, 1), joint.axis(0).xyz())
         self.assertEqual(0, joint.axis(0).damping())
-        self.assertEqual(0, joint.axis(0).stiffness())
+        self.assertEqual(100000000.0, joint.axis(0).stiffness())
+        self.assertEqual(0.0, joint.axis(0).spring_stiffness())
+        self.assertEqual(0.0, joint.axis(0).spring_reference())
+        self.assertEqual(0.0, joint.axis(0).friction())
+        self.assertEqual(Pose3d(), joint.raw_pose())
 
         joint = model.joint_by_index(1)
         self.assertNotEqual(None, joint)
@@ -68,7 +72,10 @@ class DefaultsTest(unittest.TestCase):
         self.assertNotEqual(None, joint.axis(0))
         self.assertEqual(Vector3d(0, 1, 0), joint.axis(0).xyz())
         self.assertEqual(0, joint.axis(0).damping())
-        self.assertEqual(0, joint.axis(0).stiffness())
+        self.assertEqual(100000000.0, joint.axis(0).stiffness())
+        self.assertEqual(0.0, joint.axis(0).spring_stiffness())
+        self.assertEqual(1.1, joint.axis(0).spring_reference())
+        self.assertEqual(2.0, joint.axis(0).friction())
 
         joint = model.joint_by_index(2)
         self.assertNotEqual(None, joint)
@@ -78,7 +85,10 @@ class DefaultsTest(unittest.TestCase):
         self.assertNotEqual(None, joint.axis(0))
         self.assertEqual(Vector3d(0, 0, 1), joint.axis(0).xyz())
         self.assertEqual(0, joint.axis(0).damping())
-        self.assertEqual(0, joint.axis(0).stiffness())
+        self.assertEqual(100000000.0, joint.axis(0).stiffness())
+        self.assertEqual(0.0, joint.axis(0).spring_stiffness())
+        self.assertEqual(0.0, joint.axis(0).spring_reference())
+        self.assertEqual(0.0, joint.axis(0).friction())
 
         joint = model.joint_by_index(3)
         self.assertNotEqual(None, joint)
@@ -88,7 +98,10 @@ class DefaultsTest(unittest.TestCase):
         self.assertNotEqual(None, joint.axis(0))
         self.assertEqual(Vector3d(1, 0, 0), joint.axis(0).xyz())
         self.assertEqual(0.01, joint.axis(0).damping())
-        self.assertEqual(10, joint.axis(0).stiffness())
+        self.assertEqual(100000000.0, joint.axis(0).stiffness())
+        self.assertEqual(10.0, joint.axis(0).spring_stiffness())
+        self.assertEqual(0.0, joint.axis(0).spring_reference())
+        self.assertEqual(0.0, joint.axis(0).friction())
 
 
 if __name__ == "__main__":
