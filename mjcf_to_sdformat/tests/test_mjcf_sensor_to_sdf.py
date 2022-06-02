@@ -64,7 +64,7 @@ class SensorTest(unittest.TestCase):
         world = sdf.World()
         world.set_name("default")
 
-        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world, True)
 
         self.assertEqual(2, world.model_count())
         model = world.model_by_index(0)
@@ -79,6 +79,24 @@ class SensorTest(unittest.TestCase):
         self.assertEqual(2, link.sensor_count())
         self.assertEqual("unnamedcamera_3", link.sensor_by_index(0).name())
         self.assertEqual("unnamedcamera_4", link.sensor_by_index(1).name())
+
+        self.assertEqual(4, len(world.plugins()))
+        self.assertEqual("ignition::gazebo::systems::Physics",
+                         world.plugins()[0].name())
+        self.assertEqual("ignition-gazebo-physics-system",
+                         world.plugins()[0].filename())
+        self.assertEqual("ignition::gazebo::systems::Sensors",
+                         world.plugins()[1].name())
+        self.assertEqual("ignition-gazebo-sensors-system",
+                         world.plugins()[1].filename())
+        self.assertEqual("ignition::gazebo::systems::UserCommands",
+                         world.plugins()[2].name())
+        self.assertEqual("ignition-gazebo-user-commands-system",
+                         world.plugins()[2].filename())
+        self.assertEqual("ignition::gazebo::systems::SceneBroadcaster",
+                         world.plugins()[3].name())
+        self.assertEqual("ignition-gazebo-scene-broadcaster-system",
+                         world.plugins()[3].filename())
 
 
 if __name__ == "__main__":
