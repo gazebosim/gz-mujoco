@@ -36,7 +36,6 @@ def main(argv=None):
                         dest='export_world_plugins',
                         action='store_false',
                         help="Do not export world plugins")
-    parser.set_defaults(feature=False)
     args = parser.parse_args(argv)
     return mjcf_file_to_sdformat(args.input_file,
                                  args.output_file,

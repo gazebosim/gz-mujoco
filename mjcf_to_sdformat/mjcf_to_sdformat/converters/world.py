@@ -51,32 +51,16 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
     link = mjcf_body_to_sdf(mjcf_root.worldbody, physics, modifiers=modifiers)
     model_static.set_name(su.find_unique_name(
         mjcf_root.worldbody, "geom", "static"))
-    model_static.add_link(link)
-    model_static.set_static(True)
-    world.add_model(model_static)
-
-    include_sensor_plugins = False
 
     for camera in mjcf_root.worldbody.camera:
+        print(camera)
         sensor = mjcf_camera_sensor_to_sdf(camera)
         if sensor is not None:
             link.add_sensor(sensor)
-            include_sensor_plugins = True
 
-    if include_sensor_plugins and export_world_plugins:
-        plugins = {
-            "ignition-gazebo-physics-system":
-                "ignition::gazebo::systems::Physics",
-            "ignition-gazebo-sensors-system":
-                "ignition::gazebo::systems::Sensors",
-            "ignition-gazebo-user-commands-system":
-                "ignition::gazebo::systems::UserCommands",
-            "ignition-gazebo-scene-broadcaster-system":
-                "ignition::gazebo::systems::SceneBroadcaster"
-        }
-        for [key, value] in plugins.items():
-            plugin = sdf.Plugin(key, value)
-            world.add_plugin(plugin)
+    model_static.add_link(link)
+    model_static.set_static(True)
+    world.add_model(model_static)
 
     body = mjcf_root.worldbody.body
 
@@ -100,10 +84,29 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
                                     physics,
                                     body_parent_name=body_parent_name,
                                     modifiers=modifiers)
+            for camera in body.camera:
+                sensor = mjcf_camera_sensor_to_sdf(camera)
+                if sensor is not None:
+                    link.add_sensor(sensor)
             model.add_link(link)
             iterate_bodies(body.body,
                            model,
                            body.name)
     iterate_bodies(body, model)
+
+    if export_world_plugins:
+        plugins = {
+            "ignition-gazebo-physics-system":
+                "ignition::gazebo::systems::Physics",
+            "ignition-gazebo-sensors-system":
+                "ignition::gazebo::systems::Sensors",
+            "ignition-gazebo-user-commands-system":
+                "ignition::gazebo::systems::UserCommands",
+            "ignition-gazebo-scene-broadcaster-system":
+                "ignition::gazebo::systems::SceneBroadcaster"
+        }
+        for [key, value] in plugins.items():
+            plugin = sdf.Plugin(key, value)
+            world.add_plugin(plugin)
 
     world.add_model(model)

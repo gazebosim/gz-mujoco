@@ -9,7 +9,11 @@
              attenuation="0.0 0.01 0.001" specular="0.2 0.2 0.2"/>
       <geom type="plane" size="1 1 0.1" rgba=".9 0 0 1"/>
       <geom name="rail1" type="capsule" pos="0  .07 1" zaxis="1 0 0" size="0.02 2"/>
+      <camera name="fixed" pos="0 -6 2" zaxis="0 -1 0"/>
+      <camera name="target_camera" pos="0 -6 2" zaxis="0 -1 0" target="body2"/>
       <body pos="0 0 1">
+         <camera pos="0 -6 2" zaxis="0 -1 0"/>
+         <camera pos="0 -6 2" zaxis="0 -1 0"/>
          <joint type="free"/>
          <inertial pos="0 1 0" mass="2" fullinertia="2 2 2 0 0 0"/>
          <geom type="box" pos="0.1 0.3 0.2" size=".1 .2 .3" rgba="0 .9 0 1"/>
@@ -28,7 +32,5 @@
                 dir="0.5 0.2 -0.0" attenuation="0.0 0.01 0.001" diffuse="0.8 0.8 0.8"
                 specular="0.2 0.2 0.2" active="false"/>
       </body>
-      <camera name="fixed" pos="0 -6 2" zaxis="0 -1 0"/>
-      <camera name="target_camera" pos="0 -6 2" zaxis="0 -1 0" target="body2"/>
-   </worldbody>
+    </worldbody>
 </mujoco>
