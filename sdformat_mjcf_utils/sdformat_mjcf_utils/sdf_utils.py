@@ -137,40 +137,11 @@ def get_pose_from_mjcf(element):
             v2 = Vector3d(v2.x() - v1.x() * d,
                           v2.y() - v1.y() * d,
                           v2.z() - v1.z() * d)
-            mat = Matrix3d(v1.x(), v1.y(), v1.z(),
-                           v2.x(), v2.y(), v2.z(),
-                           z.x(), z.y(), z.z())
+            mat = Matrix3d(v1.x(), v2.x(), z.x(),
+                           v1.y(), v2.y(), z.y(),
+                           v1.z(), v2.z(), z.z())
 
-            quat = Quaterniond()
-            # TODO(ahcorde): Move this to gz-math
-            # q0 largest
-            if mat(0, 0) + mat(1, 1) + mat(2, 2) > 0:
-                quat.set_w(
-                    0.5 * math.sqrt(1 + mat(0, 0) + mat(1, 1) + mat(2, 2)))
-                quat.set_x(0.25 * (mat(1, 2) - mat(2, 1)) / quat.q())
-                quat.set_y(0.25 * (mat(2, 0) - mat(0, 2)) / quat.q())
-                quat.set_z(0.25 * (mat(0, 1) - mat(1, 0)) / quat.q())
-            # q1 largest
-            elif mat(0, 0) > mat(1, 1) and mat(0, 0) > mat(2, 2):
-                quat.set_x(
-                    0.5 * math.sqrt(1 + mat(0, 0) - mat(1, 1) - mat(2, 2)))
-                quat.set_w(0.25 * (mat(1, 2) - mat(2, 1)) / quat.x())
-                quat.set_y(0.25 * (mat(1, 0) + mat(0, 1)) / quat.x())
-                quat.set_z(0.25 * (mat(2, 0) + mat(0, 2)) / quat.x())
-            # q2 largest
-            elif mat(1, 1) > mat(2, 2):
-                quat.set_y(
-                    0.5 * math.sqrt(1 - mat(0, 0) + mat(1, 1) - mat(2, 2)))
-                quat.set_w(0.25 * (mat(2, 0) - mat(0, 2)) / quat.y())
-                quat.set_x(0.25 * (mat(1, 0) + mat(0, 1)) / quat.y())
-                quat.set_z(0.25 * (mat(2, 1) + mat(1, 2)) / quat.y())
-            # q3 largest
-            else:
-                quat.set_z(
-                    0.5 * math.sqrt(1 - mat(0, 0) - mat(1, 1) + mat(2, 2)))
-                quat.set_w(0.25 * (mat(0, 1) - mat(1, 0)) / quat.z())
-                quat.set_x(0.25 * (mat(2, 0) + mat(0, 2)) / quat.z())
-                quat.set_y(0.25 * (mat(2, 1) + mat(1, 2)) / quat.z())
+            quat = Quaterniond(mat)
             euler = vec3d_to_list(quat.euler())
 
     except AttributeError:
