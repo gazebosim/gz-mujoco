@@ -53,7 +53,6 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
         mjcf_root.worldbody, "geom", "static"))
 
     for camera in mjcf_root.worldbody.camera:
-        print(camera)
         sensor = mjcf_camera_sensor_to_sdf(camera)
         if sensor is not None:
             link.add_sensor(sensor)

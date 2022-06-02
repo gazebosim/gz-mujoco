@@ -29,13 +29,9 @@ def main(argv=None):
     parser.add_argument("output_file",
                         help="Desired path for the output SDFormat file")
     parser.add_argument('--export_world_plugins',
-                        default="True",
+                        default="False",
                         action='store_true',
                         help="Export world plugins")
-    parser.add_argument('--no-export_world_plugins',
-                        dest='export_world_plugins',
-                        action='store_false',
-                        help="Do not export world plugins")
     args = parser.parse_args(argv)
     return mjcf_file_to_sdformat(args.input_file,
                                  args.output_file,
