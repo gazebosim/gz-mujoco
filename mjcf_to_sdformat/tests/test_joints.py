@@ -26,7 +26,7 @@ import sdformat as sdf
 from tests.helpers import TEST_RESOURCES_DIR
 
 
-class DefaultsTest(unittest.TestCase):
+class JointTest(unittest.TestCase):
 
     def test_defaults(self):
         filename = str(TEST_RESOURCES_DIR / "test_joints.xml")
