@@ -14,9 +14,43 @@
 
 from ignition.math import Color
 
+import logging
+
 import sdformat as sdf
 
 import sdformat_mjcf_utils.sdf_utils as su
+
+
+def _get_filename(vfs_filename):
+    """
+    This method return the name of the texture without the hash. There are two
+    situations:
+    - The filename contains the hash in your harddisk
+    - The filename doesn't contain the hash in your harddisk
+    :param str vfs_filename: The vfs filename
+    :return: The filename of the file in your harddisk
+    :rtype str:
+    """
+    filename = vfs_filename
+    contents = None
+    try:
+        with open(filename, 'rb') as f:
+            contents = f.read()
+    except FileNotFoundError:
+        pass
+    if contents is None:
+        result_dot = vfs_filename.rfind('.')
+        result_dash = vfs_filename.rfind('-')
+        filename = vfs_filename[0: result_dash:] + "." + vfs_filename[
+            result_dot + 1::]
+        try:
+            with open(filename, 'rb') as f:
+                contents = f.read()
+        except FileNotFoundError:
+            pass
+    if contents is None:
+        logging.warning(f"Not able to find the file {filename}")
+    return filename
 
 
 def mjcf_material_to_sdf(geom):
@@ -32,10 +66,32 @@ def mjcf_material_to_sdf(geom):
         if geom.material.rgba is not None:
             material.set_diffuse(su.rgba_to_color(geom.material.rgba))
             material.set_ambient(su.rgba_to_color(geom.material.rgba))
-            material.set_specular(su.rgba_to_color(geom.material.rgba))
-            material.set_emissive(su.rgba_to_color(geom.material.rgba))
+            if geom.material.specular is not None:
+                material.set_specular(
+                    su.rgba_to_color([geom.material.specular] * 3 + [1]))
+            else:
+                material.set_specular(su.rgba_to_color([0.5] * 3 + [1]))
+            if geom.material.emission is not None:
+                emission = [geom.material.emission * color for color in
+                            geom.material.rgba[:3]]
+                material.set_emissive(su.rgba_to_color(emission + [1]))
+            else:
+                material.set_emissive(su.rgba_to_color([0] * 3 + [1]))
             return material
         elif geom.material.texture is not None:
+            if geom.material.texture.gridsize is not None:
+                if (geom.material.texture.gridsize == [1, 1]).all():
+                    logging.warning("Texture gridsize is not [1 1]. This"
+                                    "might generate wrong results.")
+
+            if geom.material.texture.gridlayout is not None:
+                logging.warning("Texture gridlayout is set. This feature is "
+                                "not supported.")
+
+            if geom.material.texture.builtin is not None:
+                logging.warning("Texture builtin is set, generation of "
+                                "procedural textures is not supported.")
+
             if geom.material.texture.file is not None:
                 material = sdf.Material()
                 material.set_diffuse(Color(1, 1, 1, 1))
@@ -43,9 +99,9 @@ def mjcf_material_to_sdf(geom):
                 pbr = sdf.Pbr()
                 workflow = sdf.PbrWorkflow()
                 workflow.set_type(sdf.PbrWorkflowType.METAL)
-                print(geom.material.texture.file.get_vfs_filename())
-                workflow.set_albedo_map(
+                filename = _get_filename(
                     geom.material.texture.file.get_vfs_filename())
+                workflow.set_albedo_map(filename)
                 pbr.set_workflow(workflow.type(), workflow)
                 material.set_pbr_material(pbr)
                 return material

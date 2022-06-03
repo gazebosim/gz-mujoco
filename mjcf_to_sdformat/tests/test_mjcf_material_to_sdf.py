@@ -17,8 +17,10 @@ import unittest
 from ignition.math import Color
 
 from dm_control import mjcf
+from dm_control import mujoco
 
 from mjcf_to_sdformat.converters.material import mjcf_material_to_sdf
+from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
 
 import sdformat as sdf
 
@@ -38,8 +40,8 @@ class MaterialTest(unittest.TestCase):
         self.assertNotEqual(None, material)
         self.assertEqual(Color(0.36, 0.36, 0.36, 1.0), material.diffuse())
         self.assertEqual(Color(0.36, 0.36, 0.36, 1.0), material.ambient())
-        self.assertEqual(Color(0.36, 0.36, 0.36, 1.0), material.specular())
-        self.assertEqual(Color(0.36, 0.36, 0.36, 1.0), material.emissive())
+        self.assertEqual(Color(0.3, 0.3, 0.3, 1.0), material.specular())
+        self.assertEqual(Color(0, 0, 0, 1.0), material.emissive())
 
         material = mjcf_material_to_sdf(mjcf_model.worldbody.body[1].geom[0])
         self.assertNotEqual(None, material)
@@ -59,6 +61,32 @@ class MaterialTest(unittest.TestCase):
         workflow = pbr.workflow(sdf.PbrWorkflowType.METAL)
         self.assertNotEqual(None, workflow)
         self.assertNotEqual(None, workflow.albedo_map())
+
+    def test_material_mjcf_worldbody_to_sdf(self):
+        filename = str(TEST_RESOURCES_DIR / "tennis_ball.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
+
+        world = sdf.World()
+        world.set_name("default")
+
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+
+        model = world.model_by_index(1)
+        link = model.link_by_index(0)
+        visual = link.visual_by_index(0)
+
+        material = visual.material()
+        self.assertNotEqual(None, material)
+        self.assertEqual(Color(1, 1, 1, 1.0), material.diffuse())
+        self.assertEqual(Color(0, 0, 0, 1.0), material.ambient())
+        self.assertEqual(Color(1, 1, 1, 1.0), material.specular())
+        self.assertEqual(Color(0, 0, 0, 1.0), material.emissive())
+        pbr = material.pbr_material()
+        self.assertNotEqual(None, pbr)
+        workflow = pbr.workflow(sdf.PbrWorkflowType.METAL)
+        self.assertNotEqual(None, workflow)
+        self.assertEqual("tennis_ball.png", workflow.albedo_map())
 
 
 if __name__ == "__main__":
