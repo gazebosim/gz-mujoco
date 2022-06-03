@@ -21,36 +21,19 @@ import sdformat as sdf
 import sdformat_mjcf_utils.sdf_utils as su
 
 
-def _get_filename(vfs_filename):
+def _get_filename_on_disk(texture):
     """
-    This method return the name of the texture without the hash. There are two
-    situations:
-    - The filename contains the hash in your harddisk
-    - The filename doesn't contain the hash in your harddisk
-    :param str vfs_filename: The vfs filename
-    :return: The filename of the file in your harddisk
-    :rtype str:
+    This method returns the name of the texture file without the hash.
+    :param mjcf.Element texture: The texture element
+    :return: The name of the file in your harddisk
+    :rtype: str
     """
-    filename = vfs_filename
-    contents = None
-    try:
-        with open(filename, 'rb') as f:
-            contents = f.read()
-    except FileNotFoundError:
-        pass
-    if contents is None:
-        result_dot = vfs_filename.rfind('.')
-        result_dash = vfs_filename.rfind('-')
-        filename = vfs_filename[0: result_dash:] + "." + vfs_filename[
-            result_dot + 1::]
-        try:
-            with open(filename, 'rb') as f:
-                contents = f.read()
-        except FileNotFoundError:
-            pass
-    if contents is None:
-        logging.warning(f"Not able to find the file {filename}")
-    return filename
+    file = texture.file
+    if file.prefix:
+        return file.prefix + file.extension
+    else:
+        logging.warning("Asset file does not exist on disk")
+        return file.get_vfs_filename()
 
 
 def mjcf_material_to_sdf(geom):
@@ -99,8 +82,7 @@ def mjcf_material_to_sdf(geom):
                 pbr = sdf.Pbr()
                 workflow = sdf.PbrWorkflow()
                 workflow.set_type(sdf.PbrWorkflowType.METAL)
-                filename = _get_filename(
-                    geom.material.texture.file.get_vfs_filename())
+                filename = _get_filename_on_disk(geom.material.texture)
                 workflow.set_albedo_map(filename)
                 pbr.set_workflow(workflow.type(), workflow)
                 material.set_pbr_material(pbr)
