@@ -1,4 +1,9 @@
 <mujoco>
+   <asset>
+     <material name="material_1" emission="0.0" specular="0.3"
+              rgba="0.36 0.36 0.36 1"/>
+     <material name="material_defaults"/>
+   </asset>
    <default>
      <geom type="capsule" mass="1"/>
    </default>
@@ -16,9 +21,10 @@
          <camera pos="0 -6 2" zaxis="0 -1 0"/>
          <freejoint name="freejoint1"/>
          <inertial pos="0 1 0" mass="2" fullinertia="2 2 2 0 0 0"/>
-         <geom type="box" pos="0.1 0.3 0.2" size=".1 .2 .3" rgba="0 .9 0 1"/>
+         <geom type="box" pos="0.1 0.3 0.2" size=".1 .2 .3" material="material_1"/>
          <geom name="who_is_this" fromto="0 0 0 0 0 1" size="0.05"/>
          <geom name="capsule" type="capsule" mass="1" fromto="0 -0.06 0 0 0.06 0" size="0.05"/>
+         <geom name="default_mat" size="1 1" material="material_defaults"/>
       </body>
       <body pos="0 1 0" name="body2" quat="0.5 0 0.5 0">
          <freejoint name="freejoint2"/>
