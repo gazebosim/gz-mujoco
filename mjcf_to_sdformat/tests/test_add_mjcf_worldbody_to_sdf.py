@@ -95,8 +95,8 @@ class ModelTest(unittest.TestCase):
         self.assertNotEqual(None, model)
         link_2 = model.link_by_index(0)
         self.assertEqual("link_1", link_2.name())
-        self.assertEqual(3, link_2.visual_count())
-        self.assertEqual(3, link_2.collision_count())
+        self.assertEqual(4, link_2.visual_count())
+        self.assertEqual(4, link_2.collision_count())
         assert_allclose([0, 0, 1], su.vec3d_to_list(link_2.raw_pose().pos()))
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(link_2.raw_pose().rot().euler()))

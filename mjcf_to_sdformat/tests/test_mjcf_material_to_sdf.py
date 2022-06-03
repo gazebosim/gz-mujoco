@@ -49,6 +49,14 @@ class MaterialTest(unittest.TestCase):
         self.assertEqual(Color(0, 0.9, 0, 1.0), material.ambient())
         self.assertEqual(Color(0, 0.9, 0, 1.0), material.specular())
         self.assertEqual(Color(0, 0.9, 0, 1.0), material.emissive())
+        geom_default_mat = mjcf_model.find("geom", "default_mat")
+        self.assertIsNotNone(geom_default_mat)
+        material = mjcf_material_to_sdf(geom_default_mat)
+        self.assertNotEqual(None, material)
+        self.assertEqual(Color(1, 1, 1, 1.0), material.diffuse())
+        self.assertEqual(Color(1, 1, 1, 1.0), material.ambient())
+        self.assertEqual(Color(0.5, 0.5, 0.5, 1.0), material.specular())
+        self.assertEqual(Color(0, 0, 0, 1.0), material.emissive())
 
     def test_material_texture(self):
         mjcf_model = mjcf.from_path(
@@ -79,8 +87,8 @@ class MaterialTest(unittest.TestCase):
         material = visual.material()
         self.assertNotEqual(None, material)
         self.assertEqual(Color(1, 1, 1, 1.0), material.diffuse())
-        self.assertEqual(Color(0, 0, 0, 1.0), material.ambient())
-        self.assertEqual(Color(1, 1, 1, 1.0), material.specular())
+        self.assertEqual(Color(1, 1, 1, 1.0), material.ambient())
+        self.assertEqual(Color(0.5, 0.5, 0.5, 1.0), material.specular())
         self.assertEqual(Color(0, 0, 0, 1.0), material.emissive())
         pbr = material.pbr_material()
         self.assertNotEqual(None, pbr)
