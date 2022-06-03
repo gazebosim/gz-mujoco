@@ -15,7 +15,7 @@
 """Utility functions that aid in conversion between SDFormat and MJCF"""
 
 import math
-from ignition.math import Color, Pose3d, Quaterniond, Vector3d
+from ignition.math import Color, Pose3d, Quaterniond, Vector3d, Matrix3d
 
 NAME_DELIMITER = '_'
 
@@ -130,7 +130,8 @@ def get_pose_from_mjcf(element):
         if element.pos is not None:
             pos = element.pos
         if element.euler is not None:
-            euler = element.euler
+            quat = Quaterniond(list_to_vec3d(element.euler))
+            euler = quat.euler()
         if element.zaxis is not None:
             z = Vector3d(0, 0, 1)
             quat = Quaterniond()
@@ -138,6 +139,21 @@ def get_pose_from_mjcf(element):
             euler = vec3d_to_list(quat.euler())
         if element.quat is not None:
             euler = vec3d_to_list(wxyz_list_to_quat(element.quat).euler())
+        if element.xyaxes is not None:
+            v1 = list_to_vec3d(element.xyaxes)
+            v2 = list_to_vec3d(element.xyaxes[-3:])
+            z = v1.cross(v2)
+            d = v1.dot(v2)
+            v2 = Vector3d(v2.x() - v1.x() * d,
+                          v2.y() - v1.y() * d,
+                          v2.z() - v1.z() * d)
+            mat = Matrix3d(v1.x(), v2.x(), z.x(),
+                           v1.y(), v2.y(), z.y(),
+                           v1.z(), v2.z(), z.z())
+
+            quat = Quaterniond(mat)
+            euler = vec3d_to_list(quat.euler())
+
     except AttributeError:
         pass
     return Pose3d(list_to_vec3d(pos),
