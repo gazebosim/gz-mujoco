@@ -136,6 +136,17 @@ class GeometryTest(unittest.TestCase):
         assert_allclose([x_size * 2, y_size * 2],
                         su.vec2d_to_list(sdf_geom.plane_shape().size()))
 
+    def test_infinite_plane(self):
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        geom = body.add('geom', type="plane", size=[0, 0, 1])
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
+
+        self.assertEqual(sdf.GeometryType.PLANE, sdf_geom.type())
+        self.assertNotEqual(None, sdf_geom.plane_shape())
+        assert_allclose([1e6, 1e6],
+                        su.vec2d_to_list(sdf_geom.plane_shape().size()))
+
     def test_sphere(self):
         radius = 5.
 
