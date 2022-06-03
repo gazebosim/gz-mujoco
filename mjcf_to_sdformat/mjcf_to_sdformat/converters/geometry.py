@@ -14,6 +14,7 @@
 
 """Module to convert MJCF geoms to SDFormat Collision/Visual geometries"""
 
+import os
 from ignition.math import Vector2d, Vector3d
 
 import sdformat as sdf
@@ -24,6 +25,7 @@ COLLISION_NUMBER = 0
 
 # SDFormat doesn't have infinite plane sizes, so we use a large number instead.
 INFINITE_PLANE_SIZE = 1e6
+MESH_OUTPUT_DIR = "meshes"
 
 
 def mjcf_geom_to_sdf(geom):
@@ -88,6 +90,15 @@ def mjcf_geom_to_sdf(geom):
         plane.set_size(Vector2d(*geom_size))
         sdf_geometry.set_plane_shape(plane)
         sdf_geometry.set_type(sdf.GeometryType.PLANE)
+    elif geom.type == "mesh":
+        mj_mesh = geom.mesh
+        mesh = sdf.Mesh()
+        mesh.set_scale(su.list_to_vec3d(mj_mesh.scale))
+        mesh.set_uri(
+            os.path.join(MESH_OUTPUT_DIR,
+                         su.get_asset_filename_on_disk(mj_mesh)))
+        sdf_geometry.set_mesh_shape(mesh)
+        sdf_geometry.set_type(sdf.GeometryType.MESH)
     else:
         raise RuntimeError(
             f"Encountered unsupported shape type {geom.type}")

@@ -22,6 +22,7 @@ from dm_control import mjcf
 from mjcf_to_sdformat.converters import geometry as geometry_conv
 
 import sdformat_mjcf_utils.sdf_utils as su
+from tests.helpers import TEST_RESOURCES_DIR
 
 
 class GeometryTest(unittest.TestCase):
@@ -109,7 +110,16 @@ class GeometryTest(unittest.TestCase):
         pass
 
     def test_mesh(self):
-        pass
+        filename = str(TEST_RESOURCES_DIR / "mug.xml")
+        mjcf_model = mjcf.from_path(filename)
+        self.assertIsNotNone(mjcf_model)
+        geom = mjcf_model.find("geom", "mug")
+        self.assertIsNotNone(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
+        self.assertEqual(sdf.GeometryType.MESH, sdf_geom.type())
+        mesh_shape = sdf_geom.mesh_shape()
+        self.assertIsNotNone(mesh_shape)
+        self.assertEqual(Vector3d(0.01, 0.01, 0.01), mesh_shape.scale())
 
     def test_plane(self):
         x_size = 5.

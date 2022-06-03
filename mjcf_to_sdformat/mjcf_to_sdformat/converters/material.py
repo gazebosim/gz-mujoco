@@ -19,19 +19,6 @@ import sdformat as sdf
 import sdformat_mjcf_utils.sdf_utils as su
 
 
-def _get_filename_on_disk(texture):
-    """
-    This method returns the name of the texture file without the hash.
-    :param mjcf.Element texture: The texture element
-    :return: The name of the file in your harddisk
-    :rtype: str
-    """
-    file = texture.file
-    if file.prefix:
-        return file.prefix + file.extension
-    else:
-        logging.warning("Asset file does not exist on disk")
-        return file.get_vfs_filename()
 
 
 def mjcf_material_to_sdf(geom):
@@ -80,7 +67,7 @@ def mjcf_material_to_sdf(geom):
                 pbr = sdf.Pbr()
                 workflow = sdf.PbrWorkflow()
                 workflow.set_type(sdf.PbrWorkflowType.METAL)
-                filename = _get_filename_on_disk(geom.material.texture)
+                filename = su.get_asset_filename_on_disk(geom.material.texture)
                 workflow.set_albedo_map(filename)
                 pbr.set_workflow(workflow.type(), workflow)
                 material.set_pbr_material(pbr)
