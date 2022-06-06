@@ -1,0 +1,25 @@
+<mujoco model="imu_sensor">
+  <compiler eulerseq="XYZ"/>
+  <option gravity="0 0 -5" wind="0 0 0" magnetic="5.5644999999999998e-06 2.2875799999999999e-05 -4.2388400000000002e-05"/>
+  <asset>
+    <material name="material_1"  emission="0.0" specular="0.800000011920929" rgba="0.96000003814697266 0.96000003814697266 0.96000003814697266 1"/>
+  </asset>
+  <worldbody>
+    <body name="link" pos="0 0 0" euler="0 -0 0">
+      <inertial pos="0 0 0" mass="1.0" fullinertia="1 1 1 0 0 0"/>
+      <geom name="collision"  type="plane" group="3" size="50 50 1" pos="0 0 0" euler="0 -0 0"/>
+      <geom name="visual"  type="plane" group="0" size="50 50 1" material="material_1" pos="0 0 0" euler="0 -0 0"/>
+    </body>
+    <body name="link_0" pos="3.9499204307677989 -0.049920303940552635 3.0499999999999998" euler="0 -0 179.90874767107849">
+      <inertial pos="0 0 0" mass="0.1" fullinertia="0.00016666700000000001 0.00016666700000000001 0.00016666700000000001 0 0 0"/>
+      <geom name="collision_0"  type="box" group="3" size="0.050000000000000003 0.050000000000000003 0.050000000000000003" pos="0 0 0" euler="0 -0 0"/>
+      <geom name="visual_0"  type="box" group="0" size="0.050000000000000003 0.050000000000000003 0.050000000000000003" pos="0 0 0" euler="0 -0 0"/>
+      <site name="imu_sensor" pos="1 0 0" euler="0 45 0"/>
+      <freejoint name="unnamed_joint_0"/>
+    </body>
+  </worldbody>
+  <sensor>
+    <accelerometer name="accelerometer_imu_sensor" noise="0.0" site="imu_sensor"/>
+    <gyro noise="0.0" site="imu_sensor"/>
+  </sensor>
+</mujoco>
