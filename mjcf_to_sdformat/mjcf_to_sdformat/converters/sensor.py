@@ -45,6 +45,18 @@ def mjcf_accelerometer_gyro_sensor_to_sdf(sensor, model):
     sensor_sdf.set_update_rate(100)
     sensor_sdf.set_raw_pose(su.get_pose_from_mjcf(sensor.site))
     imu = sdf.IMU()
+
+    if sensor.noise is not None:
+        noise = sdf.Noise()
+        noise.set_type(sdf.NoiseType.GAUSSIAN)
+        noise.set_std_dev(sensor.noise)
+        imu.set_linear_acceleration_x_noise(noise)
+        imu.set_linear_acceleration_y_noise(noise)
+        imu.set_linear_acceleration_z_noise(noise)
+        imu.set_angular_velocity_x_noise(noise)
+        imu.set_angular_velocity_y_noise(noise)
+        imu.set_angular_velocity_z_noise(noise)
+
     sensor_sdf.set_imu_sensor(imu)
 
     link = model.link_by_name(sensor.site.parent.name)

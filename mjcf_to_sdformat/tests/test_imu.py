@@ -48,19 +48,35 @@ class ImuTest(unittest.TestCase):
 
         sensor = link.sensor_by_index(0)
         self.assertNotEqual(None, sensor)
+        imu = sensor.imu_sensor()
+        self.assertNotEqual(None, imu)
         self.assertEqual("accelerometer_imu_sensor", sensor.name())
         self.assertEqual(100, sensor.update_rate())
         self.assertEqual(Vector3d(1, 0, 0), sensor.raw_pose().pos())
         self.assertEqual(Quaterniond(0, 45, 0).euler(),
                          sensor.raw_pose().rot().euler())
+        self.assertEqual(0.1, imu.linear_acceleration_x_noise().std_dev())
+        self.assertEqual(0.1, imu.linear_acceleration_y_noise().std_dev())
+        self.assertEqual(0.1, imu.linear_acceleration_z_noise().std_dev())
+        self.assertEqual(0.1, imu.angular_velocity_x_noise().std_dev())
+        self.assertEqual(0.1, imu.angular_velocity_y_noise().std_dev())
+        self.assertEqual(0.1, imu.angular_velocity_z_noise().std_dev())
 
         sensor = link.sensor_by_index(1)
         self.assertNotEqual(None, sensor)
+        imu = sensor.imu_sensor()
+        self.assertNotEqual(None, imu)
         self.assertEqual("unnamedimu_0", sensor.name())
         self.assertEqual(100, sensor.update_rate())
         self.assertEqual(Vector3d(1, 0, 0), sensor.raw_pose().pos())
         self.assertEqual(Quaterniond(0, 45, 0).euler(),
                          sensor.raw_pose().rot().euler())
+        self.assertEqual(0.0, imu.linear_acceleration_x_noise().std_dev())
+        self.assertEqual(0.0, imu.linear_acceleration_y_noise().std_dev())
+        self.assertEqual(0.0, imu.linear_acceleration_z_noise().std_dev())
+        self.assertEqual(0.0, imu.angular_velocity_x_noise().std_dev())
+        self.assertEqual(0.0, imu.angular_velocity_y_noise().std_dev())
+        self.assertEqual(0.0, imu.angular_velocity_z_noise().std_dev())
 
 
 if __name__ == "__main__":
