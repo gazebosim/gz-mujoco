@@ -19,7 +19,8 @@ from mjcf_to_sdformat.converters.joint import (mjcf_joint_to_sdf,
 from mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 from mjcf_to_sdformat.converters.link import mjcf_body_to_sdf
 from mjcf_to_sdformat.converters.sensor import (
-    mjcf_camera_sensor_to_sdf, mjcf_accelerometer_gyro_sensor_to_sdf)
+    mjcf_camera_sensor_to_sdf, mjcf_accelerometer_gyro_sensor_to_sdf,
+    mjcf_force_torque_sensor_to_sdf)
 
 import sdformat_mjcf_utils.sdf_utils as su
 from sdformat_mjcf_utils.defaults import MjcfModifiers
@@ -119,6 +120,12 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
         for gyro in mjcf_root.sensor.gyro:
             if gyro is not None:
                 mjcf_accelerometer_gyro_sensor_to_sdf(gyro, model)
+        for force in mjcf_root.sensor.force:
+            if force is not None:
+                mjcf_force_torque_sensor_to_sdf(force, model)
+        for torque in mjcf_root.sensor.torque:
+            if torque is not None:
+                mjcf_force_torque_sensor_to_sdf(torque, model)
 
     if export_world_plugins:
         plugins = {
