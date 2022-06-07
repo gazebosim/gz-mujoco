@@ -22,6 +22,9 @@ import sdformat_mjcf_utils.sdf_utils as su
 VISUAL_NUMBER = 0
 COLLISION_NUMBER = 0
 
+# SDFormat doesn't have infinite plane sizes, so we use a large number instead.
+INFINITE_PLANE_SIZE = 1e6
+
 
 def mjcf_geom_to_sdf(geom):
     """
@@ -79,7 +82,10 @@ def mjcf_geom_to_sdf(geom):
         sdf_geometry.set_type(sdf.GeometryType.SPHERE)
     elif geom.type == "plane":
         plane = sdf.Plane()
-        plane.set_size(Vector2d(geom.size[0] * 2, geom.size[1] * 2))
+        geom_size = []
+        for sz in geom.size[:2]:
+            geom_size.append(sz * 2 if sz > 0 else INFINITE_PLANE_SIZE)
+        plane.set_size(Vector2d(*geom_size))
         sdf_geometry.set_plane_shape(plane)
         sdf_geometry.set_type(sdf.GeometryType.PLANE)
     else:
