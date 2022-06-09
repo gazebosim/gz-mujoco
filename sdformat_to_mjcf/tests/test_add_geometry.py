@@ -179,6 +179,32 @@ class GeometryTest(helpers.TestCase):
         assert_allclose(self.expected_euler, mj_geom.euler)
 
 
+class SurfaceTest(helpers.TestCase):
+
+    test_friction = 1.23
+    expected_friction = [1.23, 0.005, 0.0001]
+    box_size = [1, 1, 1]
+
+    def valid_surface(self):
+        surface = sdf.Surface()
+        surface.friction().ode().set_mu(self.test_friction)
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        geom = body.add('geom', type="box", name="box",
+                        size=self.box_size)
+        geometry_conv.apply_surface_to_geometry(geom, surface)
+        assert_allclose(self.expected_friction, geom.friction)
+
+    def invalid_surface(self):
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        geom = body.add('geom', type="box", name="box",
+                        size=self.box_size)
+        geometry_conv.apply_surface_to_geometry(geom, None)
+        self.assertIsNone(geom.friction)
+
+
 class CollisionTest(helpers.TestCase):
 
     def test_basic_collision_attributes(self):
