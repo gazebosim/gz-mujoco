@@ -191,6 +191,10 @@ class CollisionTest(helpers.TestCase):
         geometry.set_type(sdf.GeometryType.BOX)
         collision.set_geometry(geometry)
 
+        surface = sdf.Surface()
+        surface.friction().ode().set_mu(1.23)
+        collision.set_surface(surface)
+
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_collision(body, collision)
@@ -198,6 +202,7 @@ class CollisionTest(helpers.TestCase):
         assert_allclose([1., 2., 3.], mj_geom.pos)
         assert_allclose([90., 60., 45.], mj_geom.euler)
         self.assertEqual(geometry_conv.COLLISION_GEOM_GROUP, mj_geom.group)
+        assert_allclose([1.23, 0.005, 0.0001], mj_geom.friction)
 
 
 class VisualTest(helpers.TestCase):
