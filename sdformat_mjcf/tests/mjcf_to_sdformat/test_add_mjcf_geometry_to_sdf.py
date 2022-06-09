@@ -157,6 +157,18 @@ class GeometryTest(unittest.TestCase):
         self.assertEqual(radius, sdf_geom.sphere_shape().radius())
 
 
+class SurfaceTest(unittest.TestCase):
+    def test_friction(self):
+        mjcf_model = mjcf.from_path(
+            str(TEST_RESOURCES_DIR / "test_mujoco.xml"))
+
+        sdf_collision = geometry_conv.mjcf_collision_to_sdf(
+            mjcf_model.worldbody.geom[0])
+        self.assertIsNotNone(sdf_collision)
+
+        self.assertEqual(0.9, sdf_collision.surface().friction().ode().mu())
+
+
 class VisualTest(unittest.TestCase):
     def test_basic_visual_attributes(self):
         radius = 5.

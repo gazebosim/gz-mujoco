@@ -150,4 +150,6 @@ def mjcf_collision_to_sdf(geom):
         col.set_geometry(sdf_geometry)
     else:
         return None
+    if geom.friction is not None:
+        col.surface().friction().ode().set_mu(geom.friction[0])
     return col

@@ -138,6 +138,37 @@ class DefaultsTest(unittest.TestCase):
         shape6_sphere = visual_shape6.geometry().sphere_shape()
         self.assertEqual(0.5, shape6_sphere.radius())
 
+    def test_default_friction(self):
+        filename = str(TEST_RESOURCES_DIR / "tennis_ball.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
+
+        world = sdf.World()
+        world.set_name("default")
+
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+
+        self.assertEqual("default", world.name())
+        self.assertEqual(2, world.model_count())
+        model = world.model_by_index(0)
+        self.assertNotEqual(None, model)
+        self.assertEqual(1, model.link_count())
+        self.assertTrue(model.static())
+
+        model = world.model_by_index(1)
+        self.assertNotEqual(None, model)
+        self.assertEqual(1, model.link_count())
+        link = model.link_by_index(0)
+        self.assertNotEqual(None, link)
+
+        collision = link.collision_by_index(0)
+        self.assertEqual(sdf.GeometryType.SPHERE, collision.geometry().type())
+        sphere_shape = collision.geometry().sphere_shape()
+        self.assertNotEqual(None, sphere_shape)
+        self.assertEqual(0.03, sphere_shape.radius())
+        surface = collision.surface()
+        self.assertEqual(0.5, surface.friction().ode().mu())
+
 
 if __name__ == "__main__":
     unittest.main()
