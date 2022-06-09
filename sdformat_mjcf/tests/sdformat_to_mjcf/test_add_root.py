@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import tempfile
 import unittest
+import os
 from math import pi
 
 import sdformat as sdf
@@ -20,7 +22,11 @@ from ignition.math import Pose3d
 from dm_control import mjcf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.root import add_root
+from sdformat_mjcf.sdformat_to_mjcf.sdformat_to_mjcf import (
+    sdformat_file_to_mjcf)
 from tests import helpers
+
+TEST_RESOURCES_DIR = helpers.get_resources_dir()
 
 
 class RootTest(helpers.TestCase):
@@ -64,6 +70,15 @@ class RootTest(helpers.TestCase):
         with self.assertRaises(RuntimeError,
                                msg="One model or one world is supported"):
             add_root(root)
+
+    def test_parsing_mjcf_output(self):
+        model_file = str(TEST_RESOURCES_DIR / "double_pendulum.sdf")
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_file = os.path.join(temp_dir, "out.xml")
+            sdformat_file_to_mjcf(model_file, output_file)
+            print(open(output_file).read())
+            model = mjcf.from_path(output_file)
+            self.assertIsNotNone(model)
 
 
 if __name__ == "__main__":
