@@ -45,15 +45,36 @@ def get_rotation(element):
     :param mjcf.Element element: Element to extract the angles
     :rtype: ignition.math.Quateriond
     """
-    angle_type = "radian"
+    angle_type = "degree"
     if element.root.compiler.angle is not None:
         angle_type = element.root.compiler.angle
-    result = Vector3d()
+    quat = Quaterniond()
     if element.euler is not None:
         result = list_to_vec3d(element.euler)
-    if angle_type == "degree":
-        result = result * math.pi / 180.0
-    return Quaterniond(result)
+        if angle_type == "degree":
+            result = result * math.pi / 180.0
+        quat = Quaterniond(result)
+        print(f"Euler: {element.euler}, {result=}, {quat=}")
+    elif element.zaxis is not None:
+        z = Vector3d(0, 0, 1)
+        quat = Quaterniond()
+        quat.set_from_2_axes(z, list_to_vec3d(element.zaxis))
+    elif element.quat is not None:
+        quat = wxyz_list_to_quat(element.quat)
+    elif element.xyaxes is not None:
+        v1 = list_to_vec3d(element.xyaxes)
+        v2 = list_to_vec3d(element.xyaxes[-3:])
+        z = v1.cross(v2)
+        d = v1.dot(v2)
+        v2 = Vector3d(v2.x() - v1.x() * d,
+                      v2.y() - v1.y() * d,
+                      v2.z() - v1.z() * d)
+        mat = Matrix3d(v1.x(), v2.x(), z.x(),
+                       v1.y(), v2.y(), z.y(),
+                       v1.z(), v2.z(), z.z())
+
+        quat = Quaterniond(mat)
+    return quat
 
 
 def vec2d_to_list(vec):
@@ -125,39 +146,14 @@ def get_pose_from_mjcf(element):
     :rtype: ignition.math.Pose3d
     """
     pos = [0, 0, 0]
-    euler = [0, 0, 0]
+    quat = Quaterniond()
     try:
         if element.pos is not None:
             pos = element.pos
-        if element.euler is not None:
-            quat = Quaterniond(list_to_vec3d(element.euler))
-            euler = quat.euler()
-        if element.zaxis is not None:
-            z = Vector3d(0, 0, 1)
-            quat = Quaterniond()
-            quat.set_from_2_axes(z, list_to_vec3d(element.zaxis))
-            euler = vec3d_to_list(quat.euler())
-        if element.quat is not None:
-            euler = vec3d_to_list(wxyz_list_to_quat(element.quat).euler())
-        if element.xyaxes is not None:
-            v1 = list_to_vec3d(element.xyaxes)
-            v2 = list_to_vec3d(element.xyaxes[-3:])
-            z = v1.cross(v2)
-            d = v1.dot(v2)
-            v2 = Vector3d(v2.x() - v1.x() * d,
-                          v2.y() - v1.y() * d,
-                          v2.z() - v1.z() * d)
-            mat = Matrix3d(v1.x(), v2.x(), z.x(),
-                           v1.y(), v2.y(), z.y(),
-                           v1.z(), v2.z(), z.z())
-
-            quat = Quaterniond(mat)
-            euler = vec3d_to_list(quat.euler())
-
+        quat = get_rotation(element)
     except AttributeError:
         pass
-    return Pose3d(list_to_vec3d(pos),
-                  euler_list_to_quat(euler))
+    return Pose3d(list_to_vec3d(pos), quat)
 
 
 def prefix_name_with_index(prefix, name, index):

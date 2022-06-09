@@ -1,11 +1,11 @@
 # Copyright (C) 2022 Open Source Robotics Foundation
-
+#
 # Licensed under the Apache License, version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #       http://www.apache.org/licenses/LICENSE-2.0
-
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,8 +17,9 @@ from numpy.testing import assert_allclose
 from dm_control import mjcf
 from dm_control import mujoco
 import math
+from math import pi
 
-from ignition.math import Color, Vector3d
+from ignition.math import Color, Vector3d, Pose3d
 
 import sdformat as sdf
 
@@ -285,6 +286,50 @@ class ModelTest(unittest.TestCase):
 
         mjcf_worldbody_to_sdf(mjcf_model, physics, world)
         self.assertEqual(Vector3d(0, 0, 0), world.gravity())
+
+
+class PoseTest(unittest.TestCase):
+    expected_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
+
+    def _create_test_mjcf(self, pos, euler, angle=None):
+        mjcf_model = mjcf.RootElement(model="test_model")
+        if angle is not None:
+            mjcf_model.compiler.angle = angle
+
+        body = mjcf_model.worldbody.add("body",
+                                        name="base_link",
+                                        pos=pos,
+                                        euler=euler)
+        body.add('geom',
+                 type="sphere",
+                 size=[1],
+                 pos=pos,
+                 euler=euler)
+        return mjcf_model
+
+    def _convert_and_check_poses(self, mjcf_model):
+        physics = mjcf.Physics.from_mjcf_model(mjcf_model)
+
+        world = sdf.World()
+        world.set_name("default")
+
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+
+        sdf_model = world.model_by_name("test_model")
+        sdf_link = sdf_model.link_by_name("base_link")
+        self.assertEqual(self.expected_pose, sdf_link.raw_pose())
+
+        sdf_visual = sdf_link.visual_by_index(0)
+        self.assertEqual(self.expected_pose, sdf_visual.raw_pose())
+
+    def test_poses_with_degrees(self):
+        mjcf_model = self._create_test_mjcf([1, 2, 3], [90, 60, 45])
+        self._convert_and_check_poses(mjcf_model)
+
+    def test_poses_with_radians(self):
+        mjcf_model = self._create_test_mjcf([1, 2, 3],
+                                            [pi / 2, pi / 3, pi / 4], "radian")
+        self._convert_and_check_poses(mjcf_model)
 
 
 if __name__ == "__main__":
