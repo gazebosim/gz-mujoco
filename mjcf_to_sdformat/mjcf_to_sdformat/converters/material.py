@@ -19,8 +19,6 @@ import sdformat as sdf
 import sdformat_mjcf_utils.sdf_utils as su
 
 
-
-
 def mjcf_material_to_sdf(geom):
     """
     Convert a MJCF material to a SDFormat material
