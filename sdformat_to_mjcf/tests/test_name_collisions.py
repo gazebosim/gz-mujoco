@@ -18,7 +18,7 @@ import sdformat as sdf
 from tests import helpers
 
 from dm_control import mjcf
-from sdformat_to_mjcf.converters.geometry import add_collision
+from sdformat_to_mjcf.converters.geometry import add_collision, add_visual
 from sdformat_to_mjcf.converters.root import add_root
 
 
@@ -50,11 +50,11 @@ class NameCollisionTest(helpers.TestCase):
 
         mujoco = mjcf.RootElement(model="test")
         body1 = mujoco.worldbody.add("body", name="body1")
-        mj_geom1 = add_collision(body1, visual)
+        mj_geom1 = add_visual(body1, visual)
         self.assertEqual("bumper", mj_geom1.name)
 
         body2 = mujoco.worldbody.add("body", name="body2")
-        mj_geom2 = add_collision(body2, visual)
+        mj_geom2 = add_visual(body2, visual)
         self.assertEqual("bumper_0", mj_geom2.name)
 
     def test_link(self):
