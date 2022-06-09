@@ -185,7 +185,7 @@ class SurfaceTest(helpers.TestCase):
     expected_friction = [1.23, 0.005, 0.0001]
     box_size = [1, 1, 1]
 
-    def valid_surface(self):
+    def test_valid_surface(self):
         surface = sdf.Surface()
         surface.friction().ode().set_mu(self.test_friction)
 
@@ -196,7 +196,7 @@ class SurfaceTest(helpers.TestCase):
         geometry_conv.apply_surface_to_geometry(geom, surface)
         assert_allclose(self.expected_friction, geom.friction)
 
-    def invalid_surface(self):
+    def test_invalid_surface(self):
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         geom = body.add('geom', type="box", name="box",
