@@ -14,8 +14,10 @@
 
 from dm_control import mjcf
 
-from sdformat_mjcf.sdformat_to_mjcf.sdf_kinematics import (KinematicHierarchy,
-                                                           FreeJoint)
+from sdformat_mjcf.sdformat_to_mjcf.sdf_kinematics import (
+    KinematicHierarchy,
+    FreeJoint,
+)
 from sdformat_mjcf.sdformat_to_mjcf.converters.link import add_link
 from sdformat_mjcf.sdformat_to_mjcf.converters.joint import add_joint
 from sdformat_mjcf.utils.sdf_utils import graph_resolver

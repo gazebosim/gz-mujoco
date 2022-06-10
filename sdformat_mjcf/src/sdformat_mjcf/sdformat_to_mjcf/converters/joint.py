@@ -20,7 +20,10 @@ import sdformat as sdf
 from ignition.math import Pose3d
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.sensor import add_sensor
-from sdformat_mjcf.sdformat_to_mjcf.sdf_kinematics import FreeJoint, StaticFixedJoint
+from sdformat_mjcf.sdformat_to_mjcf.sdf_kinematics import (
+    FreeJoint,
+    StaticFixedJoint,
+)
 import sdformat_mjcf.utils.sdf_utils as su
 
 JOINT_DEFAULT_UPPER_LIMIT = 1e16

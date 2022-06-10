@@ -69,9 +69,9 @@ class MaterialTest(helpers.TestCase):
         pbr = sdf.Pbr()
         workflow = sdf.PbrWorkflow()
         workflow.set_type(sdf.PbrWorkflowType.METAL)
-        workflow.set_albedo_map(os.path.join(
-                                os.path.dirname(os.path.abspath(__file__)),
-                                "resources/box_obj/textures/albedo_map"))
+        workflow.set_albedo_map(
+            os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         "resources/box_obj/textures/albedo_map"))
         pbr.set_workflow(workflow.type(), workflow)
 
         material = sdf.Material()

@@ -15,10 +15,11 @@
 from ignition.math import Vector3d
 
 from sdformat_mjcf.mjcf_to_sdformat.converters.joint import (mjcf_joint_to_sdf,
-                                               add_fixed_joint)
+                                                             add_fixed_joint)
 from sdformat_mjcf.mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 from sdformat_mjcf.mjcf_to_sdformat.converters.link import mjcf_body_to_sdf
-from sdformat_mjcf.mjcf_to_sdformat.converters.sensor import mjcf_camera_sensor_to_sdf
+from sdformat_mjcf.mjcf_to_sdformat.converters.sensor import (
+    mjcf_camera_sensor_to_sdf)
 
 import sdformat_mjcf.utils.sdf_utils as su
 from sdformat_mjcf.utils.defaults import MjcfModifiers

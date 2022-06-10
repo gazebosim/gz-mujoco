@@ -22,7 +22,7 @@ from sdformat_mjcf.utils import sdf_utils as su
 
 
 def get_resources_dir():
-    return pathlib.Path(__file__).resolve().parent / 'resources'
+    return pathlib.Path(__file__).resolve().parent / "resources"
 
 
 class TestGraphResolverImpl(su.GraphResolverImplBase):

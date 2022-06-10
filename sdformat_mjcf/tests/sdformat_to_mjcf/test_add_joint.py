@@ -22,7 +22,10 @@ from ignition.math import Pose3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.joint import add_joint
-from sdformat_mjcf.sdformat_to_mjcf.sdf_kinematics import FreeJoint, StaticFixedJoint
+from sdformat_mjcf.sdformat_to_mjcf.sdf_kinematics import (
+    FreeJoint,
+    StaticFixedJoint,
+)
 import sdformat_mjcf.utils.sdf_utils as su
 from tests import helpers
 

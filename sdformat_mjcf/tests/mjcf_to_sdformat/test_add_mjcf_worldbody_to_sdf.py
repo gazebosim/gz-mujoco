@@ -23,7 +23,9 @@ from ignition.math import Color, Vector3d, Pose3d
 
 import sdformat as sdf
 
-from sdformat_mjcf.mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
+from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
+    mjcf_worldbody_to_sdf,
+)
 import sdformat_mjcf.utils.sdf_utils as su
 
 from tests.helpers import get_resources_dir

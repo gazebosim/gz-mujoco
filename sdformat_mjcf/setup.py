@@ -18,12 +18,13 @@ setup(
     author_email='info@openrobotics.org',
     url='https://github.com/gazebosim/gz-mujoco',
     license=license_content,
-    packages=find_packages(exclude=('tests', 'docs')),
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
     test_suite='tests',
     entry_points={
         'console_scripts': [
-            'sdformat2mjcf = sdformat_to_mjcf.cli:main',
-            'mjcf2sdformat = mjcf_to_sdformat.cli:main',
+            'sdformat2mjcf = sdformat_mjcf.sdformat_to_mjcf.cli:main',
+            'mjcf2sdformat = sdformat_mjcf.mjcf_to_sdformat.cli:main',
         ],
     },
 )

@@ -14,7 +14,9 @@
 
 import sys
 import argparse
-from sdformat_mjcf.sdformat_to_mjcf.sformat_to_mjcf import sdformat_file_to_mjcf
+from sdformat_mjcf.sdformat_to_mjcf.sformat_to_mjcf import (
+    sdformat_file_to_mjcf,
+)
 
 
 def main(argv=None):

@@ -17,7 +17,9 @@ import unittest
 from dm_control import mjcf
 from dm_control import mujoco
 
-from sdformat_mjcf.mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
+from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
+    mjcf_worldbody_to_sdf,
+)
 
 import sdformat as sdf
 

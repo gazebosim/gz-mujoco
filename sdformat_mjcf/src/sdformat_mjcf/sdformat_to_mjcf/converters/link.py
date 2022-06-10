@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sdformat_mjcf.sdformat_to_mjcf.converters.geometry import add_collision, add_visual
+from sdformat_mjcf.sdformat_to_mjcf.converters.geometry import (
+    add_collision,
+    add_visual,
+)
 from sdformat_mjcf.sdformat_to_mjcf.converters.light import add_light
 from sdformat_mjcf.sdformat_to_mjcf.converters.material import add_material
 from sdformat_mjcf.sdformat_to_mjcf.converters.sensor import add_sensor
