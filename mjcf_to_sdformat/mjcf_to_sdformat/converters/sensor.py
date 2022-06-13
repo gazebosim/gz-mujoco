@@ -31,7 +31,7 @@ def mjcf_accelerometer_gyro_sensor_to_sdf(sensor, model):
     :param mjcf.sensor sensor: The MJCF accelerometer or gyro sensor to convert
     :param sdf.Model sensor: The MJCF sensor to convert
     :return: The newly created SDFormat IMU sensors.
-    :rtype: [sdf.Sensor]
+    :rtype: sdf.Sensor
     """
     sensor_sdf = sdf.Sensor()
     if sensor.name is not None:
