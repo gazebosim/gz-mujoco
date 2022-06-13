@@ -15,7 +15,7 @@
 import unittest
 import math
 
-from ignition.math import Quaterniond, Vector3d
+from ignition.math import Vector3d
 
 from dm_control import mjcf
 from dm_control import mujoco
@@ -54,7 +54,7 @@ class ImuTest(unittest.TestCase):
         self.assertEqual("accelerometer_imu_sensor", sensor.name())
         self.assertEqual(100, sensor.update_rate())
         self.assertEqual(Vector3d(1, 0, 0), sensor.raw_pose().pos())
-        self.assertEqual(Vector3d(0, math.pi/4, 0),
+        self.assertEqual(Vector3d(0, math.pi / 4, 0),
                          sensor.raw_pose().rot().euler())
         self.assertEqual(0.1, imu.linear_acceleration_x_noise().std_dev())
         self.assertEqual(0.1, imu.linear_acceleration_y_noise().std_dev())
@@ -70,7 +70,7 @@ class ImuTest(unittest.TestCase):
         self.assertEqual("unnamedimu_0", sensor.name())
         self.assertEqual(100, sensor.update_rate())
         self.assertEqual(Vector3d(1, 0, 0), sensor.raw_pose().pos())
-        self.assertEqual(Vector3d(0, math.pi/4, 0),
+        self.assertEqual(Vector3d(0, math.pi / 4, 0),
                          sensor.raw_pose().rot().euler())
         self.assertEqual(0.0, imu.linear_acceleration_x_noise().std_dev())
         self.assertEqual(0.0, imu.linear_acceleration_y_noise().std_dev())
