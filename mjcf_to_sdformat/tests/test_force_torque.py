@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import math
 import unittest
 
-from ignition.math import Quaterniond, Vector3d
+from ignition.math import Vector3d
 
 from dm_control import mjcf
 from dm_control import mujoco
@@ -26,9 +27,9 @@ import sdformat as sdf
 from tests.helpers import TEST_RESOURCES_DIR
 
 
-class ImuTest(unittest.TestCase):
+class ForceTorqueTest(unittest.TestCase):
 
-    def test_imu(self):
+    def test_force_torque(self):
         filename = str(TEST_RESOURCES_DIR / "test_force_torque.xml")
         mjcf_model = mjcf.from_path(filename)
         physics = mujoco.Physics.from_xml_path(filename)
@@ -53,7 +54,7 @@ class ImuTest(unittest.TestCase):
         self.assertEqual(sdf.Sensortype.FORCE_TORQUE, sensor.type())
         self.assertEqual(100, sensor.update_rate())
         self.assertEqual(Vector3d(10, 11, 12), sensor.raw_pose().pos())
-        self.assertEqual(Quaterniond(0, 0, 45).euler(),
+        self.assertEqual(Vector3d(0, 0, math.pi / 4),
                          sensor.raw_pose().rot().euler())
         self.assertEqual(0, force.force_x_noise().std_dev())
         self.assertEqual(0, force.force_y_noise().std_dev())
@@ -69,7 +70,7 @@ class ImuTest(unittest.TestCase):
         self.assertEqual(sdf.Sensortype.FORCE_TORQUE, sensor.type())
         self.assertEqual(100, sensor.update_rate())
         self.assertEqual(Vector3d(10, 11, 12), sensor.raw_pose().pos())
-        self.assertEqual(Quaterniond(0, 0, 45).euler(),
+        self.assertEqual(Vector3d(0, 0, math.pi / 4),
                          sensor.raw_pose().rot().euler())
         self.assertEqual(0.0005, torque.force_x_noise().std_dev())
         self.assertEqual(0.0005, torque.force_y_noise().std_dev())
