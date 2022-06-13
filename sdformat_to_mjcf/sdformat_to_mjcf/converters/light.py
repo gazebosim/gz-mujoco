@@ -33,7 +33,7 @@ def add_light(body, light):
     type = light.type()
     pose = su.graph_resolver.resolve_pose(light.semantic_pose())
     light = body.add("light",
-                     name=light.name(),
+                     name=su.find_unique_name(body, "light", light.name()),
                      pos=su.vec3d_to_list(pose.pos()),
                      directional=sdf.LightType.DIRECTIONAL == type,
                      castshadow=light.cast_shadows(),

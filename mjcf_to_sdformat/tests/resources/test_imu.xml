@@ -19,7 +19,7 @@
     </body>
   </worldbody>
   <sensor>
-    <accelerometer name="accelerometer_imu_sensor" noise="0.0" site="imu_sensor"/>
+    <accelerometer name="accelerometer_imu_sensor" noise="0.1" site="imu_sensor"/>
     <gyro noise="0.0" site="imu_sensor"/>
   </sensor>
 </mujoco>
