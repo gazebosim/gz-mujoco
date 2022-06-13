@@ -91,6 +91,9 @@ class WorldTest(helpers.TestCase):
         assert_allclose([0.2, 0.2, 0.2],
                         self.mujoco.worldbody.light[0].specular)
 
+        # Check that the model is valid by loading it into Mujoco
+        self.assertIsNotNone(mjcf.Physics.from_mjcf_model(self.mujoco))
+
     def test_world_link_mass_zero(self):
         root = sdf.Root()
         root.load(os.path.join(

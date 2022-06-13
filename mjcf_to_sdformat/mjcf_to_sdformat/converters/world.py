@@ -44,6 +44,7 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
         model.set_name(mjcf_root.model)
     else:
         model.set_name("model")
+    model.set_self_collide(True)
 
     modifiers = MjcfModifiers(mjcf_root)
 
