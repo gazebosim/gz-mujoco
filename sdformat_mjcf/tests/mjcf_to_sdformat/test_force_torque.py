@@ -20,11 +20,14 @@ from ignition.math import Vector3d
 from dm_control import mjcf
 from dm_control import mujoco
 
-from mjcf_to_sdformat.converters.world import mjcf_worldbody_to_sdf
+from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
+    mjcf_worldbody_to_sdf)
 
 import sdformat as sdf
 
-from tests.helpers import TEST_RESOURCES_DIR
+from tests.helpers import get_resources_dir
+
+TEST_RESOURCES_DIR = get_resources_dir()
 
 
 class ForceTorqueTest(unittest.TestCase):
