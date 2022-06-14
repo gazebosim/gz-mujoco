@@ -213,7 +213,7 @@ class ModelTest(unittest.TestCase):
         self.assertEqual(Color(0, 0.9, 0, 1.0), material.diffuse())
         self.assertEqual(Color(0, 0.9, 0, 1.0), material.ambient())
         self.assertEqual(Color(0, 0.9, 0, 1.0), material.specular())
-        self.assertEqual(Color(0, 0.9, 0, 1.0), material.emissive())
+        self.assertEqual(Color(0, 0.0, 0, 1.0), material.emissive())
 
         collision_3 = link_3.collision_by_index(0)
         self.assertNotEqual(None, collision_3)
