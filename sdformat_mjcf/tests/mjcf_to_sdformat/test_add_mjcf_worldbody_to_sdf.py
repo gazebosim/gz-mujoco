@@ -291,6 +291,21 @@ class ModelTest(unittest.TestCase):
         mjcf_worldbody_to_sdf(mjcf_model, physics, world)
         self.assertEqual(Vector3d(0, 0, 0), world.gravity())
 
+    def test_single_geom(self):
+        # Test that a worldbody with a single geom should result in only one
+        # static SDFormat model.
+        filename = str(TEST_RESOURCES_DIR / "test_single_geom.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mjcf.Physics.from_mjcf_model(mjcf_model)
+
+        world = sdf.World()
+        world.set_name("default")
+
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+        self.assertEqual(1, world.model_count())
+        static_model = world.model_by_name("static")
+        self.assertEqual(1, static_model.link_count())
+
 
 class PoseTest(unittest.TestCase):
     expected_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)

@@ -143,4 +143,8 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
             plugin = sdf.Plugin(key, value)
             world.add_plugin(plugin)
 
-    world.add_model(model)
+    # An non-static SDFormat model is required to have at least one link, so if
+    # we haven't added any links to the model, we should not add it to the
+    # world.
+    if model.link_count() > 0:
+        world.add_model(model)
