@@ -14,7 +14,7 @@
 
 import sys
 import argparse
-from sdformat_mjcf.sdformat_to_mjcf.sformat_to_mjcf import (
+from sdformat_mjcf.sdformat_to_mjcf.sdformat_to_mjcf import (
     sdformat_file_to_mjcf,
 )
 
