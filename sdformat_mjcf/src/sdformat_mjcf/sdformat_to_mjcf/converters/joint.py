@@ -107,12 +107,13 @@ def add_joint(body, joint):
 
     if joint.type() == sdf.JointType.FIXED:
         return None
-    elif joint.type() in [
+
+    unique_name = su.find_unique_name(body, "joint", joint.name())
+    if joint.type() in [
             sdf.JointType.CONTINUOUS,
             sdf.JointType.REVOLUTE,
             sdf.JointType.PRISMATIC
     ]:
-        unique_name = su.find_unique_name(body, "joint", joint.name())
         mjcf_joint = body.add("joint", name=unique_name)
         mjcf_joint.pos = su.vec3d_to_list(pose.pos())
         joint_axis = joint.axis(0)
@@ -160,7 +161,7 @@ def add_joint(body, joint):
         return mjcf_joint
     elif joint.type() == sdf.JointType.BALL:
         pose = su.graph_resolver.resolve_pose(joint.semantic_pose())
-        mjcf_joint = body.add("joint", name=joint.name())
+        mjcf_joint = body.add("joint", name=unique_name)
         mjcf_joint.pos = su.vec3d_to_list(pose.pos())
         mjcf_joint.type = "ball"
         return mjcf_joint
