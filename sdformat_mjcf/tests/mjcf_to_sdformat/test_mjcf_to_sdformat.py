@@ -20,10 +20,13 @@ from math import pi
 import sdformat as sdf
 from ignition.math import Vector3d
 
-from mjcf_to_sdformat.mjcf_to_sdformat import mjcf_file_to_sdformat
-from mjcf_to_sdformat.converters.geometry import MESH_OUTPUT_DIR
+from sdformat_mjcf.mjcf_to_sdformat.mjcf_to_sdformat import (
+    mjcf_file_to_sdformat)
+from sdformat_mjcf.mjcf_to_sdformat.converters.geometry import MESH_OUTPUT_DIR
 
-from tests.helpers import TEST_RESOURCES_DIR
+from tests.helpers import get_resources_dir
+
+TEST_RESOURCES_DIR = get_resources_dir()
 
 
 class MjcfFileConversion(unittest.TestCase):

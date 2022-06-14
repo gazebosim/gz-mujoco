@@ -22,9 +22,9 @@ import sdformat as sdf
 from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
     mjcf_worldbody_to_sdf,
 )
-from mjcf_to_sdformat.converters.geometry import MESH_OUTPUT_DIR
+from sdformat_mjcf.mjcf_to_sdformat.converters.geometry import MESH_OUTPUT_DIR
 
-import sdformat_mjcf_utils.sdf_utils as su
+import sdformat_mjcf.utils.sdf_utils as su
 
 
 def mjcf_file_to_sdformat(input_file, output_file, export_world_plugins=True):

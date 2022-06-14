@@ -22,7 +22,9 @@ from dm_control import mjcf
 from sdformat_mjcf.mjcf_to_sdformat.converters import geometry as geometry_conv
 
 import sdformat_mjcf.utils.sdf_utils as su
-from tests.helpers import TEST_RESOURCES_DIR
+from tests.helpers import get_resources_dir
+
+TEST_RESOURCES_DIR = get_resources_dir()
 
 
 class GeometryTest(unittest.TestCase):
