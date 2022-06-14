@@ -108,8 +108,6 @@ def apply_surface_to_geometry(geom, sdf_surface):
     :param sdformat.Surface sdf_surface: Surface object to be applied.
     """
 
-    if sdf_surface is None:
-        return
     sdf_friction_ode = sdf_surface.friction().ode()
     # Use //surface/friction/ode/mu for sliding friction
     geom.friction = [sdf_friction_ode.mu(), 0.005, 0.0001]

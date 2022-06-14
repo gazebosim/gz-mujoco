@@ -196,14 +196,6 @@ class SurfaceTest(helpers.TestCase):
         geometry_conv.apply_surface_to_geometry(geom, surface)
         assert_allclose(self.expected_friction, geom.friction)
 
-    def test_invalid_surface(self):
-        mujoco = mjcf.RootElement(model="test")
-        body = mujoco.worldbody.add('body')
-        geom = body.add('geom', type="box", name="box",
-                        size=self.box_size)
-        geometry_conv.apply_surface_to_geometry(geom, None)
-        self.assertIsNone(geom.friction)
-
 
 class CollisionTest(helpers.TestCase):
 
