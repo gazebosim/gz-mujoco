@@ -16,6 +16,7 @@ import unittest
 from contextlib import redirect_stderr
 import io
 import tempfile
+import os
 from os import path
 import numpy as np
 from dm_control import mujoco
@@ -64,6 +65,16 @@ class CLITest(unittest.TestCase):
                 return_code = cli.main([str(model_file), output_file])
             self.assertIn("Unable to read file", output.getvalue())
             self.assertEqual(1, return_code)
+
+    def test_relative_output_dir(self):
+        model_file = TEST_RESOURCES_DIR / "double_pendulum.sdf"
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+            os.mkdir("mjcf")
+            output_file = path.join("mjcf", "double_pendulum.xml")
+            return_code = cli.main([str(model_file), output_file])
+            self.assertEqual(0, return_code)
+            self.assertTrue(os.path.exists(output_file))
 
 
 if __name__ == "__main__":
