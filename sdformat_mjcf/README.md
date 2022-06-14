@@ -46,7 +46,7 @@ A tox (environment manager) run of tests with multiple python versions:
 ### Run the application
 
 After the editable install in the first part of this section, to convert an 
-SDFormat file to mjcf, run:
+SDFormat file to MJCF, run:
 
 ```
 sdformat2mjcf path/to/file.sdf new_file.xml
@@ -59,13 +59,13 @@ extract the contents and run
 <path/to/mujoco>/bin/simulate new_file.xml
 ```
 
-To convert an SDFormat file to mjcf:
+To convert an MJCF file to SDFormat:
 
 ```
 mjcf2sdformat path/to/file.xml new_file.sdf
 ```
 
-To run the sdf file in GazeboSim, follow [this instructions to install Gazebo Sim](https://gazebosim.org/docs/latest/install)
+To run the SDFormat file in GazeboSim, follow [these instructions to install Gazebo Sim](https://gazebosim.org/docs/latest/install)
 
 ```
 ign gazebo new_file.sdf
