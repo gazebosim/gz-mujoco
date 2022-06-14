@@ -54,7 +54,7 @@ class MaterialTest(unittest.TestCase):
         self.assertEqual(Color(0, 0.9, 0, 1.0), material.diffuse())
         self.assertEqual(Color(0, 0.9, 0, 1.0), material.ambient())
         self.assertEqual(Color(0, 0.9, 0, 1.0), material.specular())
-        self.assertEqual(Color(0, 0.9, 0, 1.0), material.emissive())
+        self.assertEqual(Color(0, 0.0, 0, 1.0), material.emissive())
         geom_default_mat = mjcf_model.find("geom", "default_mat")
         self.assertIsNotNone(geom_default_mat)
         material = mjcf_material_to_sdf(geom_default_mat)
