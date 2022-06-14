@@ -25,11 +25,10 @@ export PYTHONPATH="$PYTHONPATH:$INSTALL_DIR/lib/python"
 where `$INSTALL_DIR` is the installation directory you used when building
 libsdformat.
 
-Install the `sdformat_to_mjcf` packages in "editable" mode
+Install the `sdformat-mjcf` package in "editable" mode
 
 ```bash
-pip install -e path/to/sdformat_to_mjcf
-pip install -e path/to/sdformat_mjcf_utils
+pip install -e path/to/sdformat_mjcf
 ```
 
 ### Running tests
@@ -59,3 +58,16 @@ extract the contents and run
 ```
 <path/to/mujoco>/bin/simulate new_file.xml
 ```
+
+To convert an SDFormat file to mjcf:
+
+```
+mjcf2sdformat path/to/file.xml new_file.sdf
+```
+
+To run the sdf file in GazeboSim, follow [this instructions to install Gazebo Sim](https://gazebosim.org/docs/latest/install)
+
+```
+ign gazebo new_file.sdf
+```
+
