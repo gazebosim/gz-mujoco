@@ -198,6 +198,8 @@ class CollisionTest(helpers.TestCase):
         assert_allclose([1., 2., 3.], mj_geom.pos)
         assert_allclose([90., 60., 45.], mj_geom.euler)
         self.assertEqual(geometry_conv.COLLISION_GEOM_GROUP, mj_geom.group)
+        self.assertIsNone(mj_geom.contype)
+        self.assertIsNone(mj_geom.conaffinity)
 
 
 class VisualTest(helpers.TestCase):
@@ -219,6 +221,8 @@ class VisualTest(helpers.TestCase):
         assert_allclose([1., 2., 3.], mj_geom.pos)
         assert_allclose([90., 60., 45.], mj_geom.euler)
         self.assertEqual(geometry_conv.VISUAL_GEOM_GROUP, mj_geom.group)
+        self.assertEqual(0, mj_geom.contype)
+        self.assertEqual(0, mj_geom.conaffinity)
 
 
 class GeometryIntegrationTest(unittest.TestCase):

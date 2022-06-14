@@ -32,7 +32,7 @@ def mjcf_file_to_sdformat(input_file, output_file, export_world_plugins=True):
     :param str output_file: Path to output SDFormat file.
     :param str export_world_plugins: If true SDFormat will export world plugins
     """
-    mjcf_model = mjcf.from_path(input_file)
+    mjcf_model = mjcf.from_path(input_file, escape_separators=True)
     physics = mujoco.Physics.from_xml_path(input_file)
 
     root = sdf.Root()
