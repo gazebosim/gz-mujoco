@@ -131,4 +131,8 @@ def add_visual(body, vis):
     pose = su.graph_resolver.resolve_pose(sem_pose)
     geom = add_geometry(body, vis.name(), pose, vis.geometry())
     geom.group = VISUAL_GEOM_GROUP
+    # Visual geoms do not collide with any other geom, so we set their contype
+    # and conaffinity to 0.
+    geom.contype = 0
+    geom.conaffinity = 0
     return geom
