@@ -18,7 +18,8 @@ import sdformat as sdf
 from tests import helpers
 
 from dm_control import mjcf
-from sdformat_mjcf.sdformat_to_mjcf.converters.geometry import add_collision, add_visual
+from sdformat_mjcf.sdformat_to_mjcf.converters.geometry import (add_collision,
+                                                                add_visual)
 from sdformat_mjcf.sdformat_to_mjcf.converters.root import add_root
 
 
