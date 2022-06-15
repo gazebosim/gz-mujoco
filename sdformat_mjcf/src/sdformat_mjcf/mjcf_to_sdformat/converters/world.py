@@ -87,6 +87,8 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
                        model,
                        body_parent_name=None):
         for body in input_body:
+            body_name = body.name
+
             link = mjcf_body_to_sdf(body,
                                     physics,
                                     body_parent_name=body_parent_name,
@@ -96,22 +98,118 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
                 if sensor is not None:
                     link.add_sensor(sensor)
 
+            serial_joints_created = []
+            serial_sdf_joints_created = []
+            serial_link_created = [link]
             for joint in body.joint:
                 if modifiers is not None:
                     modifiers.apply_modifiers_to_element(joint)
-                joint_sdf = mjcf_joint_to_sdf(joint,
-                                              body_parent_name,
-                                              body.name)
+
+                def check_child_name(model, child_name):
+                    """
+                    Check if there is a joint in the model with this child name
+                    Return True if the child name exists, False otherwise
+                    :param sdf.Model model: Model to check the joints
+                    :param str child_name: Name of the child joint to check
+                    :return: True if the child name exists, False otherwise
+                    :rtype bool:
+                    """
+                    for j in range(model.joint_count()):
+                        joint_sdf = model.joint_by_index(j)
+                        if (joint_sdf.child_link_name() == child_name):
+                            return True
+                    return False
+
+                def serial_joint_check(model, parent_name, child_name):
+                    """
+                    Check if a joint requires to add a serial joint.
+                    :param sdf.Model model: Model to check the joint
+                    :param str parent_name: Name of the child joint to check
+                    :param str child_name: Name of the child joint to check
+                    """
+                    child_name_result = child_name
+                    for j in range(model.joint_count()):
+                        joint_sdf = model.joint_by_index(j)
+                        # if there is a joint with this parent and child names
+                        # we should add a new link and attach the new joint to
+                        # this new link
+                        if (joint_sdf.parent_link_name() == parent_name and
+                            joint_sdf.child_link_name() == child_name):
+                            index = 0
+                            while True:
+                                # we need to create a new name for the child
+                                # For this, we will check all the child names
+                                # and we will add a suffix if the name already
+                                #exists
+                                new_child_name = child_name + "_" + str(index)
+                                if not check_child_name(model, new_child_name):
+                                    # Create a new link and add it to the model
+                                    dummy_link = sdf.Link()
+                                    dummy_link.set_name(new_child_name)
+                                    dummy_link.set_raw_pose(link.raw_pose())
+                                    dummy_link.set_pose_relative_to(
+                                        link.pose_relative_to())
+                                    serial_link_created.append(dummy_link)
+                                    child_name_result = new_child_name
+                                    model.add_joint(joint_sdf)
+                                    return child_name_result
+                                index = index + 1
+                    return child_name_result
+
+                # We can have more than two link in serie, we should check if
+                # the names are already in use in any joint.
+                child_name_result = body.name
+                parent_name_found = body_parent_name
+                while True:
+                    result = serial_joint_check(
+                        model, parent_name_found, child_name_result)
+                    if not child_name_result in serial_joints_created:
+                        child_name_result = result
+                        break
+                    parent_name_found = child_name_result
+                    child_name_result = result
+
+                # create a joint
+                if child_name_result == body_name:
+                    joint_sdf = mjcf_joint_to_sdf(joint,
+                                                  body_parent_name,
+                                                  body_name)
+                    serial_sdf_joints_created.append(joint_sdf)
+                # create a serial joint
+                else:
+                    joint_sdf = mjcf_joint_to_sdf(joint,
+                                                  body_name,
+                                                  child_name_result)
+                    serial_joints_created.append(child_name_result)
+                    serial_sdf_joints_created.append(joint_sdf)
+                    body_name = child_name_result
+
                 if joint_sdf is not None:
                     model.add_joint(joint_sdf)
             if len(body.joint) == 0 and body.freejoint is None:
                 joint_sdf = add_fixed_joint(body_parent_name, body.name)
                 model.add_joint(joint_sdf)
 
+            # We might have more than one link, if there is the case,
+            # we should remove visuals and colllisions in all the previous
+            # link only if the joint is in the same place
+            if len(serial_link_created) > 1:
+                if serial_sdf_joints_created[0].raw_pose() == serial_sdf_joints_created[-1].raw_pose():
+                    serial_link_created[-1].add_visual(link.visual_by_index(0))
+                    serial_link_created[-1].add_collision(link.collision_by_index(0))
+                    serial_link_created[-1].set_inertial(link.inertial())
+                    link.clear_visuals()
+                    link.clear_collisions()
+                    link.inertial().mass_matrix().set_mass(0)
+
+            # Add all links to the world
+            for i in range(len(serial_link_created)):
+                model.add_link(serial_link_created[i])
+
             model.add_link(link)
             iterate_bodies(body.body,
                            model,
-                           body.name)
+                           body_name)
     iterate_bodies(body, model)
 
     if mjcf_root.sensor is not None:
