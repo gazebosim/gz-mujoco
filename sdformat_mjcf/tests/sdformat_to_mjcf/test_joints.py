@@ -78,7 +78,8 @@ class JointTest(unittest.TestCase):
         self.assertEqual(0, joint.axis(0).damping())
         self.assertEqual(100000000.0, joint.axis(0).stiffness())
         self.assertEqual(0.0, joint.axis(0).spring_stiffness())
-        self.assertEqual(1.1, joint.axis(0).spring_reference())
+        self.assertEqual(0.019198621771937627,
+                         joint.axis(0).spring_reference())
         self.assertEqual(2.0, joint.axis(0).friction())
 
         joint = model.joint_by_index(2)

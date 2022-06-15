@@ -194,15 +194,18 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
             # we should remove visuals and colllisions in all the previous
             # link only if the joint is in the same place
             if len(serial_link_created) > 1:
-                if serial_sdf_joints_created[0].raw_pose() == \
-                   serial_sdf_joints_created[-1].raw_pose():
-                    serial_link_created[-1].add_visual(link.visual_by_index(0))
-                    serial_link_created[-1].add_collision(
-                        link.collision_by_index(0))
-                    serial_link_created[-1].set_inertial(link.inertial())
-                    link.clear_visuals()
-                    link.clear_collisions()
-                    link.inertial().mass_matrix().set_mass(0)
+                if serial_sdf_joints_created[0] is not None and \
+                   serial_sdf_joints_created[-1] is not None:
+                    if serial_sdf_joints_created[0].raw_pose() == \
+                       serial_sdf_joints_created[-1].raw_pose():
+                        serial_link_created[-1].add_visual(
+                            link.visual_by_index(0))
+                        serial_link_created[-1].add_collision(
+                            link.collision_by_index(0))
+                        serial_link_created[-1].set_inertial(link.inertial())
+                        link.clear_visuals()
+                        link.clear_collisions()
+                        link.inertial().mass_matrix().set_mass(0)
 
             # Add all links to the world
             for i in range(len(serial_link_created)):
