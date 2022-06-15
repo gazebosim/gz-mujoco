@@ -24,6 +24,43 @@ from sdformat_mjcf.sdformat_to_mjcf.converters.sensor import add_sensor
 from tests import helpers
 
 
+class Altimeter(helpers.TestCase):
+
+    test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
+    expected_pos = [1.0, 2.0, 3.0]
+    expected_euler = [90.0, 60.0, 45.0]
+
+    def setUp(self):
+        self.mujoco = mjcf.RootElement(model="test")
+        self.body = self.mujoco.worldbody.add("body", name="test_body")
+        self.sensor = sdf.Sensor()
+        self.sensor.set_name("altimeter_sensor")
+        self.sensor.set_type(sdf.Sensortype.ALTIMETER)
+        self.sensor.set_raw_pose(self.test_pose)
+
+    def test_default(self):
+        altimeter = sdf.Altimeter()
+        self.sensor.set_altimeter_sensor(altimeter)
+        mjcf_sensors = add_sensor(self.body, self.sensor)
+
+        self.assertIsNotNone(mjcf_sensors)
+        self.assertIsNotNone(self.mujoco.sensor)
+
+        mjcf_altimeter = self.mujoco.sensor.get_children("framepos")
+        self.assertEqual(1, len(mjcf_altimeter))
+
+        sensor_sites = self.body.get_children("site")
+        self.assertEqual(1, len(sensor_sites))
+        self.assertEqual(self.sensor.name(), sensor_sites[0].name)
+        assert_allclose(self.expected_pos, sensor_sites[0].pos)
+        assert_allclose(self.expected_euler, sensor_sites[0].euler)
+
+        mjcf_altimeter = mjcf_sensors
+        self.assertAlmostEqual(f"altimeter_{self.sensor.name()}",
+                               mjcf_altimeter.name)
+        self.assertAlmostEqual(self.sensor.name(), mjcf_altimeter.objname)
+
+
 class ImuSensorTest(helpers.TestCase):
     test_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
     expected_pos = [1.0, 2.0, 3.0]
