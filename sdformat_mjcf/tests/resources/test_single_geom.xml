@@ -1,0 +1,5 @@
+<mujoco>
+  <worldbody>
+    <geom type="box" size="1 1 1" />
+  </worldbody>
+</mujoco>
