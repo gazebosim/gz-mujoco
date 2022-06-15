@@ -1,11 +1,11 @@
 # Copyright (C) 2022 Open Source Robotics Foundation
-
+#
 # Licensed under the Apache License, version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #       http://www.apache.org/licenses/LICENSE-2.0
-
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,17 +22,21 @@ from dm_control import mjcf
 from sdformat_mjcf.mjcf_to_sdformat.converters import geometry as geometry_conv
 
 import sdformat_mjcf.utils.sdf_utils as su
+from tests.helpers import get_resources_dir
+
+TEST_RESOURCES_DIR = get_resources_dir()
 
 
 class GeometryTest(unittest.TestCase):
 
+    def setUp(self):
+        self.mujoco = mjcf.RootElement(model="test")
+        self.body = self.mujoco.worldbody.add('body')
+
     def test_box(self):
         x_size, y_size, z_size = 1, 2, 3
-
-        mujoco = mjcf.RootElement(model="test")
-        body = mujoco.worldbody.add('body')
-        geom = body.add('geom', type="box", name="box",
-                        size=[x_size, y_size, z_size])
+        geom = self.body.add('geom', type="box", name="box",
+                             size=[x_size, y_size, z_size])
         sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(sdf.GeometryType.BOX, sdf_geom.type())
@@ -44,9 +48,7 @@ class GeometryTest(unittest.TestCase):
         radius = 5.
         length = 20.
 
-        mujoco = mjcf.RootElement(model="test")
-        body = mujoco.worldbody.add('body')
-        geom = body.add('geom', type="capsule", size=[radius, length])
+        geom = self.body.add('geom', type="capsule", size=[radius, length])
         sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(sdf.GeometryType.CAPSULE, sdf_geom.type())
@@ -58,10 +60,8 @@ class GeometryTest(unittest.TestCase):
         radius = 5.
         length = 1.
 
-        mujoco = mjcf.RootElement(model="test")
-        body = mujoco.worldbody.add('body')
-        geom = body.add('geom', type="capsule", size=[radius],
-                        fromto=[0, 0, 0, 0, 0, 1])
+        geom = self.body.add('geom', type="capsule", size=[radius],
+                             fromto=[0, 0, 0, 0, 0, 1])
         sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(sdf.GeometryType.CAPSULE, sdf_geom.type())
@@ -73,9 +73,7 @@ class GeometryTest(unittest.TestCase):
         radius = 5.
         length = 20.
 
-        mujoco = mjcf.RootElement(model="test")
-        body = mujoco.worldbody.add('body')
-        geom = body.add('geom', type="cylinder", size=[radius, length])
+        geom = self.body.add('geom', type="cylinder", size=[radius, length])
         sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(sdf.GeometryType.CYLINDER, sdf_geom.type())
@@ -87,10 +85,8 @@ class GeometryTest(unittest.TestCase):
         radius = 5.
         length = 1.
 
-        mujoco = mjcf.RootElement(model="test")
-        body = mujoco.worldbody.add('body')
-        geom = body.add('geom', type="cylinder", size=[radius],
-                        fromto=[0, 0, 0, 0, 0, 1])
+        geom = self.body.add('geom', type="cylinder", size=[radius],
+                             fromto=[0, 0, 0, 0, 0, 1])
         sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(sdf.GeometryType.CYLINDER, sdf_geom.type())
@@ -102,11 +98,9 @@ class GeometryTest(unittest.TestCase):
         x_radius = 1.
         y_radius = 2.
         z_radius = 3.
-        mujoco = mjcf.RootElement(model="test")
-        body = mujoco.worldbody.add('body')
-        geom = body.add('geom',
-                        type="ellipsoid",
-                        size=[x_radius, y_radius, z_radius])
+        geom = self.body.add('geom',
+                             type="ellipsoid",
+                             size=[x_radius, y_radius, z_radius])
         sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(sdf.GeometryType.ELLIPSOID, sdf_geom.type())
@@ -118,17 +112,22 @@ class GeometryTest(unittest.TestCase):
         pass
 
     def test_mesh(self):
-        pass
+        filename = str(TEST_RESOURCES_DIR / "mug.xml")
+        mjcf_model = mjcf.from_path(filename)
+        self.assertIsNotNone(mjcf_model)
+        geom = mjcf_model.find("geom", "mug")
+        self.assertIsNotNone(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
+        self.assertEqual(sdf.GeometryType.MESH, sdf_geom.type())
+        mesh_shape = sdf_geom.mesh_shape()
+        self.assertIsNotNone(mesh_shape)
+        self.assertEqual(Vector3d(0.01, 0.01, 0.01), mesh_shape.scale())
 
     def test_plane(self):
         x_size = 5.
         y_size = 10.
 
-        mujoco = mjcf.RootElement(model="test")
-        body = mujoco.worldbody.add('body')
-        geom = body.add('geom',
-                        type="plane",
-                        size=[x_size, y_size, 0.05])
+        geom = self.body.add('geom', type="plane", size=[x_size, y_size, 0.05])
         sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(sdf.GeometryType.PLANE, sdf_geom.type())
@@ -150,11 +149,7 @@ class GeometryTest(unittest.TestCase):
     def test_sphere(self):
         radius = 5.
 
-        mujoco = mjcf.RootElement(model="test")
-        body = mujoco.worldbody.add('body')
-        geom = body.add('geom',
-                        type="sphere",
-                        size=[radius])
+        geom = self.body.add('geom', type="sphere", size=[radius])
         sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(sdf.GeometryType.SPHERE, sdf_geom.type())

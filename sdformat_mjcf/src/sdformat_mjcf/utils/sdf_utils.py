@@ -14,6 +14,7 @@
 
 """Utility functions that aid in conversion between SDFormat and MJCF"""
 
+import logging
 import math
 from ignition.math import Color, Pose3d, Quaterniond, Vector3d, Matrix3d
 
@@ -54,7 +55,6 @@ def get_rotation(element):
         if angle_type == "degree":
             result = result * math.pi / 180.0
         quat = Quaterniond(result)
-        print(f"Euler: {element.euler}, {result=}, {quat=}")
     elif element.zaxis is not None:
         z = Vector3d(0, 0, 1)
         quat = Quaterniond()
@@ -205,6 +205,21 @@ def find_unique_name(elem, namespace, name):
         test_name = f"{name}{NAME_DELIMITER}{index}"
         index += 1
     return test_name
+
+
+def get_asset_filename_on_disk(asset):
+    """
+    This method returns the name of the asset file without the hash.
+    :param mjcf.Asset asset: The asset from which the filename is recovered.
+    :return: The name of the file on disk.
+    :rtype: str
+    """
+    file = asset.file
+    if file.prefix:
+        return file.prefix + file.extension
+    else:
+        logging.warning("Asset file does not exist on disk")
+        return file.get_vfs_filename()
 
 
 class GraphResolverImplBase:

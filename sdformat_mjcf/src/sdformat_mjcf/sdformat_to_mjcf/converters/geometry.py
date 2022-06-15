@@ -31,6 +31,7 @@ def add_geometry(body, name, pose, sdf_geom):
             Collision or Visual).
     :param sdformat.Pose3d pose: Resolved pose of the geom (obtained from the
             pose of the SDFormat Collision or Visual).
+    :param sdformat.Geometry sdf_geom: Geometry object to be converted.
     :return: The newly created MJCF geom.
     :rtype: mjcf.Element
     """
@@ -98,6 +99,20 @@ def add_geometry(body, name, pose, sdf_geom):
     return geom
 
 
+def apply_surface_to_geometry(geom, sdf_surface):
+    """
+    Applies surface parameters from an SDFormat surface to an MJCF geom.
+
+    :param mjcf.Element geom: The MJCF geom to which the surface parameters
+            are applied.
+    :param sdformat.Surface sdf_surface: Surface object to be applied.
+    """
+
+    sdf_friction_ode = sdf_surface.friction().ode()
+    # Use //surface/friction/ode/mu for sliding friction
+    geom.friction = [sdf_friction_ode.mu(), 0.005, 0.0001]
+
+
 def add_collision(body, col):
     """
     Converts an SDFormat collision to an MJCF geom and add it to the given
@@ -113,6 +128,7 @@ def add_collision(body, col):
     pose = su.graph_resolver.resolve_pose(sem_pose)
     geom = add_geometry(body, col.name(), pose, col.geometry())
     geom.group = COLLISION_GEOM_GROUP
+    apply_surface_to_geometry(geom, col.surface())
     return geom
 
 

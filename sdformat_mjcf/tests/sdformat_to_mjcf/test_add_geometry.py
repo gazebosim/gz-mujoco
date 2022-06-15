@@ -179,6 +179,24 @@ class GeometryTest(helpers.TestCase):
         assert_allclose(self.expected_euler, mj_geom.euler)
 
 
+class SurfaceTest(helpers.TestCase):
+
+    test_friction = 1.23
+    expected_friction = [1.23, 0.005, 0.0001]
+    box_size = [1, 1, 1]
+
+    def test_valid_surface(self):
+        surface = sdf.Surface()
+        surface.friction().ode().set_mu(self.test_friction)
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        geom = body.add('geom', type="box", name="box",
+                        size=self.box_size)
+        geometry_conv.apply_surface_to_geometry(geom, surface)
+        assert_allclose(self.expected_friction, geom.friction)
+
+
 class CollisionTest(helpers.TestCase):
 
     def test_basic_collision_attributes(self):
@@ -191,6 +209,10 @@ class CollisionTest(helpers.TestCase):
         geometry.set_type(sdf.GeometryType.BOX)
         collision.set_geometry(geometry)
 
+        surface = sdf.Surface()
+        surface.friction().ode().set_mu(1.23)
+        collision.set_surface(surface)
+
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
         mj_geom = geometry_conv.add_collision(body, collision)
@@ -200,6 +222,7 @@ class CollisionTest(helpers.TestCase):
         self.assertEqual(geometry_conv.COLLISION_GEOM_GROUP, mj_geom.group)
         self.assertIsNone(mj_geom.contype)
         self.assertIsNone(mj_geom.conaffinity)
+        assert_allclose([1.23, 0.005, 0.0001], mj_geom.friction)
 
 
 class VisualTest(helpers.TestCase):
