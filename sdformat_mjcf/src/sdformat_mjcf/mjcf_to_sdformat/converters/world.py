@@ -133,14 +133,14 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
                         # if there is a joint with this parent and child names
                         # we should add a new link and attach the new joint to
                         # this new link
-                        if (joint_sdf.parent_link_name() == parent_name and
-                            joint_sdf.child_link_name() == child_name):
+                        if joint_sdf.parent_link_name() == parent_name and \
+                           joint_sdf.child_link_name() == child_name:
                             index = 0
                             while True:
                                 # we need to create a new name for the child
                                 # For this, we will check all the child names
                                 # and we will add a suffix if the name already
-                                #exists
+                                # exists
                                 new_child_name = child_name + "_" + str(index)
                                 if not check_child_name(model, new_child_name):
                                     # Create a new link and add it to the model
@@ -163,7 +163,7 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
                 while True:
                     result = serial_joint_check(
                         model, parent_name_found, child_name_result)
-                    if not child_name_result in serial_joints_created:
+                    if child_name_result not in serial_joints_created:
                         child_name_result = result
                         break
                     parent_name_found = child_name_result
@@ -194,9 +194,11 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
             # we should remove visuals and colllisions in all the previous
             # link only if the joint is in the same place
             if len(serial_link_created) > 1:
-                if serial_sdf_joints_created[0].raw_pose() == serial_sdf_joints_created[-1].raw_pose():
+                if serial_sdf_joints_created[0].raw_pose() == \
+                   serial_sdf_joints_created[-1].raw_pose():
                     serial_link_created[-1].add_visual(link.visual_by_index(0))
-                    serial_link_created[-1].add_collision(link.collision_by_index(0))
+                    serial_link_created[-1].add_collision(
+                        link.collision_by_index(0))
                     serial_link_created[-1].set_inertial(link.inertial())
                     link.clear_visuals()
                     link.clear_collisions()
