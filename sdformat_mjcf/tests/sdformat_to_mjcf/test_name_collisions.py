@@ -134,6 +134,15 @@ class NameCollisionTest(helpers.TestCase):
                     </joint>
                     <link name="link2"/>
                 </model>
+                <model name="M4">
+                    <link name="link1"/>
+                    <joint name="test_joint" type="ball">
+                        <parent>link1</parent>
+                        <child>link2</child>
+                        <axis><xyz>0 0 1</xyz></axis>
+                    </joint>
+                    <link name="link2"/>
+                </model>
             </world>
         </sdf>
         """
@@ -142,7 +151,7 @@ class NameCollisionTest(helpers.TestCase):
         self.assertEqual(0, len(errors))
         mjcf_root = add_root(root)
         joints = mjcf_root.find_all("joint")
-        self.assertEqual(6, len(joints))
+        self.assertEqual(8, len(joints))
         name_possibilities = ["test_joint", "test_joint_0", "test_joint_1"]
         for joint in joints:
             if hasattr(joint, "type") and joint.type == "revolute":
