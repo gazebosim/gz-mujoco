@@ -40,8 +40,9 @@ class LightTest(unittest.TestCase):
         self.assertEqual(Color(0.3, 0.3, 0.3), sdf_light.specular())
         self.assertEqual(sdf.LightType.SPOT, sdf_light.type())
         self.assertEqual(Vector3d(0, 0, -1), sdf_light.direction())
-        self.assertAlmostEqual(45, sdf_light.spot_inner_angle().degree())
-        self.assertEqual(10, sdf_light.spot_falloff())
+        self.assertAlmostEqual(0, sdf_light.spot_inner_angle().degree())
+        self.assertAlmostEqual(90, sdf_light.spot_outer_angle().degree())
+        self.assertEqual(2, sdf_light.spot_falloff())
         self.assertTrue(sdf_light.light_on())
 
     def test_light(self):
@@ -96,8 +97,9 @@ class LightTest(unittest.TestCase):
         self.assertEqual(Color(0.2, 0.2, 0.2), sdf_light.specular())
         self.assertEqual(sdf.LightType.SPOT, sdf_light.type())
         self.assertEqual(Vector3d(0, -1, -1), sdf_light.direction())
-        self.assertAlmostEqual(40, sdf_light.spot_inner_angle().degree())
-        self.assertEqual(5, sdf_light.spot_falloff())
+        self.assertAlmostEqual(0, sdf_light.spot_inner_angle().degree())
+        self.assertAlmostEqual(80, sdf_light.spot_outer_angle().degree())
+        self.assertEqual(1, sdf_light.spot_falloff())
         self.assertTrue(sdf_light.light_on())
 
 

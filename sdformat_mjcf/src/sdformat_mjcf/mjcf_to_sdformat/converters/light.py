@@ -76,16 +76,16 @@ def mjcf_light_to_sdf(light):
 
     def set_spot_light(light, light_sdf):
         light_sdf.set_type(sdf.LightType.SPOT)
-        if light.cutoff is not None:
-            # always in degrees regardless of the global angle setting.
-            light_sdf.set_spot_inner_angle(
-                Angle(light.cutoff * math.pi / 180.0))
-        else:
-            light_sdf.set_spot_inner_angle(Angle(45 * math.pi / 180.0))
-        if light.exponent is not None:
-            light_sdf.set_spot_falloff(light.exponent)
-        else:
-            light_sdf.set_spot_falloff(10)
+        # The settings for inner_angle, outer_angle, and falloff were
+        # determined experimentally.
+        light_sdf.set_spot_inner_angle(Angle(0))
+
+        # always in degrees regardless of the global angle setting.
+        cutoff = su.get_value_or_default(light.cutoff, 45)
+        light_sdf.set_spot_outer_angle(Angle(math.radians(cutoff * 2)))
+
+        exponent = su.get_value_or_default(light.exponent, 10)
+        light_sdf.set_spot_falloff(exponent * 2 / 10.0)
 
     if light.directional is not None:
         if light.directional == "true":
