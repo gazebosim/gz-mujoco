@@ -102,6 +102,28 @@ class MaterialTest(unittest.TestCase):
         self.assertNotEqual(None, workflow)
         self.assertEqual("tennis_ball.png", workflow.albedo_map())
 
+    def test_no_material(self):
+        mjcf_string = """
+        <mujoco>
+            <worldbody>
+                <geom type="box" size="1 1 1"/>
+            </worldbody>
+        </mujoco>
+        """
+        mjcf_model = mjcf.from_xml_string(mjcf_string)
+        physics = mujoco.Physics.from_xml_string(mjcf_string)
+
+        world = sdf.World()
+        world.set_name("default")
+
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+        static_model = world.model_by_name("static")
+        box_mat = static_model.link_by_index(0).visual_by_index(0).material()
+        self.assertEqual(Color(0.5, 0.5, 0.5, 1.0), box_mat.diffuse())
+        self.assertEqual(Color(0.5, 0.5, 0.5, 1.0), box_mat.ambient())
+        self.assertEqual(Color(0.5, 0.5, 0.5, 1.0), box_mat.specular())
+        self.assertEqual(Color(0, 0, 0, 1.0), box_mat.emissive())
+
 
 if __name__ == "__main__":
     unittest.main()
