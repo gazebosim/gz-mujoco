@@ -76,4 +76,9 @@ def mjcf_material_to_sdf(geom):
         material.set_specular(su.rgba_to_color(geom.rgba))
         return material
 
+    if geom.material is None and geom.rgba is None:
+        material.set_diffuse(su.rgba_to_color([0.5, 0.5, 0.5, 1]))
+        material.set_ambient(su.rgba_to_color([0.5, 0.5, 0.5, 1]))
+        material.set_specular(su.rgba_to_color([0.5, 0.5, 0.5, 1]))
+
     return material
