@@ -336,7 +336,7 @@ class PoseTest(unittest.TestCase):
 
         mjcf_worldbody_to_sdf(mjcf_model, physics, world)
 
-        sdf_model = world.model_by_name("test_model")
+        sdf_model = world.model_by_name("model_for_base_link")
         sdf_link = sdf_model.link_by_name("base_link")
         self.assertEqual(self.expected_pose, sdf_link.raw_pose())
 

@@ -70,7 +70,7 @@ class SensorTest(unittest.TestCase):
 
         mjcf_worldbody_to_sdf(mjcf_model, physics, world, True)
 
-        self.assertEqual(2, world.model_count())
+        self.assertEqual(3, world.model_count())
         model = world.model_by_index(0)
         link = model.link_by_index(0)
         self.assertEqual(1, link.sensor_count())
