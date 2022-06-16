@@ -16,7 +16,6 @@ from ignition.math import Vector3d
 
 from sdformat_mjcf.mjcf_to_sdformat.converters.joint import (mjcf_joint_to_sdf,
                                                              add_fixed_joint)
-from sdformat_mjcf.mjcf_to_sdformat.converters.light import mjcf_light_to_sdf
 from sdformat_mjcf.mjcf_to_sdformat.converters.link import mjcf_body_to_sdf
 from sdformat_mjcf.mjcf_to_sdformat.converters.sensor import (
     mjcf_camera_sensor_to_sdf, mjcf_accelerometer_gyro_sensor_to_sdf,
@@ -50,11 +49,6 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
     modifiers = MjcfModifiers(mjcf_root)
 
     model_static = sdf.Model()
-
-    for light in mjcf_root.worldbody.light:
-        modifiers.apply_modifiers_to_element(light)
-        light_sdf = mjcf_light_to_sdf(light)
-        world.add_light(light_sdf)
 
     link = mjcf_body_to_sdf(mjcf_root.worldbody, physics, modifiers=modifiers)
     model_static.set_name(su.find_unique_name(
