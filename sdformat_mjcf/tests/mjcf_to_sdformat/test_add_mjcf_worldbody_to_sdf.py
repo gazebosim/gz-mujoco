@@ -264,8 +264,10 @@ class ModelTest(unittest.TestCase):
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_4.raw_pose().rot().euler()))
 
-        self.assertEqual(1, world.light_count())
-        light_1 = world.light_by_index(0)
+        self.assertEqual(0, world.light_count())
+        static_model = world.model_by_name("static")
+        self.assertEqual(1, static_model.link_count())
+        light_1 = static_model.link_by_index(0).light_by_index(0)
         self.assertNotEqual(None, light_1)
         self.assertEqual(0, light_1.constant_attenuation_factor())
         self.assertEqual(0.01, light_1.linear_attenuation_factor())

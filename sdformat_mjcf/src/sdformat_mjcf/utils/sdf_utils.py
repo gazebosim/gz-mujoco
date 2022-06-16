@@ -222,6 +222,20 @@ def get_asset_filename_on_disk(asset):
         return file.get_vfs_filename()
 
 
+def get_value_or_default(val, default_val):
+    """
+    Returns the value of `val` if it's not None, otherwise returns the passed
+    in default value.
+    :param any val: Any variable that maybe None
+    :param any default_val: The default value.
+    :return: The value or it's not None, otherwise the default value
+    :rtype: any
+    """
+    if val is None:
+        return default_val
+    return val
+
+
 class GraphResolverImplBase:
     """Interface for graph resolver implementors"""
 
