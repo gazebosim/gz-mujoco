@@ -51,7 +51,7 @@ class ModelTest(unittest.TestCase):
         self.assertEqual(Vector3d(2, 1, 7.6), world.wind_linear_velocity())
 
         self.assertEqual("default", world.name())
-        self.assertEqual(2, world.model_count())
+        self.assertEqual(3, world.model_count())
         model = world.model_by_index(0)
         self.assertNotEqual(None, model)
         self.assertEqual(1, model.link_count())
@@ -169,7 +169,8 @@ class ModelTest(unittest.TestCase):
                         su.vec3d_to_list(collision_2.raw_pose().rot().euler()),
                         rtol=1e-5)
 
-        link_3 = model.link_by_index(1)
+        model = world.model_by_index(2)
+        link_3 = model.link_by_index(0)
         self.assertEqual("body2", link_3.name())
         self.assertEqual(1, link_3.visual_count())
         self.assertEqual(1, link_3.collision_count())
@@ -227,7 +228,7 @@ class ModelTest(unittest.TestCase):
         assert_allclose([0, 0, 0],
                         su.vec3d_to_list(collision_3.raw_pose().rot().euler()))
 
-        link_4 = model.link_by_index(2)
+        link_4 = model.link_by_index(1)
         self.assertEqual("body3", link_4.name())
         self.assertEqual(1, link_4.visual_count())
         self.assertEqual(1, link_4.collision_count())

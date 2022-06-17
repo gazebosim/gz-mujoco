@@ -51,7 +51,7 @@ class JointTest(unittest.TestCase):
 
         model = world.model_by_index(1)
         self.assertNotEqual(None, model)
-        self.assertEqual("body1_dummy_0", model.name())
+        self.assertEqual("model_for_body1_dummy_0", model.name())
 
         self.assertEqual(4, model.joint_count())
         joint = model.joint_by_index(0)

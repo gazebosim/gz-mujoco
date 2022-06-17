@@ -42,7 +42,7 @@ class MjcfFileConversion(unittest.TestCase):
             errors = root.load(output_file)
             self.assertEqual(0, len(errors))
             world = root.world_by_index(0)
-            mug_model = world.model_by_name("mug")
+            mug_model = world.model_by_name("model_for_mug")
             mug_link = mug_model.link_by_name("mug")
 
             def check_geometry(sdf_geom):
