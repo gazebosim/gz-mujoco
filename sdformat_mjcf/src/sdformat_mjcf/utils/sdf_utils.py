@@ -51,10 +51,24 @@ def get_rotation(element):
         angle_type = element.root.compiler.angle
     quat = Quaterniond()
     if element.euler is not None:
+        eulerseq = "xyz"
+        if element.root.compiler.eulerseq is not None:
+            eulerseq = element.root.compiler.eulerseq
+
         result = list_to_vec3d(element.euler)
         if angle_type == "degree":
             result = result * math.pi / 180.0
-        quat = Quaterniond(result)
+
+        if eulerseq == "XYZ":
+            quat = Quaterniond(result)
+        elif eulerseq == "xyz":
+            quat = Quaterniond(result.x(), 0, 0) * Quaterniond(
+                0, result.y(), 0) * Quaterniond(0, 0, result.z())
+        else:
+            logging.warning(f"Unsupported Euler sequence {eulerseq}. Euler "
+                            "angles will be set to identity")
+            quat = Quaterniond()
+
     elif element.zaxis is not None:
         z = Vector3d(0, 0, 1)
         quat = Quaterniond()
