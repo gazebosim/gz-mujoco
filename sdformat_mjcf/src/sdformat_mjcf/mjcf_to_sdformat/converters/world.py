@@ -138,16 +138,27 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
                 su.list_to_vec3d(mjcf_root.option.wind))
 
     models = []
-    body_to_model = {}
+    root_body_to_model = {}
     for body in mjcf_root.worldbody.body:
         model = sdf.Model()
         link = _add_body_to_model(body, physics, model, modifiers)
         model.set_name(f"model_for_{link.name()}")
         models.append(model)
-        body_to_model[body] = model
+        root_body_to_model[body] = model
+
+    # Walk up the hierarchy until we find body in root_body_to_model since
+    # we only store top level bodies (kinematic roots) in root_body_to_model
+    def _get_root_body(body):
+        while body.parent != body.root.worldbody:
+            body = body.parent
+        return body
 
     def _get_model_from_sensor(sensor):
-        return body_to_model[sensor.site.parent]
+        if hasattr(sensor, "site"):
+            return root_body_to_model[_get_root_body(sensor.site.parent)]
+
+        raise RuntimeError(
+            f"Sensor {sensor} not attached to a site or body")
 
     if mjcf_root.sensor is not None:
         for accel in mjcf_root.sensor.accelerometer:
