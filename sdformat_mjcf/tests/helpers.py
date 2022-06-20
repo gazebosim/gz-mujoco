@@ -43,13 +43,13 @@ class TestGraphResolverImpl(su.GraphResolverImplBase):
         try:
             return super().resolve_parent_link_name(joint)
         except RuntimeError:
-            return joint.parent_link_name()
+            return joint.parent_name()
 
     def resolve_child_link_name(self, joint):
         try:
             return super().resolve_child_link_name(joint)
         except RuntimeError:
-            return joint.child_link_name()
+            return joint.child_name()
 
 
 def setup_test_graph_resolver():
