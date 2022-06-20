@@ -43,7 +43,12 @@ def mjcf_geom_to_sdf(geom):
     sdf_geometry = sdf.Geometry()
     if geom.type == "box":
         box = sdf.Box()
-        box.set_size(su.list_to_vec3d(geom.size) * 2)
+        if geom.fromto is None:
+            box.set_size(su.list_to_vec3d(geom.size) * 2)
+        else:
+            v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
+            v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
+            box.set_size((v2-v1).abs())
         sdf_geometry.set_box_shape(box)
         sdf_geometry.set_type(sdf.GeometryType.BOX)
         # TODO(ahcorde): Add fromto
@@ -73,7 +78,12 @@ def mjcf_geom_to_sdf(geom):
         sdf_geometry.set_type(sdf.GeometryType.CYLINDER)
     elif geom.type == "ellipsoid":
         ellipsoid = sdf.Ellipsoid()
-        ellipsoid.set_radii(su.list_to_vec3d(geom.size))
+        if geom.fromto is None:
+            ellipsoid.set_radii(su.list_to_vec3d(geom.size))
+        else:
+            v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
+            v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
+            ellipsoid.set_radii((v2-v1).abs())
         sdf_geometry.set_ellipsoid_shape(ellipsoid)
         sdf_geometry.set_type(sdf.GeometryType.ELLIPSOID)
         # TODO(ahcorde): Add fromto
