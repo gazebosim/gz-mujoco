@@ -45,7 +45,6 @@ class GeometryTest(unittest.TestCase):
                          sdf_geom.box_shape().size())
 
     def test_box_fromto(self):
-        x_size, y_size, z_size = 1, 2, 3
         geom = self.body.add('geom', type="box", name="box",
                              fromto=[1, 0.5, 1, -1, -0.5, -1])
         sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
