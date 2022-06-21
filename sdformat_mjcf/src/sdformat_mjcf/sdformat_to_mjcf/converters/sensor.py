@@ -51,6 +51,10 @@ def add_sensor(body, sensor):
             return _add_imu(body.root.sensor,
                             sensor.imu_sensor(),
                             site_unique_name)
+        elif sensor.altimeter_sensor() is not None:
+            return _add_altimeter(body.root.sensor,
+                                  sensor.altimeter_sensor(),
+                                  site_unique_name)
         elif sensor.force_torque_sensor() is not None:
             return _add_force_torque(body.root.sensor,
                                      sensor.force_torque_sensor(),
@@ -85,6 +89,30 @@ def _convert_noise(sensor, component, sensor_name):
             "parameters are identical.")
     else:
         return noises[0].std_dev()
+
+
+def _add_altimeter(sensor, altimeter_sensor, sensor_name):
+    """
+    Converts an Altimeter sensor from SDFormat to MJCF and add it to the given
+    MJCF sensor.
+
+    :param mjcf.Element sensor: The MJCF sensor to which the altimeter is added
+    :param sdformat.Altimeter altimeter_sensor: The SDFormat altimeter Sensor
+    to be converted.
+    :param str altimeter_sensor: The Name of the SDFormat <sensor> element that
+    contains the altimeter.
+    :return: Converted altimeter element.
+    :rtype: [mjcf.Element]
+    """
+    altimeter_unique_name = su.find_unique_name(sensor, "sensor",
+                                                f"altimeter_{sensor_name}")
+    frame_pos = sensor.add("framepos",
+                           objtype="site",
+                           objname=sensor_name,
+                           name=altimeter_unique_name)
+    frame_pos.noise = altimeter_sensor.vertical_position_noise().std_dev()
+
+    return frame_pos
 
 
 def _add_imu(sensor, imu, sensor_name):
