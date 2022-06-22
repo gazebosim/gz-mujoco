@@ -110,8 +110,8 @@ class ModelTest(helpers.TestCase):
         joint = sdf.Joint()
         joint.set_name("joint")
         joint.set_type(sdf.JointType.FIXED)
-        joint.set_parent_link_name("base_link")
-        joint.set_child_link_name("upper_link")
+        joint.set_parent_name("base_link")
+        joint.set_child_name("upper_link")
         model.add_joint(joint)
 
         mj_root = add_model(self.mujoco, model)
