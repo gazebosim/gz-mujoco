@@ -228,13 +228,19 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
     if export_world_plugins:
         plugins = {
             "ignition-gazebo-physics-system":
-                "ignition::gazebo::systems::Physics",
+                "gz::sim::systems::Physics",
             "ignition-gazebo-sensors-system":
-                "ignition::gazebo::systems::Sensors",
+                "gz::sim::systems::Sensors",
             "ignition-gazebo-user-commands-system":
-                "ignition::gazebo::systems::UserCommands",
+                "gz::sim::systems::UserCommands",
             "ignition-gazebo-scene-broadcaster-system":
-                "ignition::gazebo::systems::SceneBroadcaster"
+                "gz::sim::systems::SceneBroadcaster",
+            "ignition-gazebo-forcetorque-system":
+                "gz::sim::systems::ForceTorque",
+            "ignition-gazebo-altimeter-system":
+                "gz::sim::systems::Altimeter",
+            "ignition-gazebo-imu-system":
+                "gz::sim::systems::Imu"
         }
         for [key, value] in plugins.items():
             plugin = sdf.Plugin(key, value)

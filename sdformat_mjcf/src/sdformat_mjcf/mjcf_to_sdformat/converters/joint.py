@@ -30,12 +30,12 @@ def add_fixed_joint(parent_name, child_name):
     joint_sdf = sdf.Joint()
     joint_sdf.set_type(sdf.JointType.FIXED)
     if parent_name is None:
-        joint_sdf.set_parent_link_name("world")
+        joint_sdf.set_parent_name("world")
     else:
-        joint_sdf.set_parent_link_name(parent_name)
-    joint_sdf.set_child_link_name(child_name)
+        joint_sdf.set_parent_name(parent_name)
+    joint_sdf.set_child_name(child_name)
     joint_sdf.set_name(
-        "fixed_" + joint_sdf.parent_link_name() + "_" + child_name + "_joint")
+        "fixed_" + joint_sdf.parent_name() + "_" + child_name + "_joint")
     return joint_sdf
 
 
@@ -102,14 +102,14 @@ def mjcf_joint_to_sdf(joint, parent_name, child_name, default_classes=None):
         joint_sdf.set_name("joint_" + joint.name)
     else:
         joint_sdf.set_name(
-            "joint_" + joint_sdf.parent_link_name() + "_" + child_name)
+            "joint_" + joint_sdf.parent_name() + "_" + child_name)
 
     if parent_name is None:
-        joint_sdf.set_parent_link_name("world")
+        joint_sdf.set_parent_name("world")
     else:
-        joint_sdf.set_parent_link_name(parent_name)
+        joint_sdf.set_parent_name(parent_name)
 
-    joint_sdf.set_child_link_name(child_name)
+    joint_sdf.set_child_name(child_name)
 
     if joint.axis is not None:
         joint_axis_sdf.set_xyz(Vector3d(joint.axis[0],
