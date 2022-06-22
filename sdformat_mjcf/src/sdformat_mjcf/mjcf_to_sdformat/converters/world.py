@@ -55,6 +55,9 @@ def _add_body_to_model(body, physics, model, modifiers):
 
     serial_sdf_joints_created = []
     serial_link_created = [link]
+    # Some physics engines may not like 0 mass, so we create a small mass and
+    # set the inertia from a unit sphere. The radius is arbitrary as long as
+    # the inertia values are unlikely to affect the dynamics.
     small_mass_matrix = MassMatrix3d()
     small_mass_matrix.set_from_sphere(1e-6, 1)
     small_inertial = Inertiald()
@@ -82,7 +85,7 @@ def _add_body_to_model(body, physics, model, modifiers):
         if joint_sdf is not None:
             model.add_joint(joint_sdf)
 
-    if len(body.joint) == 0 and body.freejoint is None:
+    if len(body.joint) == 0 and not _is_floating_body(body):
         joint_sdf = add_fixed_joint(parent_name, body.name)
         model.add_joint(joint_sdf)
 
