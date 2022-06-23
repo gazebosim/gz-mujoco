@@ -1,0 +1,12 @@
+<mujoco model="test_sensor">
+  <worldbody>
+    <body name="link_0">
+      <body name="link_1">
+        <site name="sensor_site"/>
+      </body>
+    </body>
+  </worldbody>
+  <sensor>
+    <gyro name="gyro0" site="sensor_site"/>
+  </sensor>
+</mujoco>
