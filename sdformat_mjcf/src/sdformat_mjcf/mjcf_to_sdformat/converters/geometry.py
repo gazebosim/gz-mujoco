@@ -36,22 +36,16 @@ def mjcf_geom_to_sdf(geom):
     :return: The newly created SDFormat geometry.
     :rtype: sdf.Geometry
     """
-    # TODO(ahcorde): we have to adjust the pose of the visual/collision to
-    # match the longitudinal axis of the capsule/cylinder and its position
-    # Related comment:
-    # https://github.com/gazebosim/gz-mujoco/pull/26#discussion_r877558075
     sdf_geometry = sdf.Geometry()
     if geom.type == "box":
         box = sdf.Box()
         if geom.fromto is None:
             box.set_size(su.list_to_vec3d(geom.size) * 2)
         else:
-            v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
-            v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
-            box.set_size((v2 - v1).abs())
+            raise RuntimeError(
+                f"Encountered unsupported shape type attribute 'fromto'")
         sdf_geometry.set_box_shape(box)
         sdf_geometry.set_type(sdf.GeometryType.BOX)
-        # TODO(ahcorde): Add fromto
     elif geom.type == "capsule":
         capsule = sdf.Capsule()
         capsule.set_radius(geom.size[0])
@@ -81,12 +75,10 @@ def mjcf_geom_to_sdf(geom):
         if geom.fromto is None:
             ellipsoid.set_radii(su.list_to_vec3d(geom.size))
         else:
-            v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
-            v2 = Vector3d(geom.fromto[3], geom.fromto[4], geom.fromto[5])
-            ellipsoid.set_radii((v2 - v1).abs())
+            raise RuntimeError(
+                f"Encountered unsupported shape type attribute 'fromto'")
         sdf_geometry.set_ellipsoid_shape(ellipsoid)
         sdf_geometry.set_type(sdf.GeometryType.ELLIPSOID)
-        # TODO(ahcorde): Add fromto
     elif geom.type == "sphere":
         sphere = sdf.Sphere()
         sphere.set_radius(geom.size[0])

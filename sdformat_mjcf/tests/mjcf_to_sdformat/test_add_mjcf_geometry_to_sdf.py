@@ -47,12 +47,9 @@ class GeometryTest(unittest.TestCase):
     def test_box_fromto(self):
         geom = self.body.add('geom', type="box", name="box",
                              fromto=[1, 0.5, 1, -1, -0.5, -1])
-        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
-        self.assertEqual(sdf.GeometryType.BOX, sdf_geom.type())
-        self.assertNotEqual(None, sdf_geom.box_shape())
-        self.assertEqual(Vector3d(2, 1, 2),
-                         sdf_geom.box_shape().size())
+        with self.assertRaises(RuntimeError):
+            sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
     def test_capsule(self):
         radius = 5.
@@ -121,12 +118,9 @@ class GeometryTest(unittest.TestCase):
     def test_ellipsoid_fromto(self):
         geom = self.body.add('geom', type="ellipsoid",
                              fromto=[1, 0.5, 2, -1, -0.5, -2])
-        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
-        self.assertEqual(sdf.GeometryType.ELLIPSOID, sdf_geom.type())
-        self.assertNotEqual(None, sdf_geom.ellipsoid_shape())
-        assert_allclose([2, 1, 4],
-                        su.vec3d_to_list(sdf_geom.ellipsoid_shape().radii()))
+        with self.assertRaises(RuntimeError):
+            sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
     def test_heightmap(self):
         pass
