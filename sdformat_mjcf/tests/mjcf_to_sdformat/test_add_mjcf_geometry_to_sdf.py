@@ -49,7 +49,7 @@ class GeometryTest(unittest.TestCase):
                              fromto=[1, 0.5, 1, -1, -0.5, -1])
 
         with self.assertRaises(RuntimeError):
-            sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
+            geometry_conv.mjcf_geom_to_sdf(geom)
 
     def test_capsule(self):
         radius = 5.
@@ -120,7 +120,7 @@ class GeometryTest(unittest.TestCase):
                              fromto=[1, 0.5, 2, -1, -0.5, -2])
 
         with self.assertRaises(RuntimeError):
-            sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
+            geometry_conv.mjcf_geom_to_sdf(geom)
 
     def test_heightmap(self):
         pass

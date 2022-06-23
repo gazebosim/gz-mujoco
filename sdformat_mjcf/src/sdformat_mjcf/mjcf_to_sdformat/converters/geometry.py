@@ -43,7 +43,7 @@ def mjcf_geom_to_sdf(geom):
             box.set_size(su.list_to_vec3d(geom.size) * 2)
         else:
             raise RuntimeError(
-                f"Encountered unsupported shape type attribute 'fromto'")
+                "Encountered unsupported shape type attribute 'fromto'")
         sdf_geometry.set_box_shape(box)
         sdf_geometry.set_type(sdf.GeometryType.BOX)
     elif geom.type == "capsule":
@@ -76,7 +76,7 @@ def mjcf_geom_to_sdf(geom):
             ellipsoid.set_radii(su.list_to_vec3d(geom.size))
         else:
             raise RuntimeError(
-                f"Encountered unsupported shape type attribute 'fromto'")
+                "Encountered unsupported shape type attribute 'fromto'")
         sdf_geometry.set_ellipsoid_shape(ellipsoid)
         sdf_geometry.set_type(sdf.GeometryType.ELLIPSOID)
     elif geom.type == "sphere":
