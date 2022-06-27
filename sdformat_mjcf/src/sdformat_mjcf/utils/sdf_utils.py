@@ -65,9 +65,8 @@ def get_rotation(element):
             quat = Quaterniond(result.x(), 0, 0) * Quaterniond(
                 0, result.y(), 0) * Quaterniond(0, 0, result.z())
         else:
-            logging.warning(f"Unsupported Euler sequence {eulerseq}. Euler "
-                            "angles will be set to identity")
-            quat = Quaterniond()
+            raise RuntimeError(f"Unsupported Euler sequence {eulerseq}. Euler "
+                               "angles will be set to identity")
 
     elif element.zaxis is not None:
         z = Vector3d(0, 0, 1)
