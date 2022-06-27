@@ -70,7 +70,7 @@ class SensorTest(unittest.TestCase):
 
         mjcf_worldbody_to_sdf(mjcf_model, physics, world, True)
 
-        self.assertEqual(2, world.model_count())
+        self.assertEqual(3, world.model_count())
         model = world.model_by_index(0)
         link = model.link_by_index(0)
         self.assertEqual(1, link.sensor_count())
@@ -84,23 +84,47 @@ class SensorTest(unittest.TestCase):
         self.assertEqual("unnamedcamera_3", link.sensor_by_index(0).name())
         self.assertEqual("unnamedcamera_4", link.sensor_by_index(1).name())
 
-        self.assertEqual(4, len(world.plugins()))
-        self.assertEqual("ignition::gazebo::systems::Physics",
+        self.assertEqual(7, len(world.plugins()))
+        self.assertEqual("gz::sim::systems::Physics",
                          world.plugins()[0].name())
         self.assertEqual("ignition-gazebo-physics-system",
                          world.plugins()[0].filename())
-        self.assertEqual("ignition::gazebo::systems::Sensors",
+        self.assertEqual("gz::sim::systems::Sensors",
                          world.plugins()[1].name())
         self.assertEqual("ignition-gazebo-sensors-system",
                          world.plugins()[1].filename())
-        self.assertEqual("ignition::gazebo::systems::UserCommands",
+        self.assertEqual("gz::sim::systems::UserCommands",
                          world.plugins()[2].name())
         self.assertEqual("ignition-gazebo-user-commands-system",
                          world.plugins()[2].filename())
-        self.assertEqual("ignition::gazebo::systems::SceneBroadcaster",
+        self.assertEqual("gz::sim::systems::SceneBroadcaster",
                          world.plugins()[3].name())
         self.assertEqual("ignition-gazebo-scene-broadcaster-system",
                          world.plugins()[3].filename())
+        self.assertEqual("gz::sim::systems::ForceTorque",
+                         world.plugins()[4].name())
+        self.assertEqual("ignition-gazebo-forcetorque-system",
+                         world.plugins()[4].filename())
+        self.assertEqual("gz::sim::systems::Altimeter",
+                         world.plugins()[5].name())
+        self.assertEqual("ignition-gazebo-altimeter-system",
+                         world.plugins()[5].filename())
+        self.assertEqual("gz::sim::systems::Imu",
+                         world.plugins()[6].name())
+        self.assertEqual("ignition-gazebo-imu-system",
+                         world.plugins()[6].filename())
+
+    def test_sensor_non_root_body_site(self):
+        filename = str(TEST_RESOURCES_DIR / "test_sensor_attachment.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
+
+        world = sdf.World()
+        world.set_name("default")
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+        model = world.model_by_name("model_for_link_0")
+        link = model.link_by_name("link_1")
+        self.assertEqual(1, link.sensor_count())
 
 
 if __name__ == "__main__":
