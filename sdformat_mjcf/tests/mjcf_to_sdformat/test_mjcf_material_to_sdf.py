@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import unittest
 
 from ignition.math import Color
@@ -21,6 +22,7 @@ from dm_control import mujoco
 
 from sdformat_mjcf.mjcf_to_sdformat.converters.material import (
     mjcf_material_to_sdf,
+    TEXTURE_OUTPUT_DIR
 )
 from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
     mjcf_worldbody_to_sdf,
@@ -100,7 +102,8 @@ class MaterialTest(unittest.TestCase):
         self.assertNotEqual(None, pbr)
         workflow = pbr.workflow(sdf.PbrWorkflowType.METAL)
         self.assertNotEqual(None, workflow)
-        self.assertEqual("tennis_ball.png", workflow.albedo_map())
+        expected_path = os.path.join(TEXTURE_OUTPUT_DIR, "tennis_ball.png")
+        self.assertEqual(expected_path, workflow.albedo_map())
 
     def test_no_material(self):
         mjcf_string = """
