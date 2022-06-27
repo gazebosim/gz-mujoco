@@ -37,6 +37,7 @@ def mjcf_geom_to_sdf(geom):
     :rtype: sdf.Geometry
     """
     sdf_geometry = sdf.Geometry()
+    is_default_type = geom.type is None and geom.mesh is None
     if geom.type == "box":
         box = sdf.Box()
         if geom.fromto is None:
@@ -79,7 +80,7 @@ def mjcf_geom_to_sdf(geom):
                 "Encountered unsupported shape type attribute 'fromto'")
         sdf_geometry.set_ellipsoid_shape(ellipsoid)
         sdf_geometry.set_type(sdf.GeometryType.ELLIPSOID)
-    elif geom.type == "sphere":
+    elif geom.type == "sphere" or is_default_type:
         sphere = sdf.Sphere()
         sphere.set_radius(geom.size[0])
         sdf_geometry.set_sphere_shape(sphere)
@@ -92,10 +93,11 @@ def mjcf_geom_to_sdf(geom):
         plane.set_size(Vector2d(*geom_size))
         sdf_geometry.set_plane_shape(plane)
         sdf_geometry.set_type(sdf.GeometryType.PLANE)
-    elif geom.type == "mesh":
+    elif geom.type == "mesh" or geom.mesh is not None:
         mj_mesh = geom.mesh
         mesh = sdf.Mesh()
-        mesh.set_scale(su.list_to_vec3d(mj_mesh.scale))
+        scale = su.get_value_or_default(mj_mesh.scale, [1, 1, 1])
+        mesh.set_scale(su.list_to_vec3d(scale))
         mesh.set_uri(
             os.path.join(MESH_OUTPUT_DIR,
                          su.get_asset_filename_on_disk(mj_mesh)))

@@ -137,6 +137,27 @@ class GeometryTest(unittest.TestCase):
         self.assertIsNotNone(mesh_shape)
         self.assertEqual(Vector3d(0.01, 0.01, 0.01), mesh_shape.scale())
 
+    def test_mesh_without_type(self):
+        test_mjcf = f"""
+        <mujoco model="mug">
+            <asset>
+                <mesh file="{TEST_RESOURCES_DIR / "mug.obj"}"/>
+            </asset>
+            <worldbody>
+                <geom name="mug" mesh="mug"/>
+            </worldbody>
+        </mujoco>
+        """
+        print(test_mjcf)
+        mjcf_model = mjcf.from_xml_string(test_mjcf)
+        self.assertIsNotNone(mjcf_model)
+        geom = mjcf_model.find("geom", "mug")
+        self.assertIsNotNone(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
+        self.assertEqual(sdf.GeometryType.MESH, sdf_geom.type())
+        mesh_shape = sdf_geom.mesh_shape()
+        self.assertIsNotNone(mesh_shape)
+
     def test_plane(self):
         x_size = 5.
         y_size = 10.
@@ -164,6 +185,16 @@ class GeometryTest(unittest.TestCase):
         radius = 5.
 
         geom = self.body.add('geom', type="sphere", size=[radius])
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
+
+        self.assertEqual(sdf.GeometryType.SPHERE, sdf_geom.type())
+        self.assertNotEqual(None, sdf_geom.sphere_shape())
+        self.assertEqual(radius, sdf_geom.sphere_shape().radius())
+
+    def test_no_type(self):
+        radius = 5.
+
+        geom = self.body.add('geom', size=[radius])
         sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(sdf.GeometryType.SPHERE, sdf_geom.type())
