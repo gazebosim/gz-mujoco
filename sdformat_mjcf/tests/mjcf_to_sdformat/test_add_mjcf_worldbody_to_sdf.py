@@ -313,10 +313,11 @@ class ModelTest(unittest.TestCase):
 class PoseTest(unittest.TestCase):
     expected_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
 
-    def _create_test_mjcf(self, pos, euler, angle=None):
+    def _create_test_mjcf(self, pos, euler, angle=None, eulerseq="XYZ"):
         mjcf_model = mjcf.RootElement(model="test_model")
         if angle is not None:
             mjcf_model.compiler.angle = angle
+        mjcf_model.compiler.eulerseq = eulerseq
 
         body = mjcf_model.worldbody.add("body",
                                         name="base_link",
@@ -352,6 +353,17 @@ class PoseTest(unittest.TestCase):
         mjcf_model = self._create_test_mjcf([1, 2, 3],
                                             [pi / 2, pi / 3, pi / 4], "radian")
         self._convert_and_check_poses(mjcf_model)
+
+    def test_poses_with_eulerseq_xyz(self):
+        mjcf_model = self._create_test_mjcf([1, 2, 3], [90, 45, -60],
+                                            eulerseq="xyz")
+        self._convert_and_check_poses(mjcf_model)
+
+    def test_poses_with_eulerseq_invalid(self):
+        mjcf_model = self._create_test_mjcf([1, 2, 3], [90, 45, -60],
+                                            eulerseq="XZY")
+        with self.assertRaises(RuntimeError):
+            self._convert_and_check_poses(mjcf_model)
 
 
 if __name__ == "__main__":
