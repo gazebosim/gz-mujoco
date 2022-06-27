@@ -82,9 +82,10 @@ class DefaultsTest(unittest.TestCase):
         mjcf_worldbody_to_sdf(mjcf_model, physics, world)
         root = sdf.Root()
         root.add_world(world)
+        print(root.to_string())
         model = world.model_by_index(1)
         self.assertNotEqual(None, model)
-        self.assertEqual(2, model.link_count())
+        self.assertEqual(1, model.link_count())
 
         link1 = model.link_by_name("body1")
         self.assertIsNotNone(link1)
@@ -113,6 +114,7 @@ class DefaultsTest(unittest.TestCase):
         shape3_sphere = visual_shape3.geometry().sphere_shape()
         self.assertEqual(0.5, shape3_sphere.radius())
 
+        model = world.model_by_index(2)
         link2 = model.link_by_name("body2")
         self.assertIsNotNone(link2)
 

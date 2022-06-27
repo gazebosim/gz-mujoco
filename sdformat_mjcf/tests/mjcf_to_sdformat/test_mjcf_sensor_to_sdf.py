@@ -70,7 +70,7 @@ class SensorTest(unittest.TestCase):
 
         mjcf_worldbody_to_sdf(mjcf_model, physics, world, True)
 
-        self.assertEqual(2, world.model_count())
+        self.assertEqual(3, world.model_count())
         model = world.model_by_index(0)
         link = model.link_by_index(0)
         self.assertEqual(1, link.sensor_count())
@@ -113,6 +113,18 @@ class SensorTest(unittest.TestCase):
                          world.plugins()[6].name())
         self.assertEqual("ignition-gazebo-imu-system",
                          world.plugins()[6].filename())
+
+    def test_sensor_non_root_body_site(self):
+        filename = str(TEST_RESOURCES_DIR / "test_sensor_attachment.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
+
+        world = sdf.World()
+        world.set_name("default")
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+        model = world.model_by_name("model_for_link_0")
+        link = model.link_by_name("link_1")
+        self.assertEqual(1, link.sensor_count())
 
 
 if __name__ == "__main__":
