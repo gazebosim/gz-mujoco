@@ -46,7 +46,7 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None, modifiers=None):
     :rtype: sdf.Link
     """
     link = sdf.Link()
-    if body_parent_name is not None:
+    if body_parent_name is not None and body_parent_name != "world":
         link.set_pose_relative_to(body_parent_name)
 
     body_name = None

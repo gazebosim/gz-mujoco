@@ -42,11 +42,11 @@ class ImuTest(unittest.TestCase):
 
         mjcf_worldbody_to_sdf(mjcf_model, physics, world)
         self.assertEqual("default", world.name())
-        self.assertEqual(2, world.model_count())
+        self.assertEqual(3, world.model_count())
 
-        model = world.model_by_index(1)
+        model = world.model_by_index(2)
         self.assertNotEqual(None, model)
-        link = model.link_by_index(1)
+        link = model.link_by_index(0)
         self.assertEqual("link_0", link.name())
         self.assertEqual(2, link.sensor_count())
 
