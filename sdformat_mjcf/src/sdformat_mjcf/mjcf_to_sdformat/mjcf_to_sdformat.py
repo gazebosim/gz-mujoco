@@ -61,8 +61,9 @@ def mjcf_file_to_sdformat(input_file, output_file, export_world_plugins=True):
     for sub_dir, assets in asset_output.items():
         new_dir = os.path.join(out_dir, sub_dir)
         for asset in assets:
-            filename = su.get_asset_filename_on_disk(asset)
-            if not os.path.exists(new_dir):
-                os.makedirs(new_dir)
-            with open(os.path.join(new_dir, filename), 'wb') as f:
-                f.write(util.to_binary_string(asset.file.contents))
+            if asset.file is not None:
+                filename = su.get_asset_filename_on_disk(asset)
+                if not os.path.exists(new_dir):
+                    os.makedirs(new_dir)
+                with open(os.path.join(new_dir, filename), 'wb') as f:
+                    f.write(util.to_binary_string(asset.file.contents))
