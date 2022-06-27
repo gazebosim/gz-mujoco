@@ -13,10 +13,13 @@
 # limitations under the License.
 
 import logging
+import os
 
 import sdformat as sdf
 
 import sdformat_mjcf.utils.sdf_utils as su
+
+TEXTURE_OUTPUT_DIR = "materials/textures"
 
 
 def mjcf_material_to_sdf(geom):
@@ -66,7 +69,8 @@ def mjcf_material_to_sdf(geom):
                 workflow = sdf.PbrWorkflow()
                 workflow.set_type(sdf.PbrWorkflowType.METAL)
                 filename = su.get_asset_filename_on_disk(geom.material.texture)
-                workflow.set_albedo_map(filename)
+                workflow.set_albedo_map(
+                    os.path.join(TEXTURE_OUTPUT_DIR, filename))
                 pbr.set_workflow(workflow.type(), workflow)
                 material.set_pbr_material(pbr)
 
