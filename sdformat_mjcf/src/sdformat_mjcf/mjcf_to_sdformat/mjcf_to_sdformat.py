@@ -23,6 +23,8 @@ from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
     mjcf_worldbody_to_sdf,
 )
 from sdformat_mjcf.mjcf_to_sdformat.converters.geometry import MESH_OUTPUT_DIR
+from sdformat_mjcf.mjcf_to_sdformat.converters.material import (
+    TEXTURE_OUTPUT_DIR)
 
 import sdformat_mjcf.utils.sdf_utils as su
 
@@ -51,9 +53,9 @@ def mjcf_file_to_sdformat(input_file, output_file, export_world_plugins=True):
     # Export all assets to the directory that contains the output_file
     out_dir = os.path.dirname(output_file)
 
-    # TODO (azeey) export textures as well
     asset_output = {
         MESH_OUTPUT_DIR: list(mjcf_model.asset.mesh),
+        TEXTURE_OUTPUT_DIR: list(mjcf_model.asset.texture),
     }
 
     for sub_dir, assets in asset_output.items():
