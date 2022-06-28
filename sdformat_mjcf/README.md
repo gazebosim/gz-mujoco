@@ -19,19 +19,8 @@ pip install -U pip
 pip install dm-control
 ```
 
-Install `python3-ignition-math7` from the
+Install `python3-ignition-math7` and `python3-sdformat13` from the
 [nightly](https://gazebosim.org/docs/all/release#type-of-releases) repo.
-
-Build `libsdformat` from source from the `ahcorde/python/all` branch and add
-the installation path to your `LD_LIBRARY_PATH` and `PYTHONPATH`.
-
-```
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$INSTALL_DIR/lib"
-export PYTHONPATH="$PYTHONPATH:$INSTALL_DIR/lib/python"
-```
-
-where `$INSTALL_DIR` is the installation directory you used when building
-libsdformat.
 
 Install the `sdformat-mjcf` package in "editable" mode
 
@@ -49,10 +38,10 @@ python -m unittest
 
 # Tools for converting SDFormat to MJCF
 
-Use the commnad line tool `sdformat2mjcf`:
+Use the commnad line tool `sdf2mjcf`:
 
 ```bash
-usage: sdformat2mjcf [-h] input_file output_file
+usage: sdf2mjcf [-h] input_file output_file
 
 positional arguments:
   input_file   Path to input SDFormat file (World or Model)
@@ -86,10 +75,10 @@ extract the contents and run
 
 # Tools for converting MJCF to SDFormat
 
-Use the commnad line tool `mjcf2sdformat`:
+Use the commnad line tool `mjcf2sdf`:
 
 ```bash
-usage: mjcf2sdformat [-h] [--export_world_plugins] input_file output_file
+usage: mjcf2sdf [-h] [--export_world_plugins] input_file output_file
 
 positional arguments:
   input_file            Path to input MJCF file
