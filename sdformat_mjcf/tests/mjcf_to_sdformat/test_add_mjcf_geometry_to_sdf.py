@@ -148,7 +148,6 @@ class GeometryTest(unittest.TestCase):
             </worldbody>
         </mujoco>
         """
-        print(test_mjcf)
         mjcf_model = mjcf.from_xml_string(test_mjcf)
         self.assertIsNotNone(mjcf_model)
         geom = mjcf_model.find("geom", "mug")
