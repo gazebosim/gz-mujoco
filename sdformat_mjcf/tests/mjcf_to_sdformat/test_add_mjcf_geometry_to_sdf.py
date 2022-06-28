@@ -210,7 +210,7 @@ class SurfaceTest(unittest.TestCase):
             mjcf_model.worldbody.geom[0])
         self.assertIsNotNone(sdf_plane_collision)
         self.assertEqual(sdf.GeometryType.PLANE,
-                         sdf_plane_collision.geom().type())
+                         sdf_plane_collision.geometry().type())
         self.assertEqual(0.9,
                          sdf_plane_collision.surface().friction().ode().mu())
 
@@ -218,7 +218,7 @@ class SurfaceTest(unittest.TestCase):
             mjcf_model.worldbody.geom[1])
         self.assertIsNotNone(sdf_rail1_collision)
         self.assertEqual(sdf.GeometryType.CAPSULE,
-                         sdf_rail1_collision.geom().type())
+                         sdf_rail1_collision.geometry().type())
         self.assertEqual(1.0,
                          sdf_rail1_collision.surface().friction().ode().mu())
 
