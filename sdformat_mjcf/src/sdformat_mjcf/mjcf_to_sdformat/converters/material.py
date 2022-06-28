@@ -32,12 +32,12 @@ def mjcf_material_to_sdf(geom):
     """
     material = sdf.Material()
     if geom.material is not None:
-        material_rbga = geom.material.rgba
-        if material_rbga is None:
-            material_rbga = [1] * 4
+        material_rgba = geom.material.rgba
+        if material_rgba is None:
+            material_rgba = [1] * 4
 
-        material.set_diffuse(su.rgba_to_color(material_rbga))
-        material.set_ambient(su.rgba_to_color(material_rbga))
+        material.set_diffuse(su.rgba_to_color(material_rgba))
+        material.set_ambient(su.rgba_to_color(material_rgba))
         if geom.material.specular is not None:
             material.set_specular(
                 su.rgba_to_color([geom.material.specular] * 3 + [1]))
@@ -45,7 +45,7 @@ def mjcf_material_to_sdf(geom):
             material.set_specular(su.rgba_to_color([0.5] * 3 + [1]))
         if geom.material.emission is not None:
             emission = [geom.material.emission * color for color in
-                        geom.material.rgba[:3]]
+                        material_rgba[:3]]
             material.set_emissive(su.rgba_to_color(emission + [1]))
         else:
             material.set_emissive(su.rgba_to_color([0] * 3 + [1]))
