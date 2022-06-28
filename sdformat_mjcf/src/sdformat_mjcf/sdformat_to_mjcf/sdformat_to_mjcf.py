@@ -28,9 +28,10 @@ def sdformat_file_to_mjcf(input_file, output_file):
     such as meshes will be output to the directory containing the output file.
     """
     root = sdf.Root()
-    errors = root.load(input_file)
-    if errors:
-        print(errors, file=sys.stderr)
+    try:
+        root.load(input_file)
+    except sdf.SDFErrorsException as e:
+        print(e, file=sys.stderr)
         return 1
     else:
         mjcf_root = add_root(root)

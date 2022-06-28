@@ -41,8 +41,7 @@ class MjcfFileConversion(unittest.TestCase):
 
             self.assertTrue(os.path.exists(output_file))
             root = sdf.Root()
-            errors = root.load(output_file)
-            self.assertEqual(0, len(errors))
+            root.load(output_file)
             world = root.world_by_index(0)
             mug_model = world.model_by_name("model_for_mug")
             mug_link = mug_model.link_by_name("mug")
