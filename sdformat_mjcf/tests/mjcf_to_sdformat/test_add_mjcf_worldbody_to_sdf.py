@@ -309,6 +309,21 @@ class ModelTest(unittest.TestCase):
         static_model = world.model_by_name("static")
         self.assertEqual(1, static_model.link_count())
 
+    def test_add_unnamed_geoms(self):
+        filename = str(TEST_RESOURCES_DIR / "test_unnamed_geoms.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mjcf.Physics.from_mjcf_model(mjcf_model)
+
+        world = sdf.World()
+        world.set_name("default")
+
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+        model = world.model_by_name("model_for_test")
+        self.assertEqual(1, model.link_count())
+        link = model.link_by_index(0)
+        self.assertEqual(2, link.visual_count())
+        self.assertEqual(2, link.collision_count())
+
 
 class PoseTest(unittest.TestCase):
     expected_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)

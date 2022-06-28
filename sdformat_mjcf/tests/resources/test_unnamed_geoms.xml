@@ -1,0 +1,9 @@
+<mujoco>
+  <worldbody>
+    <body name="test">
+      <geom type="box" size="1 1 1" />
+      <geom type="sphere" size="1" />
+    </body>
+  </worldbody>
+</mujoco>
+

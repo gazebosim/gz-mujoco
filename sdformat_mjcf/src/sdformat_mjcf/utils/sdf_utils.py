@@ -182,7 +182,6 @@ def prefix_name_with_index(prefix, name, index):
         return prefix + NAME_DELIMITER + name
     else:
         new_name = prefix + NAME_DELIMITER + str(index)
-        index = index + 1
         return new_name
 
 
