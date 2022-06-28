@@ -1,0 +1,15 @@
+<mujoco>
+  <default>
+    <mesh scale="0.1 0.2 0.3"/>
+    <material emission="0.12"/>
+  </default>
+
+  <asset>
+    <mesh file="mug.obj"/>
+    <material name="mug_mat" specular="0.34"/>
+  </asset>
+
+  <worldbody>
+    <geom name="mug" type="mesh" mesh="mug" material="mug_mat"/>
+  </worldbody>
+</mujoco>

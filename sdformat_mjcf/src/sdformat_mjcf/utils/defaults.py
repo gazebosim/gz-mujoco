@@ -42,7 +42,7 @@ class MjcfModifiers:
         self._copy_attributes(def_elem, elem)
 
     def _get_default_class(self, elem):
-        if elem.dclass is not None:
+        if hasattr(elem, 'dclass') and elem.dclass is not None:
             return elem.dclass
 
         cur_elem = elem.parent
