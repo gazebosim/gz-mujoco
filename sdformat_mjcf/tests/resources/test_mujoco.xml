@@ -12,7 +12,7 @@
    <worldbody>
       <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1" cutoff="45" exponent="10"
              attenuation="0.0 0.01 0.001" specular="0.2 0.2 0.2"/>
-      <geom type="plane" size="1 1 0.1" rgba=".9 0 0 1"/>
+      <geom type="plane" size="1 1 0.1" rgba=".9 0 0 1" friction="0.9 0.001 0.001"/>
       <geom name="rail1" type="capsule" pos="0  .07 1" zaxis="1 0 0" size="0.02 2"/>
       <camera name="fixed" pos="0 -6 2" zaxis="0 -1 0"/>
       <camera name="target_camera" pos="0 -6 2" zaxis="0 -1 0" target="body2"/>
