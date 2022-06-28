@@ -309,14 +309,30 @@ class ModelTest(unittest.TestCase):
         static_model = world.model_by_name("static")
         self.assertEqual(1, static_model.link_count())
 
+    def test_add_unnamed_geoms(self):
+        filename = str(TEST_RESOURCES_DIR / "test_unnamed_geoms.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mjcf.Physics.from_mjcf_model(mjcf_model)
+
+        world = sdf.World()
+        world.set_name("default")
+
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+        model = world.model_by_name("model_for_test")
+        self.assertEqual(1, model.link_count())
+        link = model.link_by_index(0)
+        self.assertEqual(2, link.visual_count())
+        self.assertEqual(2, link.collision_count())
+
 
 class PoseTest(unittest.TestCase):
     expected_pose = Pose3d(1, 2, 3, pi / 2, pi / 3, pi / 4)
 
-    def _create_test_mjcf(self, pos, euler, angle=None):
+    def _create_test_mjcf(self, pos, euler, angle=None, eulerseq="XYZ"):
         mjcf_model = mjcf.RootElement(model="test_model")
         if angle is not None:
             mjcf_model.compiler.angle = angle
+        mjcf_model.compiler.eulerseq = eulerseq
 
         body = mjcf_model.worldbody.add("body",
                                         name="base_link",
@@ -352,6 +368,17 @@ class PoseTest(unittest.TestCase):
         mjcf_model = self._create_test_mjcf([1, 2, 3],
                                             [pi / 2, pi / 3, pi / 4], "radian")
         self._convert_and_check_poses(mjcf_model)
+
+    def test_poses_with_eulerseq_xyz(self):
+        mjcf_model = self._create_test_mjcf([1, 2, 3], [90, 45, -60],
+                                            eulerseq="xyz")
+        self._convert_and_check_poses(mjcf_model)
+
+    def test_poses_with_eulerseq_invalid(self):
+        mjcf_model = self._create_test_mjcf([1, 2, 3], [90, 45, -60],
+                                            eulerseq="XZY")
+        with self.assertRaises(RuntimeError):
+            self._convert_and_check_poses(mjcf_model)
 
 
 if __name__ == "__main__":

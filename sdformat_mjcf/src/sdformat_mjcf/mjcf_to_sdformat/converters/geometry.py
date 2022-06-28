@@ -36,17 +36,17 @@ def mjcf_geom_to_sdf(geom):
     :return: The newly created SDFormat geometry.
     :rtype: sdf.Geometry
     """
-    # TODO(ahcorde): we have to adjust the pose of the visual/collision to
-    # match the longitudinal axis of the capsule/cylinder and its position
-    # Related comment:
-    # https://github.com/gazebosim/gz-mujoco/pull/26#discussion_r877558075
     sdf_geometry = sdf.Geometry()
+    is_default_type = geom.type is None and geom.mesh is None
     if geom.type == "box":
         box = sdf.Box()
-        box.set_size(su.list_to_vec3d(geom.size) * 2)
+        if geom.fromto is None:
+            box.set_size(su.list_to_vec3d(geom.size) * 2)
+        else:
+            raise RuntimeError(
+                "Encountered unsupported shape type attribute 'fromto'")
         sdf_geometry.set_box_shape(box)
         sdf_geometry.set_type(sdf.GeometryType.BOX)
-        # TODO(ahcorde): Add fromto
     elif geom.type == "capsule":
         capsule = sdf.Capsule()
         capsule.set_radius(geom.size[0])
@@ -73,11 +73,14 @@ def mjcf_geom_to_sdf(geom):
         sdf_geometry.set_type(sdf.GeometryType.CYLINDER)
     elif geom.type == "ellipsoid":
         ellipsoid = sdf.Ellipsoid()
-        ellipsoid.set_radii(su.list_to_vec3d(geom.size))
+        if geom.fromto is None:
+            ellipsoid.set_radii(su.list_to_vec3d(geom.size))
+        else:
+            raise RuntimeError(
+                "Encountered unsupported shape type attribute 'fromto'")
         sdf_geometry.set_ellipsoid_shape(ellipsoid)
         sdf_geometry.set_type(sdf.GeometryType.ELLIPSOID)
-        # TODO(ahcorde): Add fromto
-    elif geom.type == "sphere":
+    elif geom.type == "sphere" or is_default_type:
         sphere = sdf.Sphere()
         sphere.set_radius(geom.size[0])
         sdf_geometry.set_sphere_shape(sphere)
@@ -90,10 +93,11 @@ def mjcf_geom_to_sdf(geom):
         plane.set_size(Vector2d(*geom_size))
         sdf_geometry.set_plane_shape(plane)
         sdf_geometry.set_type(sdf.GeometryType.PLANE)
-    elif geom.type == "mesh":
+    elif geom.type == "mesh" or geom.mesh is not None:
         mj_mesh = geom.mesh
         mesh = sdf.Mesh()
-        mesh.set_scale(su.list_to_vec3d(mj_mesh.scale))
+        scale = su.get_value_or_default(mj_mesh.scale, [1, 1, 1])
+        mesh.set_scale(su.list_to_vec3d(scale))
         mesh.set_uri(
             os.path.join(MESH_OUTPUT_DIR,
                          su.get_asset_filename_on_disk(mj_mesh)))

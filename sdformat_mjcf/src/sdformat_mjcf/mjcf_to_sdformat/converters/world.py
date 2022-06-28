@@ -113,6 +113,12 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
     """
     modifiers = MjcfModifiers(mjcf_root)
 
+    for mesh_asset in mjcf_root.asset.mesh:
+        modifiers.apply_modifiers_to_element(mesh_asset)
+
+    for material_asset in mjcf_root.asset.material:
+        modifiers.apply_modifiers_to_element(material_asset)
+
     model_static = sdf.Model()
 
     link = mjcf_body_to_sdf(mjcf_root.worldbody, physics, modifiers=modifiers)

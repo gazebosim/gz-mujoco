@@ -69,7 +69,8 @@ def add_joint(body, joint):
     :rtype: mjcf.Element
     """
     if isinstance(joint, FreeJoint):
-        return body.add("freejoint")
+        return body.add("freejoint",
+                        name=su.find_unique_name(body, "joint", "freejoint"))
 
     if isinstance(joint, StaticFixedJoint):
         # The pose of this joint can be chosen arbitrarily since the purpose

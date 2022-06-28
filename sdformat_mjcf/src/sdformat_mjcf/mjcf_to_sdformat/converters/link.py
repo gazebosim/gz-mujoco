@@ -120,8 +120,6 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None, modifiers=None):
             link.set_inertial(inertial)
         except AttributeError:
             pass
-    NUMBER_OF_VISUAL = 0
-    NUMBER_OF_COLLISION = 0
 
     link.set_raw_pose(su.get_pose_from_mjcf(body))
 
@@ -159,11 +157,11 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None, modifiers=None):
         else:
             return su.get_pose_from_mjcf(geom).pos()
 
-    def set_visual(geom):
+    def set_visual(geom, index):
         visual = mjcf_visual_to_sdf(geom)
         if visual is not None:
             visual.set_name(su.prefix_name_with_index(
-                "visual", geom.name, NUMBER_OF_VISUAL))
+                "visual", geom.name, index))
             material = mjcf_material_to_sdf(geom)
             if material is not None:
                 visual.set_material(material)
@@ -171,26 +169,32 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None, modifiers=None):
             visual.set_raw_pose(pose)
             link.add_visual(visual)
 
-    def set_collision(geom):
+    def set_collision(geom, index):
         col = mjcf_collision_to_sdf(geom)
         if col is not None:
             col.set_name(su.prefix_name_with_index(
-                "collision", geom.name, NUMBER_OF_COLLISION))
+                "collision", geom.name, index))
             pose = Pose3d(get_position(geom), get_orientation(geom))
             col.set_raw_pose(pose)
             link.add_collision(col)
 
-    for geom in body.geom:
+    visual_index = 0
+    collision_index = 0
+    for ind, geom in enumerate(body.geom):
         if modifiers is not None:
             modifiers.apply_modifiers_to_element(geom)
         # If the group is not defined then visual and collision is added
         if geom.group is None:
-            set_visual(geom)
-            set_collision(geom)
+            set_visual(geom, visual_index)
+            set_collision(geom, collision_index)
+            visual_index += 1
+            collision_index += 1
         elif geom.group == VISUAL_GEOM_GROUP:
-            set_visual(geom)
+            set_visual(geom, visual_index)
+            visual_index += 1
         elif geom.group == COLLISION_GEOM_GROUP:
-            set_collision(geom)
+            set_collision(geom, collision_index)
+            collision_index += 1
 
     for light in body.light:
         if modifiers is not None:

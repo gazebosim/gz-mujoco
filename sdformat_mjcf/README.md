@@ -1,9 +1,17 @@
-# Tools for converting between SDFormat and MJCF
+# GZ-MUJOCO
+
+This Python package allows bidirectional conversion between SDFormat and MJCF
+to share worlds and robot models. We have created a command line tool to convert
+between these two formats. It takes as input an SDF file that works in Gazebo Sim
+and produces as output a MJCF file that works in Mujoco with approximately
+equivalent results; and vice versa.
+
+## Install gz-mujoco
 
 To start development, create a python3 virtual environment, upgrade pip and
 install dm-control
 
-```
+```bash
 python3 -m venv path/to/venv --system-site-packages
 . path/to/venv/bin/activate
 
@@ -39,35 +47,83 @@ Simple run of test can be done by using:
 python -m unittest
 ```
 
-A tox (environment manager) run of tests with multiple python versions:
+# Tools for converting SDFormat to MJCF
 
-    python3 -m tox
+Use the commnad line tool `sdformat2mjcf`:
 
-### Run the application
+```bash
+usage: sdformat2mjcf [-h] input_file output_file
 
-After the editable install in the first part of this section, to convert an 
-SDFormat file to MJCF, run:
+positional arguments:
+  input_file   Path to input SDFormat file (World or Model)
+  output_file  Desired path for the output MJCF file
 
+optional arguments:
+  -h, --help   show this help message and exit
 ```
-sdformat2mjcf path/to/file.sdf new_file.xml
-```
 
-To run the MJCF file in Mujoco, download a Mujoco release from https://github.com/deepmind/mujoco/releases, 
+To run the MJCF file in Mujoco, download a Mujoco release from https://github.com/deepmind/mujoco/releases,
 extract the contents and run
 
-```
-<path/to/mujoco>/bin/simulate new_file.xml
+```bash
+<path/to/mujoco>/bin/simulate output_file.xml
 ```
 
-To convert an MJCF file to SDFormat:
+## Suported features
 
+ - Models/Worlds
+ - Links
+ - Sensors
+   - Altimeter
+   - Camera
+   - Force torque
+   - IMU
+ - Joints
+   - Fixed
+   - Hinge
+   - Slide
+ - Materials
+
+# Tools for converting MJCF to SDFormat
+
+Use the commnad line tool `mjcf2sdformat`:
+
+```bash
+usage: mjcf2sdformat [-h] [--export_world_plugins] input_file output_file
+
+positional arguments:
+  input_file            Path to input MJCF file
+  output_file           Desired path for the output SDFormat file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --export_world_plugins
+                        Export world plugins
 ```
-mjcf2sdformat path/to/file.xml new_file.sdf
-```
+
+If you are going to use the converted file in Gazebo Sim you should use the flag
+`--export_world_plugins` to export some of the plugins that are required to make
+the new world work properly in Gazebo Sim.
 
 To run the SDFormat file in GazeboSim, follow [these instructions to install Gazebo Sim](https://gazebosim.org/docs/latest/install)
 
-```
-ign gazebo new_file.sdf
-```
+## Suported features
 
+ - Bodies
+ - Geoms
+ - Sensors
+   - Camera
+   - Force torque
+   - IMU
+ - Joints
+   - Ball
+   - Continuous
+   - Fixed
+   - Prismatic
+   - Revolute
+ - Materials
+
+## Unsuported features
+
+ - Tendon
+ - Generation of procedural textures is not supported.

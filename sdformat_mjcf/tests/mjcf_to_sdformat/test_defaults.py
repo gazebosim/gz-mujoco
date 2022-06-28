@@ -22,6 +22,7 @@ from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
 )
 
 import sdformat as sdf
+from ignition.math import Vector3d, Color
 
 from tests.helpers import get_resources_dir
 
@@ -139,6 +140,24 @@ class DefaultsTest(unittest.TestCase):
                          visual_shape6.geometry().type())
         shape6_sphere = visual_shape6.geometry().sphere_shape()
         self.assertEqual(0.5, shape6_sphere.radius())
+
+    def test_asset_defaults(self):
+        filename = str(TEST_RESOURCES_DIR / "test_asset_defaults.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
+
+        world = sdf.World()
+        world.set_name("default")
+
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+        static_model = world.model_by_name("static")
+        link = static_model.link_by_index(0)
+        visual_mug = link.visual_by_name("visual_mug")
+        mesh_shape = visual_mug.geometry().mesh_shape()
+        self.assertEqual(Vector3d(0.1, 0.2, 0.3), mesh_shape.scale())
+        material = visual_mug.material()
+        self.assertEqual(Color(0.12, 0.12, 0.12, 1.0), material.emissive())
+        self.assertEqual(Color(0.34, 0.34, 0.34, 1), material.specular())
 
     def test_default_friction(self):
         filename = str(TEST_RESOURCES_DIR / "tennis_ball.xml")

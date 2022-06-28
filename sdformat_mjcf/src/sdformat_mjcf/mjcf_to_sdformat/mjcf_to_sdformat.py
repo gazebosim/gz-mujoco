@@ -23,6 +23,8 @@ from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
     mjcf_worldbody_to_sdf,
 )
 from sdformat_mjcf.mjcf_to_sdformat.converters.geometry import MESH_OUTPUT_DIR
+from sdformat_mjcf.mjcf_to_sdformat.converters.material import (
+    TEXTURE_OUTPUT_DIR)
 
 import sdformat_mjcf.utils.sdf_utils as su
 
@@ -34,7 +36,7 @@ def mjcf_file_to_sdformat(input_file, output_file, export_world_plugins=True):
     :param str output_file: Path to output SDFormat file.
     :param str export_world_plugins: If true SDFormat will export world plugins
     """
-    mjcf_model = mjcf.from_path(input_file, escape_separators=True)
+    mjcf_model = mjcf.from_path(input_file)
     physics = mujoco.Physics.from_xml_path(input_file)
 
     root = sdf.Root()
@@ -51,16 +53,17 @@ def mjcf_file_to_sdformat(input_file, output_file, export_world_plugins=True):
     # Export all assets to the directory that contains the output_file
     out_dir = os.path.dirname(output_file)
 
-    # TODO (azeey) export textures as well
     asset_output = {
         MESH_OUTPUT_DIR: list(mjcf_model.asset.mesh),
+        TEXTURE_OUTPUT_DIR: list(mjcf_model.asset.texture),
     }
 
     for sub_dir, assets in asset_output.items():
         new_dir = os.path.join(out_dir, sub_dir)
         for asset in assets:
-            filename = su.get_asset_filename_on_disk(asset)
-            if not os.path.exists(new_dir):
-                os.makedirs(new_dir)
-            with open(os.path.join(new_dir, filename), 'wb') as f:
-                f.write(util.to_binary_string(asset.file.contents))
+            if asset.file is not None:
+                filename = su.get_asset_filename_on_disk(asset)
+                if not os.path.exists(new_dir):
+                    os.makedirs(new_dir)
+                with open(os.path.join(new_dir, filename), 'wb') as f:
+                    f.write(util.to_binary_string(asset.file.contents))

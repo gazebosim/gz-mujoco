@@ -44,6 +44,13 @@ class GeometryTest(unittest.TestCase):
         self.assertEqual(Vector3d(x_size, y_size, z_size) * 2,
                          sdf_geom.box_shape().size())
 
+    def test_box_fromto(self):
+        geom = self.body.add('geom', type="box", name="box",
+                             fromto=[1, 0.5, 1, -1, -0.5, -1])
+
+        with self.assertRaises(RuntimeError):
+            geometry_conv.mjcf_geom_to_sdf(geom)
+
     def test_capsule(self):
         radius = 5.
         length = 20.
@@ -108,6 +115,13 @@ class GeometryTest(unittest.TestCase):
         assert_allclose([x_radius, y_radius, z_radius],
                         su.vec3d_to_list(sdf_geom.ellipsoid_shape().radii()))
 
+    def test_ellipsoid_fromto(self):
+        geom = self.body.add('geom', type="ellipsoid",
+                             fromto=[1, 0.5, 2, -1, -0.5, -2])
+
+        with self.assertRaises(RuntimeError):
+            geometry_conv.mjcf_geom_to_sdf(geom)
+
     def test_heightmap(self):
         pass
 
@@ -122,6 +136,26 @@ class GeometryTest(unittest.TestCase):
         mesh_shape = sdf_geom.mesh_shape()
         self.assertIsNotNone(mesh_shape)
         self.assertEqual(Vector3d(0.01, 0.01, 0.01), mesh_shape.scale())
+
+    def test_mesh_without_type(self):
+        test_mjcf = f"""
+        <mujoco model="mug">
+            <asset>
+                <mesh file="{TEST_RESOURCES_DIR / "mug.obj"}"/>
+            </asset>
+            <worldbody>
+                <geom name="mug" mesh="mug"/>
+            </worldbody>
+        </mujoco>
+        """
+        mjcf_model = mjcf.from_xml_string(test_mjcf)
+        self.assertIsNotNone(mjcf_model)
+        geom = mjcf_model.find("geom", "mug")
+        self.assertIsNotNone(geom)
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
+        self.assertEqual(sdf.GeometryType.MESH, sdf_geom.type())
+        mesh_shape = sdf_geom.mesh_shape()
+        self.assertIsNotNone(mesh_shape)
 
     def test_plane(self):
         x_size = 5.
@@ -150,6 +184,16 @@ class GeometryTest(unittest.TestCase):
         radius = 5.
 
         geom = self.body.add('geom', type="sphere", size=[radius])
+        sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
+
+        self.assertEqual(sdf.GeometryType.SPHERE, sdf_geom.type())
+        self.assertNotEqual(None, sdf_geom.sphere_shape())
+        self.assertEqual(radius, sdf_geom.sphere_shape().radius())
+
+    def test_no_type(self):
+        radius = 5.
+
+        geom = self.body.add('geom', size=[radius])
         sdf_geom = geometry_conv.mjcf_geom_to_sdf(geom)
 
         self.assertEqual(sdf.GeometryType.SPHERE, sdf_geom.type())

@@ -1,5 +1,7 @@
 <mujoco>
   <default>
+    <mesh scale="0.1 0.2 0.3"/>
+    <material emission="0.123"/>
     <geom rgba="0 1 0 1"/>
     <default class="walker">
       <geom type="capsule"/>
@@ -9,6 +11,11 @@
     </default>
   </default>
 
+  <asset>
+    <mesh file="mug.obj"/>
+    <material name="mug_mat" specular="0"/>
+  </asset>
+
   <worldbody>
     <geom name="floor" type="plane" conaffinity="1" pos="248 0 0" size="250 .8 .2" zaxis="0 0 1"/>
     <body name="torso" childclass="walker">
@@ -17,5 +24,7 @@
         <geom name="torso2" size="0.07 0.3" class="class_arm"/>
       </body>
     </body>
+
+    <geom name="mug" type="mesh" mesh="mug" material="mug_mat"/>
   </worldbody>
 </mujoco>

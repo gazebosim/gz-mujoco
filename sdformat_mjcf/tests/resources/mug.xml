@@ -6,6 +6,8 @@
   </visual>
 
   <asset>
+    <texture name="skybox" type="skybox" builtin="gradient" rgb1=".4 .6 .8" rgb2="0 0 0"
+      width="800" height="800" mark="random" markrgb="1 1 1"/>
     <texture name="mug" file="mug.png" type="2d"/>
     <material name="mug" texture="mug" specular="1" shininess="1"/>
     <mesh file="mug.obj" scale=".01 .01 .01"/>
