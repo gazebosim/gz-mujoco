@@ -187,8 +187,7 @@ class ModelIntegrationTest(unittest.TestCase):
         </sdf>
         """
         root = sdf.Root()
-        errors = root.load_sdf_string(test_model_sdf)
-        self.assertEqual(0, len(errors))
+        root.load_sdf_string(test_model_sdf)
         mj_root = add_root(root)
         self.assertIsNotNone(mj_root)
         mj_link1 = mj_root.find("body", "link1")

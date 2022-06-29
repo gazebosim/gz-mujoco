@@ -75,8 +75,7 @@ class NameCollisionTest(helpers.TestCase):
         </sdf>
         """
         root = sdf.Root()
-        errors = root.load_sdf_string(sdf_string)
-        self.assertEqual(0, len(errors))
+        root.load_sdf_string(sdf_string)
         mjcf_root = add_root(root)
         bodies = mjcf_root.find_all("body")
         self.assertEqual(3, len(bodies))
@@ -97,8 +96,7 @@ class NameCollisionTest(helpers.TestCase):
         </sdf>
         """
         root = sdf.Root()
-        errors = root.load_sdf_string(sdf_string)
-        self.assertEqual(0, len(errors))
+        root.load_sdf_string(sdf_string)
         mjcf_root = add_root(root)
         joints = mjcf_root.find_all("joint")
         self.assertEqual(3, len(joints))
@@ -147,8 +145,7 @@ class NameCollisionTest(helpers.TestCase):
         </sdf>
         """
         root = sdf.Root()
-        errors = root.load_sdf_string(sdf_string)
-        self.assertEqual(0, len(errors))
+        root.load_sdf_string(sdf_string)
         mjcf_root = add_root(root)
         joints = mjcf_root.find_all("joint")
         self.assertEqual(8, len(joints))

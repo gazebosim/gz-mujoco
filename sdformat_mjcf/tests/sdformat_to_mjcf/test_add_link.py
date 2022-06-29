@@ -218,8 +218,7 @@ class LinkIntegration(unittest.TestCase):
         </sdf>""".format(*self.expected_pos, *self.expected_euler)
 
         root = sdf.Root()
-        errors = root.load_sdf_string(model_string)
-        self.assertEqual(0, len(errors))
+        root.load_sdf_string(model_string)
         mjcf_root = add_root(root)
         mj_link = mjcf_root.find("body", "L1")
         assert_allclose(self.expected_pos, mj_link.pos)

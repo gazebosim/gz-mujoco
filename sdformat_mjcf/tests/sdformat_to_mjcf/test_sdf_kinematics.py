@@ -25,8 +25,7 @@ class TreeTest(unittest.TestCase):
 
     def load_sdf_file(self, file_name):
         root = sdf.Root()
-        errors = root.load(file_name)
-        self.assertEqual(0, len(errors), errors)
+        root.load(file_name)
         return root
 
     def test_hierarchy(self):

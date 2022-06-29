@@ -276,15 +276,13 @@ class GraphResolverImpl(GraphResolverImplBase):
         is resolved.
         :return: The resolved pose.
         :rtype: ignition.math.Pose3d
-        :raises RuntimeError: if an error is encountered when resolving the
-        pose.
+        :raises SDFErrorsException: if an error is encountered when resolving
+        the pose.
         """
-        pose = Pose3d()
         if relative_to is None:
-            self._handle_errors(sem_pose.resolve(pose))
+            return sem_pose.resolve()
         else:
-            self._handle_errors(sem_pose.resolve(pose, relative_to))
-        return pose
+            return sem_pose.resolve(relative_to)
 
     def resolve_axis_xyz(self, joint_axis):
         """
@@ -293,12 +291,10 @@ class GraphResolverImpl(GraphResolverImplBase):
         resolved.
         :return: The resolved xyz vector.
         :rtype: ignition.math.Vector3d
-        :raises RuntimeError: if an error is encountered when resolving the
-        vector.
+        :raises SDFErrorsException: if an error is encountered when resolving
+        the vector.
         """
-        xyz_vec = Vector3d()
-        self._handle_errors(joint_axis.resolve_xyz(xyz_vec))
-        return xyz_vec
+        return joint_axis.resolve_xyz()
 
     def resolve_parent_link_name(self, joint):
         """
@@ -306,12 +302,10 @@ class GraphResolverImpl(GraphResolverImplBase):
         :param sdformat.Joint joint: The Joint object.
         :return: The resolved name of the parent link.
         :rtype: str
-        :raises RuntimeError: if an error is encountered when resolving the
-        the link.
+        :raises SDFErrorsException: if an error is encountered when resolving
+        the the link.
         """
-        errors, parent_link_name = joint.resolve_parent_link()
-        self._handle_errors(errors)
-        return parent_link_name
+        return joint.resolve_parent_link()
 
     def resolve_child_link_name(self, joint):
         """
@@ -319,16 +313,10 @@ class GraphResolverImpl(GraphResolverImplBase):
         :param sdformat.Joint joint: The Joint object.
         :return: The resolved name of the child link.
         :rtype: str
-        :raises RuntimeError: if an error is encountered when resolving the
-        the link.
+        :raises SDFErrorsException: if an error is encountered when resolving
+        the the link.
         """
-        errors, child_link_name = joint.resolve_child_link()
-        self._handle_errors(errors)
-        return child_link_name
-
-    def _handle_errors(self, errors):
-        if errors:
-            raise RuntimeError("\n".join(str(err) for err in errors))
+        return joint.resolve_child_link()
 
 
 class GraphResolver:
