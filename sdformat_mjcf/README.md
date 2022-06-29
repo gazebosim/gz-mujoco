@@ -1,12 +1,12 @@
-# GZ-MUJOCO
+# sdformat-mjcf
 
 This Python package allows bidirectional conversion between SDFormat and MJCF
 to share worlds and robot models. We have created a command line tool to convert
-between these two formats. It takes as input an SDF file that works in Gazebo Sim
-and produces as output a MJCF file that works in Mujoco with approximately
-equivalent results; and vice versa.
+between these two formats. It takes as input an SDFormat file that works in
+Gazebo Sim and produces as output a MJCF file that works in Mujoco with
+approximately equivalent results; and vice versa.
 
-## Install gz-mujoco
+## Install sdformat-mjcf
 
 To start development, create a python3 virtual environment, upgrade pip and
 install dm-control
@@ -22,10 +22,10 @@ pip install dm-control
 Install `python3-ignition-math7` and `python3-sdformat13` from the
 [nightly](https://gazebosim.org/docs/all/release#type-of-releases) repo.
 
-Install the `sdformat-mjcf` package in "editable" mode
+Install the `sdformat-mjcf` package
 
 ```bash
-pip install -e path/to/sdformat_mjcf
+pip install sdformat-mjcf
 ```
 
 ### Running tests
@@ -60,18 +60,44 @@ extract the contents and run
 
 ## Suported features
 
- - Models/Worlds
- - Links
- - Sensors
-   - Altimeter
-   - Camera
-   - Force torque
-   - IMU
- - Joints
-   - Fixed
-   - Hinge
-   - Slide
- - Materials
+  - Models/Worlds
+  - Links
+  - Sensors
+    - Altimeter
+    - Camera
+    - Force torque
+    - IMU
+  - Joints
+    - Ball
+    - Continuous
+    - Fixed
+    - Prismatic
+    - Revolute
+  - Materials
+
+## Unsuported features
+
+  - Nested models
+  - Links with multiple parents and kinematic loops
+  - Revolute2 and Universal joints
+  - `<scene>` element
+  - `<physics>` element
+  - Models from [Fuel](https://app.gazebosim.org/dashboard)
+  - Models contain URIs with schemes such as `model://` or `package://`.
+
+## Other limitations:
+
+  - Collada (`.dae`) meshes are not supported by Mujoco. Therefore, the user
+    has to first convert each `.dae` file to `.obj` or `.stl` file using
+    available tools such as `blender` or `meshlab`. The SDFormat file has to
+    then be updated to point to the converted mesh files instead of the `.dae`
+    files.
+  - Mujoco does not support composite `.obj` files. However, users may process
+    the output `.obj` files with
+    [obj2mjcf](https://github.com/kevinzakka/obj2mjcf) to split them into
+    individual `.obj` files.
+  - Only the diffuse texture from a PBR material is converted to MJCF. Other
+    textures are not supported.
 
 # Tools for converting MJCF to SDFormat
 
@@ -98,21 +124,39 @@ To run the SDFormat file in GazeboSim, follow [these instructions to install Gaz
 
 ## Suported features
 
- - Bodies
- - Geoms
- - Sensors
-   - Camera
-   - Force torque
-   - IMU
- - Joints
-   - Ball
-   - Continuous
-   - Fixed
-   - Prismatic
-   - Revolute
- - Materials
+  - Bodies
+  - Geoms
+  - Sensors
+    - Camera
+    - Force torque
+    - IMU
+  - Joints
+    - Fixed
+    - Free
+    - Hinge
+    - Slide
+  - Materials
 
 ## Unsuported features
 
- - Tendon
- - Generation of procedural textures is not supported.
+  - Tendon
+  - Generation of procedural textures
+  - Actuators
+  - Equality Constraints
+  - Collision filters
+  - hfields
+  - skins
+  - `option.timestep`
+  - Fitting of meshes with primitives, convex hulls or AABBs
+  - Settings that affect the constraint solver
+  - Lights that track or target objects
+
+## Other limitations:
+
+  - Only the values `xyz` and `XYZ` are supported for `compiler.eulerseq`
+  - `local` coordinates are assumed for `compiler.coordinate`
+  - Each kinematic tree in `<worldbody>` is placed inside a `<model>` when
+    converted to SDFormat. The `<self_collide>` element is always set to false
+    for `<model>`s to avoid collisions between links connected by mulitple
+    joints in series.
+
