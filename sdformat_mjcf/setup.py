@@ -20,7 +20,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 
 setup(
-    name='sdformat_mjcf_test',
+    name='sdformat_mjcf',
     version=get_version('src/sdformat_mjcf/__version__.py'),
     description='Tool to convert between SDFormat and MJCF',
     long_description=long_description,
