@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ignition.math import (Inertiald, MassMatrix3d, Vector3d, Pose3d,
+from gz.math import (Inertiald, MassMatrix3d, Vector3d, Pose3d,
                            Quaterniond)
 
 from sdformat_mjcf.mjcf_to_sdformat.converters.geometry import (
@@ -129,7 +129,7 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None, modifiers=None):
 
         :param mjcf.Element geom: MJCF geom to extract the orientation
         :return: The newly created quaterion.
-        :rtype ignition.math.Quateriond
+        :rtype gz.math.Quateriond
         """
         if geom.fromto is not None:
             v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])
@@ -148,7 +148,7 @@ def mjcf_body_to_sdf(body, physics, body_parent_name=None, modifiers=None):
 
         :param mjcf.Element geom: MJCF geom to extract the position
         :return: The newly created Vector3d.
-        :rtype ignition.math.Vector3d
+        :rtype gz.math.Vector3d
         """
         if geom.fromto is not None:
             v1 = Vector3d(geom.fromto[0], geom.fromto[1], geom.fromto[2])

@@ -16,14 +16,14 @@
 
 import logging
 import math
-from ignition.math import Color, Pose3d, Quaterniond, Vector3d, Matrix3d
+from gz.math import Color, Pose3d, Quaterniond, Vector3d, Matrix3d
 
 NAME_DELIMITER = '_'
 
 
 def vec3d_to_list(vec):
     """Convert a Vector3d object to a list.
-    :param ignition.math.Vector3d vec: Vector3d object to be converted
+    :param gz.math.Vector3d vec: Vector3d object to be converted
     :return: List of values of the x, y, and z components of `vec`
     respectively.
     :rtype: list[float]
@@ -36,7 +36,7 @@ def list_to_vec3d(list):
     :param List of values of the x, y, and z components of `vec`
     respectively.
     :return: Vector3d object
-    :rtype: ignition.math.Vector3d
+    :rtype: gz.math.Vector3d
     """
     return Vector3d(list[0], list[1], list[2])
 
@@ -44,7 +44,7 @@ def list_to_vec3d(list):
 def get_rotation(element):
     """Get the angles from a MJCF element
     :param mjcf.Element element: Element to extract the angles
-    :rtype: ignition.math.Quateriond
+    :rtype: gz.math.Quateriond
     """
     angle_type = "degree"
     if element.root.compiler.angle is not None:
@@ -93,7 +93,7 @@ def get_rotation(element):
 def vec2d_to_list(vec):
     """
     Convert a Vector2d object to a list.
-    :param ignition.math.Vector2d vec: Vector2d object to be converted.
+    :param gz.math.Vector2d vec: Vector2d object to be converted.
     :return: List of values of the x, and y components of `vec` respectively.
     :rtype: list[float]
     """
@@ -106,7 +106,7 @@ def euler_list_to_quat(list):
     :param List of values of the roll, pitch, and yaw components of `vec`
     respectively.
     :return: The newly created Quaterniond
-    :rtype: ignition.math.Quaterniond
+    :rtype: gz.math.Quaterniond
     """
     return Quaterniond(Vector3d(list[0], list[1], list[2]))
 
@@ -114,7 +114,7 @@ def euler_list_to_quat(list):
 def quat_to_list(quat):
     """
     Convert a Quaterniond object to a list in the order expected by MJCF.
-    :param ignition.math.Quaterniond quat: Quaterniond object to be converted.
+    :param gz.math.Quaterniond quat: Quaterniond object to be converted.
     :return: List of values of the quaternion in wxyz order.
     :rtype: list[float]
     """
@@ -124,7 +124,7 @@ def quat_to_list(quat):
 def quat_to_euler_list(quat):
     """
     Convert a Quaterniond object to a list of Euler angles in degrees.
-    :param ignition.math.Quaterniond quat: Quaterniond object to be converted.
+    :param gz.math.Quaterniond quat: Quaterniond object to be converted.
     :return: List of values of the euler angles.
     :rtype: list[float]
     """
@@ -143,10 +143,10 @@ def wxyz_list_to_quat(quat):
 
 def rgba_to_color(rgba):
     """
-    Convert a MJCF rgba color list to a ignition math Color
+    Convert a MJCF rgba color list to a gz math Color
     :param list rgba: List of color (red, green, blue, alpha).
     :return: The newly created color
-    :rtype: ignition.math.color
+    :rtype: gz.math.color
     """
     return Color(rgba[0], rgba[1], rgba[2], rgba[3])
 
@@ -156,7 +156,7 @@ def get_pose_from_mjcf(element):
     Get the pose from a MJCF element
     :param mjcf.Element element: MJCF element to get the pose
     :return: The newly created Pose3d
-    :rtype: ignition.math.Pose3d
+    :rtype: gz.math.Pose3d
     """
     pos = [0, 0, 0]
     quat = Quaterniond()
@@ -275,7 +275,7 @@ class GraphResolverImpl(GraphResolverImplBase):
         :param str relative_to: (Optional) The frame relative to which the pose
         is resolved.
         :return: The resolved pose.
-        :rtype: ignition.math.Pose3d
+        :rtype: gz.math.Pose3d
         :raises SDFErrorsException: if an error is encountered when resolving
         the pose.
         """
@@ -290,7 +290,7 @@ class GraphResolverImpl(GraphResolverImplBase):
         :param sdformat.JointAxis joint_axis: The JointAxis object to be
         resolved.
         :return: The resolved xyz vector.
-        :rtype: ignition.math.Vector3d
+        :rtype: gz.math.Vector3d
         :raises SDFErrorsException: if an error is encountered when resolving
         the vector.
         """

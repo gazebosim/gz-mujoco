@@ -17,7 +17,7 @@ import os
 
 from dm_control import mjcf
 
-from ignition.math import Color
+from gz.math import Color
 
 import sdformat as sdf
 

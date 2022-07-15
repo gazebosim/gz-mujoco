@@ -25,7 +25,7 @@ jobs:
         sudo /tmp/gzdev/gzdev.py repository enable osrf stable
         sudo /tmp/gzdev/gzdev.py repository enable osrf nightly
         sudo apt-get update
-        sudo apt-get install -y libsdformat13-dev python3-ignition-math7 python3-sdformat13
+        sudo apt-get install -y libsdformat13-dev python3-gz-math7 python3-sdformat13
     - name: Install test dependencies
       run: python3 -m pip install -U tox
     - name: Test sdformat_mjcf

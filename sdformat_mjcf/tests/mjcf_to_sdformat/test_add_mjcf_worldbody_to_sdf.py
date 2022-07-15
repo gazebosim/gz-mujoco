@@ -19,7 +19,7 @@ from dm_control import mujoco
 import math
 from math import pi
 
-from ignition.math import Color, Vector3d, Pose3d
+from gz.math import Color, Vector3d, Pose3d
 
 import sdformat as sdf
 

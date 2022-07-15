@@ -17,7 +17,7 @@ from numpy.testing import assert_allclose
 from math import pi, sqrt
 
 import sdformat as sdf
-from ignition.math import Color, Inertiald, Pose3d, MassMatrix3d, Vector3d
+from gz.math import Color, Inertiald, Pose3d, MassMatrix3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.link import add_link

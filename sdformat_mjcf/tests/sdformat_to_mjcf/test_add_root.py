@@ -18,7 +18,7 @@ import os
 from math import pi
 
 import sdformat as sdf
-from ignition.math import Pose3d
+from gz.math import Pose3d
 from dm_control import mjcf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.root import add_root

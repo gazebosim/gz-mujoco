@@ -15,7 +15,7 @@
 import unittest
 
 import sdformat as sdf
-from ignition.math import Pose3d, Vector3d
+from gz.math import Pose3d, Vector3d
 
 from tests import helpers
 import sdformat_mjcf.utils.sdf_utils as su

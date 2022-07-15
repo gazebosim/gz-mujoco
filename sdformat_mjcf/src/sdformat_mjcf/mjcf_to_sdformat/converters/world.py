@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ignition.math import Vector3d, MassMatrix3d, Inertiald
+from gz.math import Vector3d, MassMatrix3d, Inertiald
 
 from sdformat_mjcf.mjcf_to_sdformat.converters.joint import (mjcf_joint_to_sdf,
                                                              add_fixed_joint)
@@ -189,19 +189,19 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
 
     if export_world_plugins:
         plugins = {
-            "ignition-gazebo-physics-system":
+            "gz-gazebo-physics-system":
                 "gz::sim::systems::Physics",
-            "ignition-gazebo-sensors-system":
+            "gz-gazebo-sensors-system":
                 "gz::sim::systems::Sensors",
-            "ignition-gazebo-user-commands-system":
+            "gz-gazebo-user-commands-system":
                 "gz::sim::systems::UserCommands",
-            "ignition-gazebo-scene-broadcaster-system":
+            "gz-gazebo-scene-broadcaster-system":
                 "gz::sim::systems::SceneBroadcaster",
-            "ignition-gazebo-forcetorque-system":
+            "gz-gazebo-forcetorque-system":
                 "gz::sim::systems::ForceTorque",
-            "ignition-gazebo-altimeter-system":
+            "gz-gazebo-altimeter-system":
                 "gz::sim::systems::Altimeter",
-            "ignition-gazebo-imu-system":
+            "gz-gazebo-imu-system":
                 "gz::sim::systems::Imu"
         }
         for [key, value] in plugins.items():

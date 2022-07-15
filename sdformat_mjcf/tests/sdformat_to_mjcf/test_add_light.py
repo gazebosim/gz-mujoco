@@ -18,7 +18,7 @@ import math
 
 from dm_control import mjcf
 
-from ignition.math import Color, Pose3d, Vector3d
+from gz.math import Color, Pose3d, Vector3d
 
 import sdformat as sdf
 

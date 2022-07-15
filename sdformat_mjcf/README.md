@@ -19,7 +19,7 @@ pip install -U pip
 pip install dm-control
 ```
 
-Install `python3-ignition-math7` and `python3-sdformat13` from the
+Install `python3-gz-math7` and `python3-sdformat13` from the
 [nightly](https://gazebosim.org/docs/all/release#type-of-releases) repo.
 
 Install the `sdformat-mjcf` package

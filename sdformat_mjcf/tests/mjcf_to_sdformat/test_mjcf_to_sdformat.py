@@ -18,7 +18,7 @@ import unittest
 from math import pi
 
 import sdformat as sdf
-from ignition.math import Vector3d
+from gz.math import Vector3d
 
 from sdformat_mjcf.mjcf_to_sdformat.mjcf_to_sdformat import (
     mjcf_file_to_sdformat)

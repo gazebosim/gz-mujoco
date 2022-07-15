@@ -17,7 +17,7 @@ from numpy.testing import assert_allclose
 from math import pi
 
 import sdformat as sdf
-from ignition.math import Pose3d
+from gz.math import Pose3d
 from dm_control import mjcf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.sensor import add_sensor

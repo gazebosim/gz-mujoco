@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ignition.math import Angle, Color, Pose3d, Quaterniond, Vector3d
+from gz.math import Angle, Color, Pose3d, Quaterniond, Vector3d
 
 import math
 

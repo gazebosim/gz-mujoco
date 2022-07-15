@@ -17,7 +17,7 @@ import unittest
 from dm_control import mjcf
 from dm_control import mujoco
 
-from ignition.math import Vector3d
+from gz.math import Vector3d
 
 from sdformat_mjcf.mjcf_to_sdformat.converters import sensor as sensor_conv
 from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
@@ -87,31 +87,31 @@ class SensorTest(unittest.TestCase):
         self.assertEqual(7, len(world.plugins()))
         self.assertEqual("gz::sim::systems::Physics",
                          world.plugins()[0].name())
-        self.assertEqual("ignition-gazebo-physics-system",
+        self.assertEqual("gz-gazebo-physics-system",
                          world.plugins()[0].filename())
         self.assertEqual("gz::sim::systems::Sensors",
                          world.plugins()[1].name())
-        self.assertEqual("ignition-gazebo-sensors-system",
+        self.assertEqual("gz-gazebo-sensors-system",
                          world.plugins()[1].filename())
         self.assertEqual("gz::sim::systems::UserCommands",
                          world.plugins()[2].name())
-        self.assertEqual("ignition-gazebo-user-commands-system",
+        self.assertEqual("gz-gazebo-user-commands-system",
                          world.plugins()[2].filename())
         self.assertEqual("gz::sim::systems::SceneBroadcaster",
                          world.plugins()[3].name())
-        self.assertEqual("ignition-gazebo-scene-broadcaster-system",
+        self.assertEqual("gz-gazebo-scene-broadcaster-system",
                          world.plugins()[3].filename())
         self.assertEqual("gz::sim::systems::ForceTorque",
                          world.plugins()[4].name())
-        self.assertEqual("ignition-gazebo-forcetorque-system",
+        self.assertEqual("gz-gazebo-forcetorque-system",
                          world.plugins()[4].filename())
         self.assertEqual("gz::sim::systems::Altimeter",
                          world.plugins()[5].name())
-        self.assertEqual("ignition-gazebo-altimeter-system",
+        self.assertEqual("gz-gazebo-altimeter-system",
                          world.plugins()[5].filename())
         self.assertEqual("gz::sim::systems::Imu",
                          world.plugins()[6].name())
-        self.assertEqual("ignition-gazebo-imu-system",
+        self.assertEqual("gz-gazebo-imu-system",
                          world.plugins()[6].filename())
 
     def test_sensor_non_root_body_site(self):

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ignition.math import Quaterniond, Vector3d, Pose3d
+from gz.math import Quaterniond, Vector3d, Pose3d
 
 import logging
 
