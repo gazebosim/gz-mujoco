@@ -15,7 +15,7 @@
 """Module to convert MJCF geoms to SDFormat Collision/Visual geometries"""
 
 import os
-from ignition.math import Vector2d, Vector3d
+from gz.math import Vector2d, Vector3d
 
 import sdformat as sdf
 import sdformat_mjcf.utils.sdf_utils as su

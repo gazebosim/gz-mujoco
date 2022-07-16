@@ -30,7 +30,7 @@ def add_link(body, link, parent_name="world", link_pose=None):
     :param mjcf.Element body: The MJCF body to which the body is added.
     :param sdformat.Link link: The SDFormat link to be converted.
     :param str parent_name: Name of parent link.
-    :param ignition.math.Pose3d link_pose: Pose of link. This is optional and
+    :param gz.math.Pose3d link_pose: Pose of link. This is optional and
     if set to None, the pose will be resolved from the link.
     :return: The newly created MJCF body.
     :rtype: mjcf.Element

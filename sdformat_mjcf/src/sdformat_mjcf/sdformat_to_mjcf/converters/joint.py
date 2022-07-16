@@ -17,7 +17,7 @@
 import math
 
 import sdformat as sdf
-from ignition.math import Pose3d
+from gz.math import Pose3d
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.sensor import add_sensor
 from sdformat_mjcf.sdformat_to_mjcf.sdf_kinematics import (
@@ -40,7 +40,7 @@ def _compute_joint_axis(joint_axis, joint_pose):
     joint.
 
     :param sdformat.JointAxis: The input joint axis
-    :param ignition.math.Pose3d joint_pose: The pose of the joint that contains
+    :param gz.math.Pose3d joint_pose: The pose of the joint that contains
     the joint axis.
     :param axis_xyz_resolver: Function to resolve the unit vector a joint axis.
     :return: The computed axis unit vector.

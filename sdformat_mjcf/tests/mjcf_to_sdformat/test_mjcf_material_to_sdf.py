@@ -15,7 +15,7 @@
 import os
 import unittest
 
-from ignition.math import Color
+from gz.math import Color
 
 from dm_control import mjcf
 from dm_control import mujoco

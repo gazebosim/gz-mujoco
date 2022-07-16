@@ -14,7 +14,7 @@
 
 import unittest
 
-from ignition.math import Pose3d, Vector3d
+from gz.math import Pose3d, Vector3d
 
 from dm_control import mjcf
 from dm_control import mujoco

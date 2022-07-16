@@ -15,7 +15,7 @@
 import math
 import unittest
 
-from ignition.math import Vector3d
+from gz.math import Vector3d
 
 from dm_control import mjcf
 from dm_control import mujoco

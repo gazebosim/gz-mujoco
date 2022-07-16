@@ -22,7 +22,7 @@ from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
 )
 
 import sdformat as sdf
-from ignition.math import Vector3d, Color
+from gz.math import Vector3d, Color
 
 from tests.helpers import get_resources_dir
 

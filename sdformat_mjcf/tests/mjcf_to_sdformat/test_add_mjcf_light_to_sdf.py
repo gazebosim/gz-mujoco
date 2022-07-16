@@ -16,7 +16,7 @@ import unittest
 
 from dm_control import mjcf
 
-from ignition.math import Color, Vector3d
+from gz.math import Color, Vector3d
 
 import sdformat as sdf
 
