@@ -26,8 +26,8 @@ from sdformat_mjcf.sdformat_to_mjcf.sdf_kinematics import (
 )
 import sdformat_mjcf.utils.sdf_utils as su
 
-JOINT_DEFAULT_UPPER_LIMIT = 1e16
-JOINT_DEFAULT_LOWER_LIMIT = -1e16
+JOINT_DEFAULT_UPPER_LIMIT = math.inf
+JOINT_DEFAULT_LOWER_LIMIT = -math.inf
 JOINT_DEFAULT_DAMPING = 0.0
 JOINT_DEFAULT_FRICTION = 0.0
 JOINT_DEFAULT_SPRING_REFERENCE = 0.0
