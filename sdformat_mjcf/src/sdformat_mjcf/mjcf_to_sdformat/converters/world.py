@@ -26,6 +26,10 @@ from sdformat_mjcf.utils.defaults import MjcfModifiers
 
 import sdformat as sdf
 
+MJCF_DEFAULT_GRAVITY = [0, 0, -9.81]
+MJCF_DEFAULT_MAGNETIC = [0, -0.5, 0]
+MJCF_DEFAULT_WIND = [0, 0, 0]
+
 
 def _is_floating_body(body):
     freejoint = body.get_children("freejoint")
@@ -137,15 +141,21 @@ def mjcf_worldbody_to_sdf(mjcf_root, physics, world,
     if mjcf_root.option is not None:
         if mjcf_root.option.flag.gravity == "disable":
             world.set_gravity(Vector3d(0, 0, 0))
-        elif mjcf_root.option.gravity is not None:
-            world.set_gravity(su.list_to_vec3d(mjcf_root.option.gravity))
-        if mjcf_root.option.magnetic is not None:
-            world.set_magnetic_field(
-                su.list_to_vec3d(mjcf_root.option.magnetic))
-        if mjcf_root.option.wind is not None:
-            world.set_wind_linear_velocity(
-                su.list_to_vec3d(mjcf_root.option.wind))
+        else:
+            world.set_gravity(
+                su.list_to_vec3d(
+                    su.get_value_or_default(mjcf_root.option.gravity,
+                                            MJCF_DEFAULT_GRAVITY)))
 
+        world.set_magnetic_field(
+            su.list_to_vec3d(
+                su.get_value_or_default(mjcf_root.option.magnetic,
+                                        MJCF_DEFAULT_MAGNETIC)))
+
+        world.set_wind_linear_velocity(
+            su.list_to_vec3d(
+                su.get_value_or_default(mjcf_root.option.wind,
+                                        MJCF_DEFAULT_WIND)))
     models = []
     root_body_to_model = {}
     for body in mjcf_root.worldbody.body:
