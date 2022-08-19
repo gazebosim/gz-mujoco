@@ -16,6 +16,13 @@
               <uri>meshes/box.obj</uri>
           </mesh>
         </geometry>
+        <material>
+          <pbr>
+            <metal>
+              <albedo_map>textures/albedo_map.png</albedo_map>
+            </metal>
+          </pbr>
+        </material>
       </visual>
     </link>
   </model>
