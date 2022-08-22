@@ -76,7 +76,6 @@ class RootTest(helpers.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             output_file = os.path.join(temp_dir, "out.xml")
             sdformat_file_to_mjcf(model_file, output_file)
-            print(open(output_file).read())
             model = mjcf.from_path(output_file)
             self.assertIsNotNone(model)
 

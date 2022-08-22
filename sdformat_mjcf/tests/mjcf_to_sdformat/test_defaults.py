@@ -83,7 +83,6 @@ class DefaultsTest(unittest.TestCase):
         mjcf_worldbody_to_sdf(mjcf_model, physics, world)
         root = sdf.Root()
         root.add_world(world)
-        print(root.to_string())
         model = world.model_by_index(1)
         self.assertNotEqual(None, model)
         self.assertEqual(1, model.link_count())
