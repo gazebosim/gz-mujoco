@@ -25,6 +25,9 @@ import sdformat as sdf
 
 from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
     mjcf_worldbody_to_sdf,
+    MJCF_DEFAULT_GRAVITY,
+    MJCF_DEFAULT_MAGNETIC,
+    MJCF_DEFAULT_WIND,
 )
 import sdformat_mjcf.utils.sdf_utils as su
 
@@ -323,6 +326,22 @@ class ModelTest(unittest.TestCase):
         link = model.link_by_index(0)
         self.assertEqual(2, link.visual_count())
         self.assertEqual(2, link.collision_count())
+
+    def test_unset_gravity_magnetic_wind(self):
+        filename = str(TEST_RESOURCES_DIR / "test_unnamed_geoms.xml")
+        mjcf_model = mjcf.from_path(filename)
+        physics = mujoco.Physics.from_xml_path(filename)
+
+        world = sdf.World()
+        world.set_name("default")
+
+        mjcf_worldbody_to_sdf(mjcf_model, physics, world)
+        self.assertEqual(Vector3d(*MJCF_DEFAULT_MAGNETIC),
+                         world.magnetic_field())
+        self.assertEqual(Vector3d(*MJCF_DEFAULT_GRAVITY),
+                         world.gravity())
+        self.assertEqual(Vector3d(*MJCF_DEFAULT_WIND),
+                         world.wind_linear_velocity())
 
 
 class PoseTest(unittest.TestCase):
