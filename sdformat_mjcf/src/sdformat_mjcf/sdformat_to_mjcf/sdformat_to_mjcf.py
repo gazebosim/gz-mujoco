@@ -34,6 +34,13 @@ def sdformat_file_to_mjcf(input_file, output_file):
         print(e, file=sys.stderr)
         return 1
     else:
+        input_dir, _ = os.path.split(os.path.abspath(input_file))
+        # Change CWD to the input dir so that assets with relative file paths
+        # can be found. For example, when running the converter from a
+        # directory outside the input dir and the input file has
+        # `<albedo_map>materials/textures/foo.png</albedo_map>`
+        os.chdir(input_dir)
+
         mjcf_root = add_root(root)
         mjcf_root.default.dclass = "unused"
         output_dir, file_name = os.path.split(os.path.abspath(output_file))

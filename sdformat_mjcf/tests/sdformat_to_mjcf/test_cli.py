@@ -76,6 +76,18 @@ class CLITest(unittest.TestCase):
             self.assertEqual(0, return_code)
             self.assertTrue(os.path.exists(output_file))
 
+    def test_relative_resource_path(self):
+        model_dir = TEST_RESOURCES_DIR / "box_obj"
+        model_file = model_dir / "model.sdf"
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+            os.mkdir("mjcf")
+            self.assertNotEqual(os.getcwd(), str(model_dir))
+            output_file = path.join("mjcf", "box_obj.xml")
+            return_code = cli.main([str(model_file), output_file])
+            self.assertEqual(0, return_code)
+            self.assertTrue(os.path.exists(output_file))
+
 
 if __name__ == "__main__":
     unittest.main()
