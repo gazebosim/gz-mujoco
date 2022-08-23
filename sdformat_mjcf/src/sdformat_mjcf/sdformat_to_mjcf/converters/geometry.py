@@ -92,6 +92,7 @@ def add_geometry(body, name, pose, sdf_geom):
                                             file=mesh_file_path)
         else:
             geom.mesh = asset_loaded
+        geom.mesh.scale = su.vec3d_to_list(mesh_shape.scale())
     else:
         raise RuntimeError(
             f"Encountered unsupported shape type {sdf_geom.type()}")
