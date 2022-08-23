@@ -20,7 +20,11 @@ pip install dm-control
 ```
 
 Install `python3-gz-math7` and `python3-sdformat13` from the
-[nightly](https://gazebosim.org/docs/all/release#type-of-releases) repo.
+[nightly](https://gazebosim.org/docs/all/release#type-of-releases) repo. On macOS, add the [osrf/simulation](https://github.com/osrf/homebrew-simulation) tap and install `sdformat13`:
+```
+brew tap osrf/simulation
+brew install sdformat13
+```
 
 Install the `sdformat-mjcf` package
 
