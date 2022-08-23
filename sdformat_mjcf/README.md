@@ -8,15 +8,13 @@ approximately equivalent results; and vice versa.
 
 ## Install sdformat-mjcf
 
-To start development, create a python3 virtual environment, upgrade pip and
-install dm-control
+To start development, create a python3 virtual environment, and upgrade pip.
 
 ```bash
 python3 -m venv path/to/venv --system-site-packages
 . path/to/venv/bin/activate
 
 pip install -U pip
-pip install dm-control
 ```
 
 Install `python3-gz-math7` and `python3-sdformat13` from the

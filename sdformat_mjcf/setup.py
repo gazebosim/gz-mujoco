@@ -42,4 +42,7 @@ setup(
             'mjcf2sdf= sdformat_mjcf.mjcf_to_sdformat.cli:main',
         ],
     },
+    install_requires=[
+        'dm-control',
+    ],
 )
