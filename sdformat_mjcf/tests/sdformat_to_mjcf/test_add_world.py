@@ -16,7 +16,7 @@ import unittest
 from numpy.testing import assert_allclose
 import os
 
-import sdformat as sdf
+import sdformat13 as sdf
 from dm_control import mjcf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.world import add_world

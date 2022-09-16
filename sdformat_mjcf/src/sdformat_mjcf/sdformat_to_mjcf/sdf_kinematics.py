@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sdformat as sdf
+import sdformat13 as sdf
 import sdformat_mjcf.utils.sdf_utils as su
 
 

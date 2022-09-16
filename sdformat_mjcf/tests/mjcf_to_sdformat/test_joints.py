@@ -14,7 +14,7 @@
 
 import unittest
 
-from gz.math import Pose3d, Vector3d
+from gz.math7 import Pose3d, Vector3d
 
 from dm_control import mjcf
 from dm_control import mujoco
@@ -23,7 +23,7 @@ from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
     mjcf_worldbody_to_sdf,
 )
 
-import sdformat as sdf
+import sdformat13 as sdf
 
 from tests.helpers import get_resources_dir
 

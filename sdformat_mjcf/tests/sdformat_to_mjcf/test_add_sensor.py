@@ -16,8 +16,8 @@ import unittest
 from numpy.testing import assert_allclose
 from math import pi
 
-import sdformat as sdf
-from gz.math import Pose3d
+import sdformat13 as sdf
+from gz.math7 import Pose3d
 from dm_control import mjcf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.sensor import add_sensor

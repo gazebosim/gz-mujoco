@@ -15,7 +15,7 @@
 import os
 import sys
 
-import sdformat as sdf
+import sdformat13 as sdf
 from dm_control.mjcf.export_with_assets import export_with_assets
 from sdformat_mjcf.sdformat_to_mjcf.converters.root import add_root
 

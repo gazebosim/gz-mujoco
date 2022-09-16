@@ -21,8 +21,8 @@ from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
     mjcf_worldbody_to_sdf,
 )
 
-import sdformat as sdf
-from gz.math import Vector3d, Color
+import sdformat13 as sdf
+from gz.math7 import Vector3d, Color
 
 from tests.helpers import get_resources_dir
 

@@ -17,9 +17,9 @@ import os
 
 from dm_control import mjcf
 
-from gz.math import Color
+from gz.math7 import Color
 
-import sdformat as sdf
+import sdformat13 as sdf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.material import add_material
 from tests import helpers
