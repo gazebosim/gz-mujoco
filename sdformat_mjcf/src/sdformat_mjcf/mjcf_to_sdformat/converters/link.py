@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from gz.math7 import (Inertiald, MassMatrix3d, Vector3d, Pose3d,
-                     Quaterniond)
+from gz.math7 import (Inertiald, MassMatrix3d, Vector3d, Pose3d, Quaterniond)
 
 from sdformat_mjcf.mjcf_to_sdformat.converters.geometry import (
     mjcf_visual_to_sdf,
