@@ -16,8 +16,8 @@
 
 import math
 
-import sdformat as sdf
-from gz.math import Pose3d
+import sdformat13 as sdf
+from gz.math7 import Pose3d
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.sensor import add_sensor
 from sdformat_mjcf.sdformat_to_mjcf.sdf_kinematics import (

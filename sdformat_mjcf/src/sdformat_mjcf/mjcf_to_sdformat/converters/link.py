@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from gz.math import (Inertiald, MassMatrix3d, Vector3d, Pose3d,
-                     Quaterniond)
+from gz.math7 import (Inertiald, MassMatrix3d, Vector3d, Pose3d, Quaterniond)
 
 from sdformat_mjcf.mjcf_to_sdformat.converters.geometry import (
     mjcf_visual_to_sdf,
@@ -25,7 +24,7 @@ from sdformat_mjcf.mjcf_to_sdformat.converters.material import (
     mjcf_material_to_sdf,
 )
 
-import sdformat as sdf
+import sdformat13 as sdf
 import sdformat_mjcf.utils.sdf_utils as su
 
 NUMBER_OF_SDF_LINK = 0

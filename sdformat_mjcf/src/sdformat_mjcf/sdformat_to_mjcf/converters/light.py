@@ -16,7 +16,7 @@
 
 
 import sdformat_mjcf.utils.sdf_utils as su
-import sdformat as sdf
+import sdformat13 as sdf
 
 
 def add_light(body, light):

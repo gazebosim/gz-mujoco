@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from gz.math import Vector3d, MassMatrix3d, Inertiald
+from gz.math7 import Vector3d, MassMatrix3d, Inertiald
 
 from sdformat_mjcf.mjcf_to_sdformat.converters.joint import (mjcf_joint_to_sdf,
                                                              add_fixed_joint)
@@ -24,7 +24,7 @@ from sdformat_mjcf.mjcf_to_sdformat.converters.sensor import (
 import sdformat_mjcf.utils.sdf_utils as su
 from sdformat_mjcf.utils.defaults import MjcfModifiers
 
-import sdformat as sdf
+import sdformat13 as sdf
 
 MJCF_DEFAULT_GRAVITY = [0, 0, -9.81]
 MJCF_DEFAULT_MAGNETIC = [0, -0.5, 0]

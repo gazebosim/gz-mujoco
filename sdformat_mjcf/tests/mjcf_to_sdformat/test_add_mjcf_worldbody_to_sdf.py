@@ -19,9 +19,9 @@ from dm_control import mujoco
 import math
 from math import pi
 
-from gz.math import Color, Vector3d, Pose3d
+from gz.math7 import Color, Vector3d, Pose3d
 
-import sdformat as sdf
+import sdformat13 as sdf
 
 from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
     mjcf_worldbody_to_sdf,

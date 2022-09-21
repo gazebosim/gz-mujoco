@@ -15,7 +15,7 @@
 import logging
 import os
 
-import sdformat as sdf
+import sdformat13 as sdf
 
 import sdformat_mjcf.utils.sdf_utils as su
 
