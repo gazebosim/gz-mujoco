@@ -60,7 +60,7 @@ extract the contents and run
 <path/to/mujoco>/bin/simulate output_file.xml
 ```
 
-## Suported features
+## Supported features
 
   - Models/Worlds
   - Links
@@ -77,17 +77,28 @@ extract the contents and run
     - Revolute
   - Materials
 
-## Unsuported features
+## Missing features
+The following is a list of missing features divided into features that are currently unimplemented, but may be
+implemented at a later time ("Currently unimplemented") and features that are unlikely to be implemented because they
+are currently not supported by the MJCF specification ("Unsupported by MJCF").
+
+The list only contains SDFormat elements that affect the physical properties of a model. Unless otherwise
+stated, SDFormat elements that affect the behavior of the simulator (i.e not the physical properties of a model), e.g.,
+`<world><physics>`, are not implemented.
+
+## Currently unimplemented features
 
   - Nested models
   - Links with multiple parents and kinematic loops
   - Revolute2 and Universal joints
-  - `<scene>` element
-  - `<physics>` element
+  - `<scene>` element in SDFormat
+  - `<physics>` element in SDFormat
   - Models from [Fuel](https://app.gazebosim.org/dashboard)
-  - Models contain URIs with schemes such as `model://` or `package://`.
+  - Models that contain URIs with schemes such as `model://` or `package://`.
+  - Collision bitmasks
+  - The `<self_collide>` tag in models and links
 
-## Other limitations:
+## Unsupported by MJCF:
 
   - Collada (`.dae`) meshes are not supported by Mujoco. Therefore, the user
     has to first convert each `.dae` file to `.obj` or `.stl` file using
@@ -100,10 +111,17 @@ extract the contents and run
     individual `.obj` files.
   - Only the diffuse texture from a PBR material is converted to MJCF. Other
     textures are not supported.
+  - The following link elements
+    - `velocity_decay`
+    - `projector`
+    - `audio_sink`
+    - `audio_source`
+    - `battery`
+    - `particle_emitter`
 
 # Tools for converting MJCF to SDFormat
 
-Use the commnad line tool `mjcf2sdf`:
+Use the command line tool `mjcf2sdf`:
 
 ```bash
 usage: mjcf2sdf [-h] [--export_world_plugins] input_file output_file
@@ -124,7 +142,7 @@ the new world work properly in Gazebo Sim.
 
 To run the SDFormat file in GazeboSim, follow [these instructions to install Gazebo Sim](https://gazebosim.org/docs/latest/install)
 
-## Suported features
+## Supported features
 
   - Bodies
   - Geoms
@@ -139,26 +157,46 @@ To run the SDFormat file in GazeboSim, follow [these instructions to install Gaz
     - Slide
   - Materials
 
-## Unsuported features
+## Missing features
+The following is a list of missing features divided into features that are currently unimplemented, but may be
+implemented at a later time ("Currently unimplemented") and features that are unlikely to be implemented because they
+are currently not supported by the SDFormat specification ("Unsupported by SDFormat").
 
-  - Tendon
+The list only contains MJCF elements that affect the physical properties of a model. Unless otherwise
+stated, MJCF elements that affect the behavior of the simulator (i.e not the physical properties of a model), e.g.,
+`option.timestep`, are not implemented.
+
+### Currently unimplemented
+
+The following is a list of unimplemented features that affect the physical properties of a model. Unless otherwise
+stated, MJCF elements that affect the behavior of the simulator (i.e not the physical properties of a model), e.g.,
+`option.timestep`, are not implemented.
+
+  - **`<compiler>`**
+    - Values for `compiler.coordinate` other than `local`
+    - Values for `compiler.eulerseq` other than `xyz` and `XYZ`
+    - Fitting of meshes with primitives, convex hulls or AABBs
+
   - Generation of procedural textures
-  - Actuators
-  - Equality Constraints
-  - Collision filters
-  - hfields
-  - skins
-  - `option.timestep`
-  - Fitting of meshes with primitives, convex hulls or AABBs
+  - `hfield` geoms
+  - Collision bitmasks (`contype`, `conaffinity`)
+  - `<composite>` elements.
+  - Equality Constraints (`<equality>`)
+  - Settings that affect the Mujoco visualizer (`<visual>`)
+
+## Unsupported by SDFormat
+  - Skins
+  - Contact `pair`s and `exclude`s (`<contact>`)
+  - Tendons (`<tendon>`)
+  - Actuators (`<actuator>`)
   - Settings that affect the constraint solver
   - Lights that track or target objects
+  - Cameras that track or target objects
 
 ## Other limitations:
 
-  - Only the values `xyz` and `XYZ` are supported for `compiler.eulerseq`
-  - `local` coordinates are assumed for `compiler.coordinate`
   - Each kinematic tree in `<worldbody>` is placed inside a `<model>` when
     converted to SDFormat. The `<self_collide>` element is always set to false
-    for `<model>`s to avoid collisions between links connected by mulitple
+    for `<model>`s to avoid collisions between links connected by multiple
     joints in series.
 
