@@ -104,9 +104,9 @@ class KinematicHierarchy:
         self.link_to_node_dict = {self.world_link: self.world_node}
 
         # Recursively create child model kin hierarchies and merge them up.
-        # When merging, all children of the child model kin hierarchy world node
-        # are initially listed under the current world node. If there is a joint
-        # with a child link in a child model, it will be re-parented when
+        # When merging, all children of the child model kin hierarchy world
+        # node are initially listed under the current world node. If there is a
+        # joint with a child link in a child model, it will be re-parented when
         # joints are processed below.
         for mi in range(model.model_count()):
             child_model = model.model_by_index(mi)
@@ -128,9 +128,10 @@ class KinematicHierarchy:
             # child model nodes. `scoped_named_link_map` is required to process
             # joints whose child link is in a child model.
             for scoped_name, link in child_kh.scoped_named_link_map.items():
-                link_scoped_named = child_model.name()+'::'+scoped_name
+                link_scoped_named = child_model.name() + '::' + scoped_name
                 self.scoped_named_link_map[link_scoped_named] = link
-                child_kh.link_to_node_dict[link].scoped_name = link_scoped_named
+                child_kh_link_node = child_kh.link_to_node_dict[link]
+                child_kh_link_node.scoped_name = link_scoped_named
 
             # Merge child model link to node map
             self.link_to_node_dict.update(child_kh.link_to_node_dict)

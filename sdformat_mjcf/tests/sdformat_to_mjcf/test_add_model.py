@@ -271,9 +271,10 @@ class ModelIntegrationTest(unittest.TestCase):
         self.assertIsNotNone(mj_simple_model_link.get_children("freejoint"))
 
         mj_extra_model_link = mj_root.find("body",
-                                            "sub_nested::extra_model::link")
+                                           "sub_nested::extra_model::link")
         self.assertIsNotNone(mj_extra_model_link)
         self.assertIsNotNone(mj_extra_model_link.get_children("freejoint"))
+
 
 if __name__ == "__main__":
     unittest.main()
