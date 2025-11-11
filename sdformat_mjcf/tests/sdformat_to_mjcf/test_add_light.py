@@ -18,9 +18,9 @@ import math
 
 from dm_control import mjcf
 
-from gz.math7 import Color, Pose3d, Vector3d
+from gz.math import Color, Pose3d, Vector3d
 
-import sdformat13 as sdf
+import sdformat as sdf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.light import add_light
 from sdformat_mjcf.sdformat_to_mjcf.converters.link import add_link

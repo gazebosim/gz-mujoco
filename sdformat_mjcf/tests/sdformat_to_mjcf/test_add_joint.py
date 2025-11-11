@@ -17,8 +17,8 @@ import numpy as np
 from numpy.testing import assert_allclose
 from math import pi
 
-import sdformat13 as sdf
-from gz.math7 import Pose3d, Vector3d
+import sdformat as sdf
+from gz.math import Pose3d, Vector3d
 from dm_control import mjcf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.joint import add_joint

@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from gz.math7 import Angle, Color, Pose3d, Quaterniond, Vector3d
+from gz.math import Angle, Color, Pose3d, Quaterniond, Vector3d
 
 import math
 
 import sdformat_mjcf.utils.sdf_utils as su
 
-import sdformat13 as sdf
+import sdformat as sdf
 
 LIGHT_NUMBER = 0
 

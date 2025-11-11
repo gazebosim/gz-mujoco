@@ -16,7 +16,7 @@
 
 import logging
 import math
-from gz.math7 import Color, Pose3d, Quaterniond, Vector3d, Matrix3d
+from gz.math import Color, Pose3d, Quaterniond, Vector3d, Matrix3d
 
 NAME_DELIMITER = '_'
 

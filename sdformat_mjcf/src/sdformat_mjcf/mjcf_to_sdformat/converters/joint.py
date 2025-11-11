@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from gz.math7 import Vector3d
+from gz.math import Vector3d
 import logging
 import math
-import sdformat13 as sdf
+import sdformat as sdf
 import sdformat_mjcf.utils.sdf_utils as su
 
 

@@ -14,7 +14,7 @@
 
 
 import unittest
-import sdformat13 as sdf
+import sdformat as sdf
 from tests import helpers
 
 from dm_control import mjcf
@@ -79,11 +79,9 @@ class NameCollisionTest(helpers.TestCase):
         mjcf_root = add_root(root)
         bodies = mjcf_root.find_all("body")
         self.assertEqual(3, len(bodies))
-        name_possibilities = ["base_link", "base_link_0", "base_link_1"]
-        for body in bodies:
-            self.assertIn(body.name, name_possibilities)
-            # Removed matched name to ensure names are unique.
-            name_possibilities.remove(body.name)
+        expected_names = ["M1::base_link", "M2::base_link", "M3::base_link"]
+        self.assertEqual(set(expected_names),
+                         set([body.name for body in bodies]))
 
     def test_freejoints(self):
         sdf_string = """

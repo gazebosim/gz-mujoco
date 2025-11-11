@@ -14,7 +14,7 @@
 
 import unittest
 
-import sdformat13 as sdf
+import sdformat as sdf
 from sdformat_mjcf.sdformat_to_mjcf.sdf_kinematics import KinematicHierarchy
 from tests.helpers import get_resources_dir
 

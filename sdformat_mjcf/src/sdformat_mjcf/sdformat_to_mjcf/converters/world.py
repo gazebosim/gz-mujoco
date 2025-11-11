@@ -26,7 +26,7 @@ def add_world(mjcf_out, world):
     """
     for mo in range(world.model_count()):
         model = world.model_by_index(mo)
-        add_model(mjcf_out, model)
+        add_model(mjcf_out, model, model_is_root=False)
     for li in range(world.light_count()):
         light = world.light_by_index(li)
         add_light(mjcf_out.worldbody, light)

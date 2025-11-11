@@ -17,8 +17,8 @@ import unittest
 import os
 from math import pi
 
-import sdformat13 as sdf
-from gz.math7 import Pose3d
+import sdformat as sdf
+from gz.math import Pose3d
 from dm_control import mjcf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.root import add_root

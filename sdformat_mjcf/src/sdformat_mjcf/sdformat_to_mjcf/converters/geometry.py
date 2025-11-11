@@ -83,6 +83,10 @@ def add_geometry(body, name, pose, sdf_geom):
             os.path.basename(mesh_shape.uri()))[0]
         if 'http://' in uri or 'https://' in uri:
             raise RuntimeError("Fuel meshes are not yet supported")
+        if 'model://' in uri:
+            prefix = 'model://'
+            # TODO: Support sdf::ParserConfig::AddURIPath to resolve URIs.
+            uri = uri.replace(prefix, '', 1)
         geom.type = "mesh"
         asset_loaded = geom.root.asset.find('mesh', file_without_extension)
         dirname = os.path.dirname(mesh_shape.file_path())

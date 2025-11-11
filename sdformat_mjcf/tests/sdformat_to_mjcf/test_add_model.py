@@ -16,8 +16,8 @@ import unittest
 from numpy.testing import assert_allclose
 from math import pi
 
-import sdformat13 as sdf
-from gz.math7 import Pose3d
+import sdformat as sdf
+from gz.math import Pose3d
 from dm_control import mjcf
 
 from sdformat_mjcf.sdformat_to_mjcf.converters.model import add_model
@@ -194,6 +194,86 @@ class ModelIntegrationTest(unittest.TestCase):
         self.assertFalse(mj_link1.get_children("joint"))
         self.assertFalse(mj_link1.get_children("freejoint"))
 
+    def test_nested_model_fixed_joint(self):
+        test_model_sdf = """
+        <sdf version="1.11">
+            <model name="modelA">
+                <pose>1 0 0 0 0 0</pose>
+                <link name="linkA">
+                    <pose>1 0 0 0 0 0</pose>
+                    <collision name="c1">
+                        <geometry>
+                            <sphere><radius>1</radius></sphere>
+                        </geometry>
+                    </collision>
+                </link>
+                <model name="modelB">
+                    <pose>0 1 0 0 0 0</pose>
+                    <link name="linkA">
+                        <pose>0 1 0 0 0 0</pose>
+                        <collision name="c1">
+                            <geometry>
+                                <sphere><radius>2</radius></sphere>
+                            </geometry>
+                        </collision>
+                    </link>
+                </model>
+                <joint name="modelB_joint" type="fixed">
+                    <parent>linkA</parent>
+                    <child>modelB::linkA</child>
+                </joint>
+            </model>
+        </sdf>
+        """
+        root = sdf.Root()
+        root.load_sdf_string(test_model_sdf)
+        mj_root = add_root(root)
+        self.assertIsNotNone(mj_root)
+        mj_modelA_linkA = mj_root.find("body", "linkA")
+        self.assertIsNotNone(mj_modelA_linkA)
+
+        # Check that modelB::linkA was added as a child of (modelA::)linkA
+        modelA_linkA_children = mj_modelA_linkA.get_children("body")
+        self.assertEqual(1, len(modelA_linkA_children))
+        mj_modelB_linkA = modelA_linkA_children[0]
+        self.assertEqual("modelB::linkA", mj_modelB_linkA.name)
+
+        # Verify that the right pos was set for modelB::linkA
+        sdf_linkA = root.model().link_by_name("linkA")
+        sdf_linkA_pose = sdf_linkA.semantic_pose().resolve(
+            _resolveTo="modelB::linkA")
+        modelB_linkA_expected_pos = su.vec3d_to_list(
+            sdf_linkA_pose.inverse().pos())
+        assert_allclose(modelB_linkA_expected_pos, mj_modelB_linkA.pos)
+
+    def test_nested_model_multi_level(self):
+        test_model_sdf = """
+        <sdf version="1.11">
+            <model name='top_nested'>
+                <model name='sub_nested'>
+                    <model name='simple_model'>
+                        <link name='link'/>
+                    </model>
+                    <model name='extra_model'>
+                        <link name='link'/>
+                    </model>
+                </model>
+            </model>
+        </sdf>
+        """
+        root = sdf.Root()
+        root.load_sdf_string(test_model_sdf)
+        mj_root = add_root(root)
+        self.assertIsNotNone(mj_root)
+        mj_simple_model_link = mj_root.find("body",
+                                            "sub_nested::simple_model::link")
+        self.assertIsNotNone(mj_simple_model_link)
+        self.assertIsNotNone(mj_simple_model_link.get_children("freejoint"))
+
+        mj_extra_model_link = mj_root.find("body",
+                                            "sub_nested::extra_model::link")
+        self.assertIsNotNone(mj_extra_model_link)
+        self.assertIsNotNone(mj_extra_model_link.get_children("freejoint"))
 
 if __name__ == "__main__":
     unittest.main()
