@@ -43,10 +43,11 @@ def sdformat_file_to_mjcf(input_file, output_file):
         previous_cwd = os.getcwd()
         try:
             os.chdir(input_dir)
-
             mjcf_root = add_root(root)
             mjcf_root.default.dclass = "unused"
             export_with_assets(mjcf_root, output_dir, file_name)
         finally:
+            # Switch CWD back to previous CWD so that caller can expect to
+            # find outputs at expected relative paths.
             os.chdir(previous_cwd)
         return 0
