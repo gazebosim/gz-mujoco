@@ -125,19 +125,34 @@ class GeometryTest(helpers.TestCase):
             os.path.join(get_resources_dir(), "box_obj", "model.sdf"))
         mesh.set_scale(Vector3d(0.1, 0.2, 0.3))
 
-        geometry = sdf.Geometry()
-        geometry.set_mesh_shape(mesh)
-        geometry.set_type(sdf.GeometryType.MESH)
-
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
-        mj_geom = geometry_conv.add_geometry(body, "mesh_shape",
-                                             self.test_pose, geometry)
+        mj_geoms = geometry_conv.convert_and_add_mesh(body, "mesh_shape",
+                                                      self.test_pose, mesh)
+        self.assertEqual(1, len(mj_geoms))
+        mj_geom = mj_geoms[0]
         self.assertEqual("mesh_shape", mj_geom.name)
         self.assertEqual("mesh", mj_geom.type)
         self.assertEqual(1, len(mujoco.asset.find_all('mesh')))
         mj_mesh = mujoco.asset.mesh[0]
         assert_allclose([0.1, 0.2, 0.3], mj_mesh.scale)
+
+    def test_glb_mesh(self):
+        mesh = sdf.Mesh()
+        mesh.set_uri("meshes/end_effector.glb")
+        mesh.set_file_path(
+            os.path.join(get_resources_dir(), "end_effector_glb", "model.sdf"))
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        mj_geoms = geometry_conv.convert_and_add_mesh(body, "mesh_shape",
+                                                      self.test_pose, mesh)
+        self.assertEqual(4, len(mj_geoms))
+
+        actual_types = [geom.type for geom in mj_geoms]
+        expected_types = ["mesh"] * len(mj_geoms)
+        self.assertEqual(expected_types, actual_types)
+        self.assertEqual(4, len(mujoco.asset.find_all('mesh')))
 
     def test_plane(self):
         plane = sdf.Plane()

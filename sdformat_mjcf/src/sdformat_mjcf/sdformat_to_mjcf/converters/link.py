@@ -17,7 +17,6 @@ from sdformat_mjcf.sdformat_to_mjcf.converters.geometry import (
     add_visual,
 )
 from sdformat_mjcf.sdformat_to_mjcf.converters.light import add_light
-from sdformat_mjcf.sdformat_to_mjcf.converters.material import add_material
 from sdformat_mjcf.sdformat_to_mjcf.converters.sensor import add_sensor
 import sdformat_mjcf.utils.sdf_utils as su
 
@@ -93,9 +92,7 @@ def add_link(body, link, parent_name="world", link_pose=None, link_name=None):
     for vi in range(link.visual_count()):
         vis = link.visual_by_index(vi)
         if vis.geometry() is not None:
-            visual_geom = add_visual(body, vis)
-            if vis.material() is not None:
-                add_material(visual_geom, vis.material())
+            add_visual(body, vis)
 
     for li in range(link.light_count()):
         light = link.light_by_index(li)

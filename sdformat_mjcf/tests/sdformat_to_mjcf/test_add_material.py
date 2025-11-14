@@ -46,7 +46,7 @@ class MaterialTest(helpers.TestCase):
             "geom",
             name="geometry_test")
 
-        material_mjcf = add_material(geom, material)
+        material_mjcf = add_material(geom.root, material)
         self.assertNotEqual(None, material_mjcf)
         self.assertEqual("material_albedo_map", material_mjcf.name)
         self.assertEqual("albedo_map", material_mjcf.texture.name)
@@ -62,7 +62,7 @@ class MaterialTest(helpers.TestCase):
         geom2 = body.add(
             "geom",
             name="geometry_test2")
-        material_mjcf2 = add_material(geom2, material)
+        material_mjcf2 = add_material(geom2.root, material)
         self.assertEqual(material_mjcf2, material_mjcf)
 
     def test_material_pbr_bad_extension(self):
@@ -83,7 +83,7 @@ class MaterialTest(helpers.TestCase):
             "geom",
             name="geometry_test")
 
-        self.assertRaises(RuntimeError, add_material, geom, material)
+        self.assertRaises(RuntimeError, add_material, geom.root, material)
 
     def test_material_color(self):
         material = sdf.Material()
@@ -98,7 +98,7 @@ class MaterialTest(helpers.TestCase):
             "geom",
             name="geometry_test")
 
-        material_mjcf = add_material(geom, material)
+        material_mjcf = add_material(geom.root, material)
         self.assertNotEqual(material_mjcf, None)
 
         self.assertAlmostEqual(0.8, material_mjcf.specular)

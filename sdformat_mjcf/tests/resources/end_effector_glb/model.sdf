@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="end_effector">
+    <pose>0 0 0.5 0 0 0</pose>
+    <link name="link">
+      <collision name='collision0'>
+        <pose>2.0000000000000002e-05 0 -0.01925 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.041500000000000002</radius>
+            <length>0.0465</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='collision1'>
+        <pose>0 -5.0000000000000002e-05 -0.129 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.01525</radius>
+            <length>0.17299999999999999</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='collision2'>
+        <pose>0 0 -0.2505 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.0040499999999999998</radius>
+            <length>0.056000000000000001</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>meshes/end_effector.glb</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>
