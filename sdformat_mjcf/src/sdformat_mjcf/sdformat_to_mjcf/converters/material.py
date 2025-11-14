@@ -24,11 +24,12 @@ import os
 MATERIAL_NUMBER = 0
 
 
-def add_material(geom, material):
+def add_material(root, material):
     """
     Converts an SDFormat material to an MJCF material.
 
-    :param mjcf.Element geom: The MJCF geom to add the material
+    :param mjcf.RootElement root: The MJCF root in which the material will be
+    created.
     :param sdf.Material material: The SDF material to convert
     :return: The newly created MJCF material.
     :rtype: mjcf.Element
@@ -38,7 +39,7 @@ def add_material(geom, material):
     em_color = material.emissive()
     specular = (sp_color.r() + sp_color.g() + sp_color.b()) / 3.0
     emissive = (em_color.r() + em_color.g() + em_color.b()) / 3.0
-    asset = geom.root.asset
+    asset = root.asset
     r_mat = None
     if pbr is not None:
         workflow = pbr.workflow(sdf.PbrWorkflowType.METAL)
@@ -81,5 +82,4 @@ def add_material(geom, material):
                                 clamp(diff.g() * 0.8 + amb.g() * 0.4, 0, 1),
                                 clamp(diff.b() * 0.8 + amb.b() * 0.4, 0, 1),
                                 clamp(diff.a() * 0.8 + amb.a() * 0.4, 0, 1)])
-    geom.material = r_mat
     return r_mat
