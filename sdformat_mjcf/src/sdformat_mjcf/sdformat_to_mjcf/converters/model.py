@@ -86,8 +86,6 @@ def add_model(mjcf_root, model):
             link_pose = graph_resolver.resolve_pose(cn.link.semantic_pose())
         new_link_pose = model_pose * link_pose
 
-        # Add model name as prefix for body names for ease of identification
-        # when converting a world.
         convert_node(mjcf_root.worldbody, cn, new_link_pose)
 
     return mjcf_root
