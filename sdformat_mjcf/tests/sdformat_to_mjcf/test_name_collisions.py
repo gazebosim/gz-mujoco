@@ -79,9 +79,11 @@ class NameCollisionTest(helpers.TestCase):
         mjcf_root = add_root(root)
         bodies = mjcf_root.find_all("body")
         self.assertEqual(3, len(bodies))
-        expected_names = ["M1::base_link", "M2::base_link", "M3::base_link"]
-        self.assertEqual(set(expected_names),
-                         set([body.name for body in bodies]))
+        name_possibilities = ["base_link", "base_link_0", "base_link_1"]
+        for body in bodies:
+            self.assertIn(body.name, name_possibilities)
+            # Removed matched name to ensure names are unique.
+            name_possibilities.remove(body.name)
 
     def test_freejoints(self):
         sdf_string = """

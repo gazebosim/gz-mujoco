@@ -71,7 +71,7 @@ class CLITest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
             os.mkdir("mjcf")
-            output_file = path.join(os.getcwd(), "mjcf", "double_pendulum.xml")
+            output_file = path.join("mjcf", "double_pendulum.xml")
             return_code = cli.main([str(model_file), output_file])
             self.assertEqual(0, return_code)
             self.assertTrue(os.path.exists(output_file))
@@ -83,7 +83,7 @@ class CLITest(unittest.TestCase):
             os.chdir(temp_dir)
             os.mkdir("mjcf")
             self.assertNotEqual(os.getcwd(), str(model_dir))
-            output_file = path.join(os.getcwd(), "mjcf", "box_obj.xml")
+            output_file = path.join("mjcf", "box_obj.xml")
             return_code = cli.main([str(model_file), output_file])
             self.assertEqual(0, return_code)
             self.assertTrue(os.path.exists(output_file))

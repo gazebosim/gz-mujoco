@@ -88,6 +88,7 @@ stated, SDFormat elements that affect the behavior of the simulator (i.e not the
 
 ## Currently unimplemented features
 
+  - Nested models
   - Links with multiple parents and kinematic loops
   - Revolute2 and Universal joints
   - `<scene>` element in SDFormat

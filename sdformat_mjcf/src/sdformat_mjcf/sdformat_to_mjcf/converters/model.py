@@ -24,7 +24,7 @@ from sdformat_mjcf.utils.sdf_utils import graph_resolver
 import sdformat as sdf
 
 
-def add_model(mjcf_root, model, model_is_root=True):
+def add_model(mjcf_root, model):
     """
     Converts a model from SDFormat to MJCF and add it to the given
     MJCF root.
@@ -36,22 +36,12 @@ def add_model(mjcf_root, model, model_is_root=True):
     :rtype: mjcf.Element
     """
 
-    # The resulting kinematic hierarchy includes all links and joints from
-    # all child models.
     kin_hierarchy = KinematicHierarchy(model)
     model_pose = graph_resolver.resolve_pose(model.semantic_pose())
 
-    def convert_node(body, node, link_pose, link_name_prefix=None):
-        # A node may be assigned a scoped name if it belongs to a child model
-        # for disambiguation. In this case, use the scoped name for the link
-        # body.
-        link_name_override = node.link.name()
-        if node.scoped_name:
-            link_name_override = node.scoped_name
-        if link_name_prefix:
-            link_name_override = link_name_prefix + link_name_override
+    def convert_node(body, node, link_pose=None):
         child_body = add_link(body, node.link, node.parent_node.link.name(),
-                              link_pose, link_name_override)
+                              link_pose)
 
         add_joint(child_body, node.joint)
         # Geoms added to bodies attached to the worldbody without a
@@ -72,8 +62,7 @@ def add_model(mjcf_root, model, model_is_root=True):
             should_add_exclusions = is_fixed_joint and is_body_world
 
         for cn in node.child_nodes:
-            grand_child_body = convert_node(child_body, cn, cn.resolved_pose,
-                                            link_name_prefix)
+            grand_child_body = convert_node(child_body, cn)
             if should_add_exclusions:
                 body.root.contact.add(
                     "exclude",
@@ -85,15 +74,8 @@ def add_model(mjcf_root, model, model_is_root=True):
 
     for cn in kin_hierarchy.world_node.child_nodes:
         # Adjust the poses of each of the nodes to account for the model
-        if cn.resolved_pose:
-            link_pose = cn.resolved_pose
-        else:
-            link_pose = graph_resolver.resolve_pose(cn.link.semantic_pose())
+        link_pose = graph_resolver.resolve_pose(cn.link.semantic_pose())
         new_link_pose = model_pose * link_pose
-
-        # Add model name as prefix for body names for ease of identification
-        # when converting a world.
-        link_name_prefix = None if model_is_root else model.name() + "::"
-        convert_node(mjcf_root.worldbody, cn, new_link_pose, link_name_prefix)
+        convert_node(mjcf_root.worldbody, cn, new_link_pose)
 
     return mjcf_root

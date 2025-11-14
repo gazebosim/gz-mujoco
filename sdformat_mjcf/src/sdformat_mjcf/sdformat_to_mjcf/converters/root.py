@@ -60,7 +60,7 @@ def add_root(root):
                                 material="grid",
                                 condim=3)
 
-        return add_model(mjcf_root, root.model(), model_is_root=True)
+        return add_model(mjcf_root, root.model())
     elif root.world_count() > 0:
         # Does not support multiple worlds
         return add_world(mjcf_root, root.world_by_index(0))
