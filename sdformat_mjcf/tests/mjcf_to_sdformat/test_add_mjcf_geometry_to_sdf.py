@@ -15,8 +15,8 @@
 import unittest
 from numpy.testing import assert_allclose
 
-import sdformat13 as sdf
-from gz.math7 import Vector3d
+import sdformat as sdf
+from gz.math import Vector3d
 from dm_control import mjcf
 
 from sdformat_mjcf.mjcf_to_sdformat.converters import geometry as geometry_conv

@@ -14,7 +14,7 @@
 
 
 import unittest
-import sdformat13 as sdf
+import sdformat as sdf
 from tests import helpers
 
 from dm_control import mjcf

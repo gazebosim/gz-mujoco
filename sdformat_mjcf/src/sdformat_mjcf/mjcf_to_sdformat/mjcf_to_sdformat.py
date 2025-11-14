@@ -17,7 +17,7 @@ import os
 from dm_control import mjcf
 from dm_control import mujoco
 from dm_control.mujoco.wrapper import util
-import sdformat13 as sdf
+import sdformat as sdf
 
 from sdformat_mjcf.mjcf_to_sdformat.converters.world import (
     mjcf_worldbody_to_sdf,

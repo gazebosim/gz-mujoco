@@ -14,10 +14,10 @@
 
 """Module to convert SDFormat MAterials to MJCF"""
 
-from gz.math7 import clamp
+from gz.math import clamp
 
-from sdformat13 import Pbr, PbrWorkflow, Material  # noqa: F401
-import sdformat13 as sdf
+from sdformat import Pbr, PbrWorkflow, Material  # noqa: F401
+import sdformat as sdf
 
 import os
 

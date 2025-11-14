@@ -17,11 +17,11 @@ python3 -m venv path/to/venv --system-site-packages
 pip install -U pip
 ```
 
-Install `python3-gz-math7` and `python3-sdformat13` from the
-[nightly](https://gazebosim.org/docs/all/release#type-of-releases) repo. On macOS, add the [osrf/simulation](https://github.com/osrf/homebrew-simulation) tap and install `sdformat13`:
+Install `python3-gz-math9` and `python3-sdformat16` from the
+[nightly](https://gazebosim.org/docs/all/release#type-of-releases) repo. On macOS, add the [osrf/simulation](https://github.com/osrf/homebrew-simulation) tap and install `sdformat16`:
 ```
 brew tap osrf/simulation
-brew install sdformat13
+brew install sdformat16
 ```
 
 Install the `sdformat-mjcf` package
