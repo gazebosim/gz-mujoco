@@ -36,12 +36,18 @@ def add_model(mjcf_root, model):
     :rtype: mjcf.Element
     """
 
+    # The resulting kinematic hierarchy includes all links and joints from
+    # all child models.
     kin_hierarchy = KinematicHierarchy(model)
     model_pose = graph_resolver.resolve_pose(model.semantic_pose())
 
-    def convert_node(body, node, link_pose=None):
+    def convert_node(body, node, link_pose):
+        # A node may be assigned a scoped name if it belongs to a child model
+        # for disambiguation. In this case, use the scoped name for the link
+        # body.
+        link_name_override = node.scoped_name if node.scoped_name else None
         child_body = add_link(body, node.link, node.parent_node.link.name(),
-                              link_pose)
+                              link_pose, link_name_override)
 
         add_joint(child_body, node.joint)
         # Geoms added to bodies attached to the worldbody without a
@@ -62,7 +68,7 @@ def add_model(mjcf_root, model):
             should_add_exclusions = is_fixed_joint and is_body_world
 
         for cn in node.child_nodes:
-            grand_child_body = convert_node(child_body, cn)
+            grand_child_body = convert_node(child_body, cn, cn.resolved_pose)
             if should_add_exclusions:
                 body.root.contact.add(
                     "exclude",
@@ -74,8 +80,14 @@ def add_model(mjcf_root, model):
 
     for cn in kin_hierarchy.world_node.child_nodes:
         # Adjust the poses of each of the nodes to account for the model
-        link_pose = graph_resolver.resolve_pose(cn.link.semantic_pose())
+        if cn.resolved_pose:
+            link_pose = cn.resolved_pose
+        else:
+            link_pose = graph_resolver.resolve_pose(cn.link.semantic_pose())
         new_link_pose = model_pose * link_pose
+
+        # Add model name as prefix for body names for ease of identification
+        # when converting a world.
         convert_node(mjcf_root.worldbody, cn, new_link_pose)
 
     return mjcf_root

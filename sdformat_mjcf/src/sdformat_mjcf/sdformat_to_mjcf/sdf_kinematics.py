@@ -48,9 +48,16 @@ class LinkNode:
         self.joint = joint
         self.child_nodes = []
 
+        # Pose computed for top-level child model links
+        self.resolved_pose = None
+
+        # Scoped name assigned for child model links
+        self.scoped_name = None
+
     def __repr__(self):
         child_repr = " ".join(str(node) for node in self.child_nodes)
-        return f"{self.link.name()}->({child_repr})"
+        link_name = self.scoped_name if self.scoped_name else self.link.name()
+        return f"{link_name}->({child_repr})"
 
     def add_child(self, node, joint):
         """
@@ -90,15 +97,53 @@ class KinematicHierarchy:
         self.world_link.set_name("world")
         self.world_node = LinkNode(self.world_link)
 
-        link_to_node_dict = {self.world_link: self.world_node}
+        # Map of scoped linked name to link. If this is a child model kin
+        # hierarchy, it will be merged into the parent kin hierarchy map.
+        self.scoped_named_link_map = {}
+
+        self.link_to_node_dict = {self.world_link: self.world_node}
+
+        # Recursively create child model kin hierarchies and merge them up.
+        # When merging, all children of the child model kin hierarchy world
+        # node are initially listed under the current world node. If there is a
+        # joint with a child link in a child model, it will be re-parented when
+        # joints are processed below.
+        for mi in range(model.model_count()):
+            child_model = model.model_by_index(mi)
+            child_kh = KinematicHierarchy(child_model)
+            for cn in child_kh.world_node.child_nodes:
+                if cn.resolved_pose:
+                    cn_link_pose = cn.resolved_pose
+                else:
+                    cn_link_pose = su.graph_resolver.resolve_pose(
+                        cn.link.semantic_pose())
+                child_pose = su.graph_resolver.resolve_pose(
+                    child_model.semantic_pose())
+                cn.resolved_pose = child_pose * cn_link_pose
+                # Removing the child node from child_kh.world_node is
+                # unnecessary and dangerous since it affects the iterable.
+                self.world_node.add_child(cn, cn.joint)
+
+            # Merge `scoped_named_link_map` and update scoped name for
+            # child model nodes. `scoped_named_link_map` is required to process
+            # joints whose child link is in a child model.
+            for scoped_name, link in child_kh.scoped_named_link_map.items():
+                link_scoped_named = child_model.name() + '::' + scoped_name
+                self.scoped_named_link_map[link_scoped_named] = link
+                child_kh_link_node = child_kh.link_to_node_dict[link]
+                child_kh_link_node.scoped_name = link_scoped_named
+
+            # Merge child model link to node map
+            self.link_to_node_dict.update(child_kh.link_to_node_dict)
 
         # Start with every link being a child of world link. Later on, we will
         # process joints to build the hierarchy.
         for li in range(model.link_count()):
             node = LinkNode(model.link_by_index(li), self.world_node)
-            link_to_node_dict[node.link] = node
+            self.link_to_node_dict[node.link] = node
             joint = StaticFixedJoint() if model.static() else FreeJoint()
             self.world_node.add_child(node, joint)
+            self.scoped_named_link_map[node.link.name()] = node.link
 
         for ji in range(model.joint_count()):
             joint = model.joint_by_index(ji)
@@ -109,10 +154,15 @@ class KinematicHierarchy:
                 parent = self.world_link
 
             child_link_name = su.graph_resolver.resolve_child_link_name(joint)
-            # TODO (azeey) We assume that the child link is in the current
-            # model, i.e., not nested. Remove this assumption when we support
-            # nesting.
-            child_node = link_to_node_dict[model.link_by_name(child_link_name)]
+            child_link = self.scoped_named_link_map[child_link_name]
+            child_node = self.link_to_node_dict[child_link]
+
+            if child_node.resolved_pose and parent_link_name != "world":
+                parent_pose = su.graph_resolver.resolve_pose(
+                    parent.semantic_pose())
+                child_node.resolved_pose = (
+                    parent_pose.inverse() * child_node.resolved_pose
+                )
 
             self.world_node.remove_child(child_node)
-            link_to_node_dict[parent].add_child(child_node, joint)
+            self.link_to_node_dict[parent].add_child(child_node, joint)
