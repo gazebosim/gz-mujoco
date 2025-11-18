@@ -97,7 +97,7 @@ class KinematicHierarchy:
         self.world_link.set_name("world")
         self.world_node = LinkNode(self.world_link)
 
-        # Map of scoped linked name to link. If this is a child model kin
+        # Map of scoped link name to link. If this is a child model kin
         # hierarchy, it will be merged into the parent kin hierarchy map.
         self.scoped_named_link_map = {}
 
