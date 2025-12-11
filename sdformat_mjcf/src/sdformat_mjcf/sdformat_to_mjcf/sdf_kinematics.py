@@ -117,9 +117,9 @@ class KinematicHierarchy:
                 else:
                     cn_link_pose = su.graph_resolver.resolve_pose(
                         cn.link.semantic_pose())
-                child_pose = su.graph_resolver.resolve_pose(
+                child_model_pose = su.graph_resolver.resolve_pose(
                     child_model.semantic_pose())
-                cn.resolved_pose = child_pose * cn_link_pose
+                cn.resolved_pose = child_model_pose * cn_link_pose
                 # Removing the child node from child_kh.world_node is
                 # unnecessary and dangerous since it affects the iterable.
                 self.world_node.add_child(cn, cn.joint)
@@ -156,7 +156,7 @@ class KinematicHierarchy:
             child_link_name = su.graph_resolver.resolve_child_link_name(joint)
             child_link = self.scoped_named_link_map[child_link_name]
             child_node = self.link_to_node_dict[child_link]
-            
+
             if parent_link_name != "world":
                 parent_node = self.link_to_node_dict[parent]
                 if parent_node.resolved_pose:
