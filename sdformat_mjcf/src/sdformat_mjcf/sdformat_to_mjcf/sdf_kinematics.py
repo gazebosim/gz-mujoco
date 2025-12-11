@@ -156,12 +156,21 @@ class KinematicHierarchy:
             child_link_name = su.graph_resolver.resolve_child_link_name(joint)
             child_link = self.scoped_named_link_map[child_link_name]
             child_node = self.link_to_node_dict[child_link]
-
-            if child_node.resolved_pose and parent_link_name != "world":
-                parent_pose = su.graph_resolver.resolve_pose(
-                    parent.semantic_pose())
+            
+            if parent_link_name != "world":
+                parent_node = self.link_to_node_dict[parent]
+                if parent_node.resolved_pose:
+                    parent_pose = parent_node.resolved_pose
+                else:
+                    parent_pose = su.graph_resolver.resolve_pose(
+                        parent.semantic_pose())
+                if child_node.resolved_pose:
+                    child_pose = child_node.resolved_pose
+                else:
+                    child_pose = su.graph_resolver.resolve_pose(
+                        child_link.semantic_pose())
                 child_node.resolved_pose = (
-                    parent_pose.inverse() * child_node.resolved_pose
+                    parent_pose.inverse() * child_pose
                 )
 
             self.world_node.remove_child(child_node)
