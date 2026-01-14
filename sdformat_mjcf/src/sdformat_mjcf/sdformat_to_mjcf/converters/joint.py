@@ -109,7 +109,7 @@ def add_joint(body, joint):
     if joint.type() == sdf.JointType.FIXED:
         return None
 
-    unique_name = su.find_unique_name(body, "joint", joint.name())
+    unique_name = su.find_unique_name(body, "joint", su.sanitize_identifier_name(joint.name()))
     if joint.type() in [
             sdf.JointType.CONTINUOUS,
             sdf.JointType.REVOLUTE,

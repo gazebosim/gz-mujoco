@@ -58,7 +58,7 @@ def add_link(body, link, parent_name="world", link_pose=None, link_name=None):
 
     link_name = link_name if link_name else link.name()
     body = body.add("body",
-                    name=su.find_unique_name(body, "body", link_name),
+                    name=su.find_unique_name(body, "body", su.sanitize_identifier_name(link_name)),
                     pos=su.vec3d_to_list(pose.pos()),
                     euler=su.quat_to_euler_list(pose.rot()))
 

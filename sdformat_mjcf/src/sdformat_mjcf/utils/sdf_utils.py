@@ -14,6 +14,7 @@
 
 """Utility functions that aid in conversion between SDFormat and MJCF"""
 
+from dm_control.mjcf import constants
 import logging
 import math
 from gz.math import Color, Pose3d, Quaterniond, Vector3d, Matrix3d
@@ -247,6 +248,16 @@ def get_value_or_default(val, default_val):
         return default_val
     return val
 
+def sanitize_identifier_name(name):
+    """
+    Identifiers cannot have a slash ('/') in MJCF therefore, they will be escaped
+    :param str name: Name of identifier to be sanitized
+    :return: Sanitized name
+    :rtype: str
+    """
+    # https://github.com/google-deepmind/dm_control/blob/b913c52a7ff6847d278fcc90eff60e98b7235fb3/dm_control/mjcf/parser.py#L265-L269
+    new_value = name.replace(constants.PREFIX_SEPARATOR_ESCAPE, constants.PREFIX_SEPARATOR_ESCAPE * 2)
+    return new_value.replace(constants.PREFIX_SEPARATOR, constants.PREFIX_SEPARATOR_ESCAPE)
 
 class GraphResolverImplBase:
     """Interface for graph resolver implementors"""

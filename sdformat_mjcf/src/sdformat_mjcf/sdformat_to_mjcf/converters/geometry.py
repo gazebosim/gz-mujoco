@@ -15,11 +15,51 @@
 """Module to convert SDFormat Collision/Visual geometries to MJCF geoms"""
 
 import os
+from urllib.parse import ParseResult, urlparse
+from pathlib import Path
 
 import sdformat_mjcf.utils.sdf_utils as su
 
 COLLISION_GEOM_GROUP = 3
 VISUAL_GEOM_GROUP = 0
+
+def _get_asset_paths(env_vars: list[str]):
+    output = []
+    for env_var in env_vars:
+        val = os.getenv(env_var)
+        if val is not None:
+            output.extend(val.split(os.pathsep))
+    return output
+
+# TODO(azeey): libsdformat has a utility function for resolving URIs, but
+# it doesn't have a python binding yet. Once that becomes available, this
+# function should be rewritten to leverage that.
+def _resolve_uri(mesh_shape, uri: ParseResult):
+    uri_file_path = Path(uri.netloc + uri.path)
+    print("Handling:", uri, uri_file_path)
+    if (uri_file_path.suffix == ""):
+        raise RuntimeError("Unable to find the mesh extension {}"
+                           .format(uri))
+    if uri.scheme in ['http', 'https']:
+        raise RuntimeError("Fuel meshes are not yet supported")
+    elif uri.scheme in ['model', 'package']:
+        # Substitute paths from GZ_SIM_RESOURCE_PATH and SDF_PATH and search
+        env_vars = ["SDF_PATH", "GZ_SIM_RESOURCE_PATH"]
+        asset_paths = _get_asset_paths(env_vars)
+        for dir in asset_paths:
+            mesh_file_path = Path(dir) / uri_file_path
+            if mesh_file_path.exists():
+                return mesh_file_path
+        # If we got here, then it means the file was not found
+        raise RuntimeError(
+            f"Could not find {uri_file_path} in paths defined "
+            f"in the environment variables {env_vars}"
+        )
+    if uri_file_path.is_absolute():
+        return uri_file_path
+    else:
+        parent_dir = Path(mesh_shape.file_path()).parent
+        return parent_dir / uri_file_path
 
 
 def add_geometry(body, name, pose, sdf_geom):
@@ -40,7 +80,7 @@ def add_geometry(body, name, pose, sdf_geom):
         return
     geom = body.add(
         "geom",
-        name=su.find_unique_name(body, "geom", name),
+        name=su.find_unique_name(body, "geom", su.sanitize_identifier_name(name)),
         pos=su.vec3d_to_list(pose.pos()),
         euler=su.quat_to_euler_list(pose.rot()),
     )
@@ -74,22 +114,14 @@ def add_geometry(body, name, pose, sdf_geom):
         geom.size = [sphere_shape.radius()]
     elif sdf_geom.mesh_shape():
         mesh_shape = sdf_geom.mesh_shape()
-        uri = mesh_shape.uri()
-        extension_tokens = os.path.basename(mesh_shape.uri()).split(".")
-        if (len(extension_tokens) == 1):
-            raise RuntimeError("Unable to find the mesh extension {}"
-                               .format(uri))
-        file_without_extension = os.path.splitext(
-            os.path.basename(mesh_shape.uri()))[0]
-        if 'http://' in uri or 'https://' in uri:
-            raise RuntimeError("Fuel meshes are not yet supported")
+        uri = urlparse(mesh_shape.uri())
+        mesh_file_path = _resolve_uri(mesh_shape, uri)
+        file_without_extension = mesh_file_path.stem
         geom.type = "mesh"
         asset_loaded = geom.root.asset.find('mesh', file_without_extension)
-        dirname = os.path.dirname(mesh_shape.file_path())
-        mesh_file_path = os.path.join(dirname, uri)
         if asset_loaded is None:
             geom.mesh = geom.root.asset.add('mesh',
-                                            file=mesh_file_path)
+                                            file=str(mesh_file_path))
         else:
             geom.mesh = asset_loaded
         geom.mesh.scale = su.vec3d_to_list(mesh_shape.scale())
