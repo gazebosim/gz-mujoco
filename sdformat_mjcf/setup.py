@@ -44,5 +44,7 @@ setup(
     },
     install_requires=[
         'dm-control',
+        'trimesh',
+        'pycollada'
     ],
 )

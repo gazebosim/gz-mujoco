@@ -14,6 +14,8 @@
 
 """Module to convert SDFormat Collision/Visual geometries to MJCF geoms"""
 
+import trimesh
+import tempfile
 import os
 from urllib.parse import ParseResult, urlparse
 from pathlib import Path
@@ -36,7 +38,6 @@ def _get_asset_paths(env_vars: list[str]):
 # function should be rewritten to leverage that.
 def _resolve_uri(mesh_shape, uri: ParseResult):
     uri_file_path = Path(uri.netloc + uri.path)
-    print("Handling:", uri, uri_file_path)
     if (uri_file_path.suffix == ""):
         raise RuntimeError("Unable to find the mesh extension {}"
                            .format(uri))
@@ -116,12 +117,20 @@ def add_geometry(body, name, pose, sdf_geom):
         mesh_shape = sdf_geom.mesh_shape()
         uri = urlparse(mesh_shape.uri())
         mesh_file_path = _resolve_uri(mesh_shape, uri)
-        file_without_extension = mesh_file_path.stem
+        mesh_name = f"{geom.name}_{mesh_file_path.stem}"
         geom.type = "mesh"
-        asset_loaded = geom.root.asset.find('mesh', file_without_extension)
+        asset_loaded = geom.root.asset.find('mesh', mesh_name)
         if asset_loaded is None:
-            geom.mesh = geom.root.asset.add('mesh',
-                                            file=str(mesh_file_path))
+            if mesh_file_path.suffix in [".stl", ".obj"]:
+                geom.mesh = geom.root.asset.add('mesh', name=mesh_name,
+                                                file=str(mesh_file_path))
+            else:
+                # TODO(azeey): Handle error from trimesh, e.g if the mesh format is not supported
+                mesh = trimesh.load(mesh_file_path)
+                with tempfile.NamedTemporaryFile(prefix=mesh_file_path.stem, suffix='.stl') as tmp:
+                    mesh.export(tmp.name)
+                    geom.mesh = geom.root.asset.add('mesh', name=mesh_name,
+                                                    file=tmp.name)
         else:
             geom.mesh = asset_loaded
         geom.mesh.scale = su.vec3d_to_list(mesh_shape.scale())
