@@ -45,9 +45,8 @@ def add_model(mjcf_root, model):
         # A node may be assigned a scoped name if it belongs to a child model
         # for disambiguation. In this case, use the scoped name for the link
         # body.
-        link_name_override = node.scoped_name if node.scoped_name else None
-        child_body = add_link(body, node.link, node.parent_node.link.name(),
-                              link_pose, link_name_override)
+        child_body = add_link(body, node.link, node.parent_node.scoped_name,
+                              link_pose, node.scoped_name)
 
         add_joint(child_body, node.joint)
         # Geoms added to bodies attached to the worldbody without a
@@ -80,11 +79,7 @@ def add_model(mjcf_root, model):
 
     for cn in kin_hierarchy.world_node.child_nodes:
         # Adjust the poses of each of the nodes to account for the model
-        if cn.resolved_pose:
-            link_pose = cn.resolved_pose
-        else:
-            link_pose = graph_resolver.resolve_pose(cn.link.semantic_pose())
-        new_link_pose = model_pose * link_pose
+        new_link_pose = model_pose * cn.resolved_pose
 
         convert_node(mjcf_root.worldbody, cn, new_link_pose)
 
