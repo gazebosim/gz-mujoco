@@ -128,7 +128,9 @@ class KinematicHierarchy:
         for li in range(model.link_count()):
             node = LinkNode(model.link_by_index(li), self.world_node)
             node.scoped_name = node.link.name()
-            node.resolved_pose = su.graph_resolver.resolve_pose(node.link.semantic_pose())
+            node.resolved_pose = su.graph_resolver.resolve_pose(
+                node.link.semantic_pose()
+            )
             self.link_to_node_dict[node.link] = node
             joint = StaticFixedJoint() if model.static() else FreeJoint()
             self.world_node.add_child(node, joint)
@@ -142,12 +144,15 @@ class KinematicHierarchy:
                 parent = self.world_link
 
             child_link_name = su.graph_resolver.resolve_child_link_name(joint)
-            child_node = self.link_to_node_dict[model.link_by_name(child_link_name)]
+            child_node = self.link_to_node_dict[
+                model.link_by_name(child_link_name)
+            ]
 
             if parent_link_name != "world":
                 parent_node = self.link_to_node_dict[parent]
+                parent_pose_inv = parent_node.resolved_pose.inverse()
                 child_node.resolved_pose = (
-                    parent_node.resolved_pose.inverse() * child_node.resolved_pose
+                    parent_pose_inv * child_node.resolved_pose
                 )
 
             self.world_node.remove_child(child_node)
