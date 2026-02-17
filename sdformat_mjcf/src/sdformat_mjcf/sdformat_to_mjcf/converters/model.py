@@ -42,9 +42,6 @@ def add_model(mjcf_root, model):
     model_pose = graph_resolver.resolve_pose(model.semantic_pose())
 
     def convert_node(body, node, link_pose):
-        # A node may be assigned a scoped name if it belongs to a child model
-        # for disambiguation. In this case, use the scoped name for the link
-        # body.
         child_body = add_link(body, node.link, node.parent_node.scoped_name,
                               link_pose, node.scoped_name)
 
