@@ -22,7 +22,7 @@ from sdformat_mjcf.sdformat_to_mjcf.converters.sensor import add_sensor
 import sdformat_mjcf.utils.sdf_utils as su
 
 
-def add_link(body, link, parent_name="world", link_pose=None):
+def add_link(body, link, parent_name="world", link_pose=None, link_name=None):
     """
     Converts a link from SDFormat to MJCF and add it to the given
     body/worldbody.
@@ -32,7 +32,8 @@ def add_link(body, link, parent_name="world", link_pose=None):
     :param str parent_name: Name of parent link.
     :param gz.math.Pose3d link_pose: Pose of link. This is optional and
     if set to None, the pose will be resolved from the link.
-    :return: The newly created MJCF body.
+    :param str link_name: The name to be assigned for the link body. This is
+    optional and if set to None, `link.name()` will be used.
     :rtype: mjcf.Element
     """
     # Currently the following SDFormat elements inside <link> are ignored
@@ -55,8 +56,9 @@ def add_link(body, link, parent_name="world", link_pose=None):
         else:
             pose = su.graph_resolver.resolve_pose(sem_pose, parent_name)
 
+    link_name = link_name if link_name else link.name()
     body = body.add("body",
-                    name=su.find_unique_name(body, "body", link.name()),
+                    name=su.find_unique_name(body, "body", link_name),
                     pos=su.vec3d_to_list(pose.pos()),
                     euler=su.quat_to_euler_list(pose.rot()))
 

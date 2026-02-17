@@ -11,7 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+#
+from gz.math import Pose3d
 import sdformat as sdf
 import sdformat_mjcf.utils.sdf_utils as su
 
@@ -48,9 +49,18 @@ class LinkNode:
         self.joint = joint
         self.child_nodes = []
 
+        # Pose computed for all links. The value would be relative to the
+        # parent of the link. If the link has no joints, it is considered to be
+        # connected to the world link with a free joint.
+        self.resolved_pose = Pose3d()
+
+        # Scoped name assigned for child model links
+        self.scoped_name = None
+
     def __repr__(self):
         child_repr = " ".join(str(node) for node in self.child_nodes)
-        return f"{self.link.name()}->({child_repr})"
+        link_name = self.scoped_name if self.scoped_name else self.link.name()
+        return f"{link_name}->({child_repr})"
 
     def add_child(self, node, joint):
         """
@@ -89,14 +99,39 @@ class KinematicHierarchy:
         self.world_link = sdf.Link()
         self.world_link.set_name("world")
         self.world_node = LinkNode(self.world_link)
+        self.world_node.scoped_name = "world"
 
-        link_to_node_dict = {self.world_link: self.world_node}
+        self.link_to_node_dict = {self.world_link: self.world_node}
+
+        # Recursively create child model kin hierarchies and merge them up.
+        # When merging, all children of the child model kin hierarchy world
+        # node are initially listed under the current world node. If there is a
+        # joint with a child link in a child model, it will be re-parented when
+        # joints are processed below.
+        for mi in range(model.model_count()):
+            child_model = model.model_by_index(mi)
+            child_kh = KinematicHierarchy(child_model)
+            child_model_pose = su.graph_resolver.resolve_pose(
+                child_model.semantic_pose())
+            for cn in child_kh.world_node.child_nodes:
+                cn.resolved_pose *= child_model_pose
+                # Removing the child node from child_kh.world_node is
+                # unnecessary and dangerous since it affects the iterable.
+                self.world_node.add_child(cn, cn.joint)
+                cn.scoped_name = child_model.name() + '::' + cn.scoped_name
+
+            # Merge child model link to node map
+            self.link_to_node_dict.update(child_kh.link_to_node_dict)
 
         # Start with every link being a child of world link. Later on, we will
         # process joints to build the hierarchy.
         for li in range(model.link_count()):
             node = LinkNode(model.link_by_index(li), self.world_node)
-            link_to_node_dict[node.link] = node
+            node.scoped_name = node.link.name()
+            node.resolved_pose = su.graph_resolver.resolve_pose(
+                node.link.semantic_pose()
+            )
+            self.link_to_node_dict[node.link] = node
             joint = StaticFixedJoint() if model.static() else FreeJoint()
             self.world_node.add_child(node, joint)
 
@@ -109,10 +144,16 @@ class KinematicHierarchy:
                 parent = self.world_link
 
             child_link_name = su.graph_resolver.resolve_child_link_name(joint)
-            # TODO (azeey) We assume that the child link is in the current
-            # model, i.e., not nested. Remove this assumption when we support
-            # nesting.
-            child_node = link_to_node_dict[model.link_by_name(child_link_name)]
+            child_node = self.link_to_node_dict[
+                model.link_by_name(child_link_name)
+            ]
+
+            if parent_link_name != "world":
+                parent_node = self.link_to_node_dict[parent]
+                parent_pose_inv = parent_node.resolved_pose.inverse()
+                child_node.resolved_pose = (
+                    parent_pose_inv * child_node.resolved_pose
+                )
 
             self.world_node.remove_child(child_node)
-            link_to_node_dict[parent].add_child(child_node, joint)
+            self.link_to_node_dict[parent].add_child(child_node, joint)
