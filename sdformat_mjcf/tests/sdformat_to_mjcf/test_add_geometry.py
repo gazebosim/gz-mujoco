@@ -154,6 +154,35 @@ class GeometryTest(helpers.TestCase):
         self.assertEqual(expected_types, actual_types)
         self.assertEqual(4, len(mujoco.asset.find_all('mesh')))
 
+    def test_glb_mesh_with_texture(self):
+        mesh = sdf.Mesh()
+        mesh.set_uri("box_with_texture.glb")
+        # Since box_with_texture.glb is in resources directly, we point file_path there
+        mesh.set_file_path(
+            os.path.join(get_resources_dir(), "box_with_texture.glb"))
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        # is_visual=True is required to trigger material/texture processing
+        mj_geoms = geometry_conv.convert_and_add_mesh(body, "textured_mesh",
+                                                      self.test_pose, mesh, is_visual=True)
+        
+        # Expect at least one mesh, one texture, and one material
+        self.assertTrue(len(mj_geoms) > 0)
+        self.assertTrue(len(mujoco.asset.find_all('mesh')) > 0)
+        
+        textures = mujoco.asset.find_all('texture')
+        materials = mujoco.asset.find_all('material')
+        
+        self.assertTrue(len(textures) > 0, "Should have extracted textures")
+        self.assertTrue(len(materials) > 0, "Should have created materials")
+        
+        # Check that material references texture
+        for mat in materials:
+            if mat.texture:
+                self.assertIsNotNone(mat.texture, "Material should reference a texture")
+                self.assertIn(mat.texture, textures, "Referenced texture should exist in assets")
+
     def test_plane(self):
         plane = sdf.Plane()
         x_size = 5.

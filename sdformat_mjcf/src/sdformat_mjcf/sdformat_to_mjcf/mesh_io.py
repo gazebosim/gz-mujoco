@@ -10,6 +10,7 @@ class Material:
     specular: float
     shininess: float
     rgba: list[float]  # each channel has a value from 0 to 1
+    texture: str = None
 
 
 @dataclass
@@ -23,7 +24,7 @@ class ConversionOutput:
     obj_files: dict[str, MeshInfo]
 
 
-def _extract_material_info(mesh_material) -> Material:
+def _extract_material_info(mesh_material) -> tuple[Material, object]:
     """
     Helper function to extract key material properties from a trimesh material
     and map them to the desired Material dataclass structure.
@@ -38,17 +39,24 @@ def _extract_material_info(mesh_material) -> Material:
     specular = 0.5
     shininess = 30.0
     color = default_rgba
+    image = None
 
     # Try to extract color information by checking against known material types
     if isinstance(mesh_material, trimesh.visual.material.PBRMaterial):
         # PBRMaterial uses baseColorFactor
         color = mesh_material.baseColorFactor
+        if mesh_material.baseColorTexture is not None:
+            image = mesh_material.baseColorTexture
     elif isinstance(mesh_material, trimesh.visual.material.SimpleMaterial):
         # SimpleMaterial usually has a diffuse color
         color = mesh_material.diffuse
+        if mesh_material.image is not None:
+            image = mesh_material.image
     elif hasattr(mesh_material, 'main_color'):
         # Fallback for older/custom materials
         color = mesh_material.main_color
+        if hasattr(mesh_material, 'image') and mesh_material.image is not None:
+            image = mesh_material.image
 
     # --- Color Standardization ---
     if isinstance(color, np.ndarray):
@@ -71,7 +79,7 @@ def _extract_material_info(mesh_material) -> Material:
         specular=specular,
         shininess=shininess,
         rgba=rgba
-    )
+    ), image
 
 
 def convert_mesh_to_obj_multimesh(input_filepath: str,
@@ -155,14 +163,25 @@ def convert_mesh_to_obj_multimesh(input_filepath: str,
 
             # 3. EXTRACT MATERIAL AND COMPILE RESULT
             extracted_material = None
-            if mesh.visual.material is not None:
+            extracted_image = None
+            if hasattr(mesh.visual, "material") and mesh.visual.material is not None:
                 # Use the material from the original mesh
-                extracted_material = _extract_material_info(
+                extracted_material, extracted_image = _extract_material_info(
                     mesh.visual.material)
 
             if extracted_material is None:
                 extracted_material = Material(specular=0.5, shininess=30.0,
                                               rgba=[0.5, 0.5, 0.5, 1.0])
+
+            if extracted_image is not None:
+                try:
+                    texture_filename = os.path.splitext(obj_filename)[0] + ".png"
+                    print(f"Exporting texture to {texture_filename}")
+                    extracted_image.save(texture_filename)
+                    extracted_material.texture = texture_filename
+                except Exception as e:
+                    print(f"WARNING: Failed to export texture for mesh '{G_name}'.")
+                    print(f"Detail: {e}")
 
             mesh_info = MeshInfo(mat=extracted_material)
 

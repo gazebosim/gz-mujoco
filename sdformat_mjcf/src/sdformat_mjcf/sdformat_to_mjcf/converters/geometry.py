@@ -232,10 +232,27 @@ def convert_and_add_mesh(body, name, pose, sdf_mesh, is_visual=False):
             mesh.scale = su.vec3d_to_list(sdf_mesh.scale())
             material_asset = None
             if is_visual:
-                material_asset = body.root.asset.add(
-                    "material", name=sub_mesh_material_asset_name,
-                    specular=info.mat.specular, shininess=info.mat.shininess,
-                    rgba=info.mat.rgba)
+                texture_asset = None
+                if info.mat.texture:
+                    texture_name = "texture_" + sub_mesh_name
+                    texture_loaded = body.root.asset.find('texture', texture_name)
+                    if texture_loaded:
+                        texture_asset = texture_loaded
+                    else:
+                        texture_asset = body.root.asset.add(
+                            "texture", name=texture_name, type="2d",
+                            file=info.mat.texture)
+
+                if texture_asset:
+                    material_asset = body.root.asset.add(
+                        "material", name=sub_mesh_material_asset_name,
+                        specular=info.mat.specular, shininess=info.mat.shininess,
+                        rgba=info.mat.rgba, texture=texture_asset)
+                else:
+                    material_asset = body.root.asset.add(
+                        "material", name=sub_mesh_material_asset_name,
+                        specular=info.mat.specular, shininess=info.mat.shininess,
+                        rgba=info.mat.rgba)
             geom_list.append(
                 _add_mesh_geom_with_assets(body, name, pose, mesh,
                                         mjcf_material_asset=material_asset))
