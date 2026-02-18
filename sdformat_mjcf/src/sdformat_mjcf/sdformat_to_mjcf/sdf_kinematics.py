@@ -54,7 +54,7 @@ class LinkNode:
         # connected to the world link with a free joint.
         self.resolved_pose = Pose3d()
 
-        # Scoped name assigned for child model links
+        # The scoped name of the link relative to the kinematic hierarchy root.
         self.scoped_name = None
 
     def __repr__(self):
@@ -114,7 +114,7 @@ class KinematicHierarchy:
             child_model_pose = su.graph_resolver.resolve_pose(
                 child_model.semantic_pose())
             for cn in child_kh.world_node.child_nodes:
-                cn.resolved_pose *= child_model_pose
+                cn.resolved_pose = child_model_pose * cn.resolved_pose
                 # Removing the child node from child_kh.world_node is
                 # unnecessary and dangerous since it affects the iterable.
                 self.world_node.add_child(cn, cn.joint)

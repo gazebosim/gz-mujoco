@@ -208,9 +208,9 @@ class ModelIntegrationTest(unittest.TestCase):
                     </collision>
                 </link>
                 <model name="modelB">
-                    <pose>0 1 0 0 0 0</pose>
+                    <pose>0 1 0 0 0 1.5707</pose>
                     <link name="linkA">
-                        <pose>0 1 0 0 0 0</pose>
+                        <pose>0 1 0 1.5707 0 0</pose>
                         <collision name="c1">
                             <geometry>
                                 <sphere><radius>2</radius></sphere>
@@ -244,7 +244,8 @@ class ModelIntegrationTest(unittest.TestCase):
             _resolveTo="modelB::linkA")
         modelB_linkA_expected_pos = su.vec3d_to_list(
             sdf_linkA_pose.inverse().pos())
-        assert_allclose(modelB_linkA_expected_pos, mj_modelB_linkA.pos)
+        assert_allclose(
+            modelB_linkA_expected_pos, mj_modelB_linkA.pos, atol=1e-10)
 
     def test_nested_model_multi_level(self):
         test_model_sdf = """
@@ -289,9 +290,9 @@ class ModelIntegrationTest(unittest.TestCase):
                     </collision>
                 </link>
                 <model name="modelB">
-                    <pose>0 1 0 0 0 0</pose>
+                    <pose>0 1 0 0 0 1.5707</pose>
                     <link name="linkA">
-                        <pose>0 10 0 0 0 0</pose>
+                        <pose>0 10 0 1.5707 0 0</pose>
                         <collision name="c2">
                             <geometry>
                                 <sphere><radius>2</radius></sphere>
@@ -329,14 +330,16 @@ class ModelIntegrationTest(unittest.TestCase):
         modelB_linkA_expected_pos = su.vec3d_to_list(
             (sdf_modelA.raw_pose() * sdf_modelB_linkA_pose).pos()
         )
-        assert_allclose(modelB_linkA_expected_pos, mj_modelB_linkA.pos)
+        assert_allclose(
+            modelB_linkA_expected_pos, mj_modelB_linkA.pos, atol=1e-10)
 
         # Verify that the right pos was set for (modelA::)linkA
         sdf_linkA = sdf_modelA.link_by_name("linkA")
         sdf_linkA_pose = sdf_linkA.semantic_pose().resolve(
             _resolveTo="modelB::linkA")
         modelA_linkA_expected_pos = su.vec3d_to_list(sdf_linkA_pose.pos())
-        assert_allclose(modelA_linkA_expected_pos, mj_modelA_linkA.pos)
+        assert_allclose(
+            modelA_linkA_expected_pos, mj_modelA_linkA.pos, atol=1e-10)
 
 
 if __name__ == "__main__":
