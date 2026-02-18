@@ -207,7 +207,7 @@ def convert_and_add_mesh(body, name, pose, sdf_mesh, is_visual=False):
     with tempfile.TemporaryDirectory() as tmp_dir:
         output_filepath = (Path(tmp_dir) / mesh_name).with_suffix(".obj")
         result = convert_mesh_to_obj_multimesh(
-            str(mesh_file_path), str(output_filepath)
+            str(mesh_file_path), str(output_filepath), merge_same_material=is_visual
         )
         geom_list = []
         for path_raw, info in result.obj_files.items():

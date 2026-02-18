@@ -191,34 +191,22 @@ class GeometryTest(helpers.TestCase):
 
         mujoco = mjcf.RootElement(model="test")
         body = mujoco.worldbody.add('body')
+        # is_visual=True triggers material merging
         mj_geoms = geometry_conv.convert_and_add_mesh(body, "shared_texture_mesh",
                                                       self.test_pose, mesh, is_visual=True)
         
-        self.assertTrue(len(mj_geoms) > 0)
+        # Expect merging to happen for shared materials
+        # 2 meshes -> 1 merged mesh
+        self.assertEqual(len(mj_geoms), 1)
         
         textures = mujoco.asset.find_all('texture')
         materials = mujoco.asset.find_all('material')
         
-        self.assertTrue(len(materials) >= 2, "Should have multiple materials")
-        self.assertTrue(len(textures) > 0, "Should have extracted textures")
+        self.assertEqual(len(materials), 1, "Should have one merged material")
+        self.assertEqual(len(textures), 1, "Should have one extracted texture")
         
-        # Check that multiple materials point to the same texture content
-        # Note: MJCF loads assets into memory, so we compare contents.
-        # Since we deduplicated the file generation, the contents read from the (single) file 
-        # (or identical files) should be identical.
-        texture_contents = [tex.file.contents for tex in textures]
-        
-        # Verify all textures have content
-        for content in texture_contents:
-            self.assertIsNotNone(content)
-            
-        # Verify contents are identical (all equal to the first one)
-        first_content = texture_contents[0]
-        for content in texture_contents[1:]:
-            self.assertEqual(content, first_content, "Texture contents should be identical")
-            
-        # Also verify we have the right number of texture assets (one per mesh material reference)
-        self.assertEqual(len(textures), 2)
+        # Verify texture content exists
+        self.assertIsNotNone(textures[0].file.contents)
 
     def test_plane(self):
         plane = sdf.Plane()
