@@ -3,6 +3,7 @@ import numpy as np
 import os
 import sys
 import trimesh
+import hashlib
 
 
 @dataclass
@@ -118,6 +119,8 @@ def convert_mesh_to_obj_multimesh(input_filepath: str,
 
     base_path, _ = os.path.splitext(output_filepath)
     conversion_results: dict[str, MeshInfo] = {}
+    saved_textures: dict[str, str] = {}  # hash -> filename
+    saved_texture_ids: dict[int, str] = {}  # id(image) -> filename
 
     # Iterate over the scene's NODES to capture transforms
     count = 0
@@ -175,12 +178,31 @@ def convert_mesh_to_obj_multimesh(input_filepath: str,
 
             if extracted_image is not None:
                 try:
-                    texture_filename = os.path.splitext(obj_filename)[0] + ".png"
-                    print(f"Exporting texture to {texture_filename}")
-                    extracted_image.save(texture_filename)
+                    # Optimization: Check if we've already processed this exact image object
+                    image_id = id(extracted_image)
+                    if image_id in saved_texture_ids:
+                        texture_filename = saved_texture_ids[image_id]
+                        print(f"Reusing texture object {texture_filename} for mesh '{G_name}'")
+                    else:
+                        # Fallback: Check if content is identical even if object is different
+                        image_bytes = extracted_image.tobytes()
+                        image_hash = hashlib.sha256(image_bytes).hexdigest()[:8]
+                        
+                        if image_hash in saved_textures:
+                            texture_filename = saved_textures[image_hash]
+                            print(f"Reusing texture content {texture_filename} for mesh '{G_name}'")
+                        else:
+                            texture_filename = f"{base_path}_{image_hash}.png"
+                            print(f"Exporting texture to {texture_filename}")
+                            extracted_image.save(texture_filename)
+                            saved_textures[image_hash] = texture_filename
+                        
+                        # Cache the ID for future lookups
+                        saved_texture_ids[image_id] = texture_filename
+                    
                     extracted_material.texture = texture_filename
                 except Exception as e:
-                    print(f"WARNING: Failed to export texture for mesh '{G_name}'.")
+                    print(f"WARNING: Failed to process texture for mesh '{G_name}'.")
                     print(f"Detail: {e}")
 
             mesh_info = MeshInfo(mat=extracted_material)

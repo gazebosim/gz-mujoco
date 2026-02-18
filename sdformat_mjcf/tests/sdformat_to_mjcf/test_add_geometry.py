@@ -183,6 +183,43 @@ class GeometryTest(helpers.TestCase):
                 self.assertIsNotNone(mat.texture, "Material should reference a texture")
                 self.assertIn(mat.texture, textures, "Referenced texture should exist in assets")
 
+    def test_glb_shared_texture(self):
+        mesh = sdf.Mesh()
+        mesh.set_uri("box_with_shared_texture.glb")
+        mesh.set_file_path(
+            os.path.join(get_resources_dir(), "box_with_shared_texture.glb"))
+
+        mujoco = mjcf.RootElement(model="test")
+        body = mujoco.worldbody.add('body')
+        mj_geoms = geometry_conv.convert_and_add_mesh(body, "shared_texture_mesh",
+                                                      self.test_pose, mesh, is_visual=True)
+        
+        self.assertTrue(len(mj_geoms) > 0)
+        
+        textures = mujoco.asset.find_all('texture')
+        materials = mujoco.asset.find_all('material')
+        
+        self.assertTrue(len(materials) >= 2, "Should have multiple materials")
+        self.assertTrue(len(textures) > 0, "Should have extracted textures")
+        
+        # Check that multiple materials point to the same texture content
+        # Note: MJCF loads assets into memory, so we compare contents.
+        # Since we deduplicated the file generation, the contents read from the (single) file 
+        # (or identical files) should be identical.
+        texture_contents = [tex.file.contents for tex in textures]
+        
+        # Verify all textures have content
+        for content in texture_contents:
+            self.assertIsNotNone(content)
+            
+        # Verify contents are identical (all equal to the first one)
+        first_content = texture_contents[0]
+        for content in texture_contents[1:]:
+            self.assertEqual(content, first_content, "Texture contents should be identical")
+            
+        # Also verify we have the right number of texture assets (one per mesh material reference)
+        self.assertEqual(len(textures), 2)
+
     def test_plane(self):
         plane = sdf.Plane()
         x_size = 5.
