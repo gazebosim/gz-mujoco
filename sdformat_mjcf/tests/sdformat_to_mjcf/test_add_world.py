@@ -77,8 +77,8 @@ class WorldTest(helpers.TestCase):
 
         self.assertNotEqual(self.mujoco.worldbody.light[0], None)
         self.assertEqual("directional", self.mujoco.worldbody.light[0].name)
-        self.assertEqual("true", self.mujoco.worldbody.light[0].directional)
-        self.assertEqual("true", self.mujoco.worldbody.light[0].castshadow)
+        self.assertEqual("directional", self.mujoco.worldbody.light[0].type)
+        self.assertTrue(self.mujoco.worldbody.light[0].castshadow)
         assert_allclose([0., 0., 10.], self.mujoco.worldbody.light[0].pos)
         assert_allclose([0.9, 0.01, 0.001],
                         self.mujoco.worldbody.light[0].attenuation)

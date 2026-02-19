@@ -18,7 +18,7 @@ import math
 
 from dm_control import mjcf
 
-from gz.math import Color, Pose3d, Vector3d
+from gz.math import Angle, Color, Pose3d, Vector3d
 
 import sdformat as sdf
 
@@ -51,14 +51,18 @@ class LightTest(helpers.TestCase):
         light.set_quadratic_attenuation_factor(0.01)
         light.set_direction(Vector3d(0.1, 0.2, 1))
         light.set_intensity(1.7)
+        light.set_light_on(True)
 
         light_mjcf = add_light(self.body, light)
 
         self.assertNotEqual(light_mjcf, None)
         self.assertEqual(light_mjcf.name, light.name())
-        self.assertEqual(bool(light_mjcf.directional),
-                         light.type() == sdf.LightType.DIRECTIONAL)
+        # Check type string
+        self.assertEqual(light_mjcf.type, "directional")
         self.assertEqual(bool(light_mjcf.castshadow), light.cast_shadows())
+        self.assertEqual(bool(light_mjcf.active), light.light_on())
+        self.assertEqual(light_mjcf.intensity, light.intensity())
+        
         assert_allclose(self.expected_pos, light_mjcf.pos)
         assert_allclose([light.constant_attenuation_factor(),
                          light.linear_attenuation_factor(),
@@ -75,6 +79,41 @@ class LightTest(helpers.TestCase):
                          light.specular().g(),
                          light.specular().b()],
                         light_mjcf.specular)
+
+    def test_light_spot(self):
+        light = sdf.Light()
+        light.set_name("spotlight")
+        light.set_type(sdf.LightType.SPOT)
+        light.set_raw_pose(self.test_pose)
+        light.set_spot_outer_angle(Angle(math.radians(30)))
+        light.set_attenuation_range(20.0)
+        light.set_intensity(0.8)
+        light.set_spot_inner_angle(Angle(0.0))
+        light.set_spot_falloff(1.0)
+
+        light_mjcf = add_light(self.body, light)
+
+        self.assertNotEqual(light_mjcf, None)
+        self.assertEqual(light_mjcf.type, "spot")
+        assert_allclose(light_mjcf.cutoff, 30.0)
+        assert_allclose(light_mjcf.range, 20.0)
+        assert_allclose(light_mjcf.intensity, 0.8)
+        # Expected exponent calculated: Inner=0, Outer=30, Falloff=1.0 -> 19.99
+        assert_allclose(light_mjcf.exponent, 20.0, rtol=1e-2)
+
+    def test_light_point(self):
+        light = sdf.Light()
+        light.set_name("pointlight")
+        light.set_type(sdf.LightType.POINT)
+        light.set_raw_pose(self.test_pose)
+        light.set_attenuation_range(5.0)
+
+        light_mjcf = add_light(self.body, light)
+        
+        self.assertNotEqual(light_mjcf, None)
+        self.assertEqual(light_mjcf.type, "spot")
+        assert_allclose(light_mjcf.cutoff, 180.0)
+        assert_allclose(light_mjcf.range, 5.0)
 
     def test_light_none(self):
         light_mjcf = add_light(self.body, None)
@@ -103,8 +142,7 @@ class LightTest(helpers.TestCase):
 
         self.assertNotEqual(body_mjcf.light[0], None)
         self.assertEqual(body_mjcf.light[0].name, light.name())
-        self.assertEqual(bool(body_mjcf.light[0].directional),
-                         light.type() == sdf.LightType.DIRECTIONAL)
+        self.assertEqual(body_mjcf.light[0].type, "directional")
         self.assertEqual(bool(body_mjcf.light[0].castshadow),
                          light.cast_shadows())
         assert_allclose(self.expected_pos, body_mjcf.light[0].pos)
@@ -123,6 +161,7 @@ class LightTest(helpers.TestCase):
                          light.specular().g(),
                          light.specular().b()],
                         body_mjcf.light[0].specular)
+        assert_allclose(body_mjcf.light[0].intensity, 1.7)
 
 
 if __name__ == "__main__":
