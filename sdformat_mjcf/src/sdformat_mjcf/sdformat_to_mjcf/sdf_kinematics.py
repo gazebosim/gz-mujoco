@@ -49,10 +49,15 @@ class LinkNode:
         self.joint = joint
         self.child_nodes = []
 
+        # Pose computed for all links relative to the model frame. This is stored
+        # to avoid recomputation.
+        self.resolved_pose_wrt_model = Pose3d()
+
+
         # Pose computed for all links. The value would be relative to the
         # parent of the link. If the link has no joints, it is considered to be
         # connected to the world link with a free joint.
-        self.resolved_pose = Pose3d()
+        self.resolved_pose_wrt_parent = None
 
         # The scoped name of the link relative to the kinematic hierarchy root.
         self.scoped_name = None
@@ -60,7 +65,7 @@ class LinkNode:
     def __repr__(self):
         child_repr = " ".join(str(node) for node in self.child_nodes)
         link_name = self.scoped_name if self.scoped_name else self.link.name()
-        return f"{link_name}->({child_repr})"
+        return f"{link_name}->[{self.resolved_pose_wrt_parent}]->({child_repr})"
 
     def add_child(self, node, joint):
         """
@@ -114,7 +119,7 @@ class KinematicHierarchy:
             child_model_pose = su.graph_resolver.resolve_pose(
                 child_model.semantic_pose())
             for cn in child_kh.world_node.child_nodes:
-                cn.resolved_pose = child_model_pose * cn.resolved_pose
+                cn.resolved_pose_wrt_model = child_model_pose * cn.resolved_pose_wrt_model
                 # Removing the child node from child_kh.world_node is
                 # unnecessary and dangerous since it affects the iterable.
                 self.world_node.add_child(cn, cn.joint)
@@ -128,7 +133,7 @@ class KinematicHierarchy:
         for li in range(model.link_count()):
             node = LinkNode(model.link_by_index(li), self.world_node)
             node.scoped_name = node.link.name()
-            node.resolved_pose = su.graph_resolver.resolve_pose(
+            node.resolved_pose_wrt_model = su.graph_resolver.resolve_pose(
                 node.link.semantic_pose()
             )
             self.link_to_node_dict[node.link] = node
@@ -150,10 +155,15 @@ class KinematicHierarchy:
 
             if parent_link_name != "world":
                 parent_node = self.link_to_node_dict[parent]
-                parent_pose_inv = parent_node.resolved_pose.inverse()
-                child_node.resolved_pose = (
-                    parent_pose_inv * child_node.resolved_pose
+                parent_pose_inv = parent_node.resolved_pose_wrt_model.inverse()
+                child_node.resolved_pose_wrt_parent = (
+                    parent_pose_inv * child_node.resolved_pose_wrt_model
                 )
 
             self.world_node.remove_child(child_node)
             self.link_to_node_dict[parent].add_child(child_node, joint)
+
+        # Update the resolved pose of the remaining nodes in world_node since they don't have a parent.
+        for node in self.world_node.child_nodes:
+            node.resolved_pose_wrt_parent = node.resolved_pose_wrt_model
+

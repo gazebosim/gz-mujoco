@@ -342,5 +342,28 @@ class ModelIntegrationTest(unittest.TestCase):
             modelA_linkA_expected_pos, mj_modelA_linkA.pos, atol=1e-10)
 
 
+    def test_urdf_kinematics(self):
+        model_file = helpers.get_resources_dir() / "arm.urdf"
+        root = sdf.Root()
+        root.load(str(model_file))
+        mj_root = add_root(root)
+        self.assertIsNotNone(mj_root)
+
+        # Copied from arm.urdf
+        expected_poses = {
+            'link_1': {'pos': [0, 0, 0.1], 'euler': [0.0, 0, 0]},
+            'link_2': {'pos': [0, 0, 0.2], 'euler': [0.0, 0, 0]},
+            'link_3': {'pos': [0, 0, 0.4], 'euler': [0.0, 90.0, 0]},
+            'link_4': {'pos': [0, 0, 0.35], 'euler': [0.0, 0.0, 0]},
+            'link_5': {'pos': [0, 0, 0.06], 'euler': [0.0, 0.0, 0]},
+            'link_6': {'pos': [0, 0, 0.08], 'euler': [0.0, 0.0, 0]},
+        }
+        for link, expectations in expected_poses.items():
+            mj_body = mj_root.find("body", link)
+            pos = getattr(mj_body, "pos", [0.0, 0, 0])
+            euler = getattr(mj_body, "euler", [0.0, 0, 0])
+            assert_allclose(pos, expectations['pos'], atol=1e-10)
+            assert_allclose(euler, expectations['euler'], atol=0.2)
+
 if __name__ == "__main__":
     unittest.main()
