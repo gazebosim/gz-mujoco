@@ -36,7 +36,15 @@ def add_world(mjcf_out, world):
     # - spherical_coordinates ?
     # - atmosphere
     # - physics
-    # - Scene ?
+
+    if world.scene():
+        mjcf_out.visual.headlight.ambient = [
+            world.scene().ambient().r(),
+            world.scene().ambient().g(),
+            world.scene().ambient().b()
+        ]
+        mjcf_out.visual.headlight.diffuse = [0, 0, 0]
+        mjcf_out.visual.headlight.specular = [0, 0, 0]
 
     mjcf_out.option.gravity = su.vec3d_to_list(world.gravity())
     mjcf_out.option.magnetic = su.vec3d_to_list(world.magnetic_field())

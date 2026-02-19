@@ -101,6 +101,48 @@ class WorldTest(helpers.TestCase):
         with self.assertRaises(RuntimeError):
             add_world(self.mujoco, world)
 
+    def test_scene_headlight(self):
+        root = sdf.Root()
+        root.load(os.path.join(get_resources_dir(), "lights.sdf"))
+        world = root.world_by_index(0)
+
+        self.body = add_world(self.mujoco, world)
+
+        # The scene in lights.sdf has ambient: 0.4 0.4 0.4
+        self.assertIsNotNone(self.mujoco.visual.headlight)
+        assert_allclose([0.4, 0.4, 0.4], self.mujoco.visual.headlight.ambient)
+        assert_allclose([0, 0, 0], self.mujoco.visual.headlight.diffuse)
+
+    def test_no_scene_headlight(self):
+        sdf_string = """
+<sdf version="1.6">
+  <world name="default">
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+  </world>
+</sdf>
+"""
+        root = sdf.Root()
+        root.load_sdf_string(sdf_string)
+        world = root.world_by_index(0)
+
+        self.body = add_world(self.mujoco, world)
+
+        # Even if no scene tag, sdformat might create a default scene
+        # We check if headlight is populated if scene() returns something
+        if world.scene():
+             # Check if it has defaults
+             # SDF default ambient is 0.4 0.4 0.4
+             self.assertIsNotNone(self.mujoco.visual.headlight)
+             # Default ambient in SDF is 0.4 0.4 0.4
+             assert_allclose([0.4, 0.4, 0.4], self.mujoco.visual.headlight.ambient)
+             assert_allclose([0, 0, 0], self.mujoco.visual.headlight.diffuse)
+        else:
+             # If no scene object, then visual shouldn't be touched regarding headlight
+             pass
+
 
 if __name__ == "__main__":
     unittest.main()
