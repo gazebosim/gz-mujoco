@@ -64,7 +64,7 @@ def add_model(mjcf_root, model):
             should_add_exclusions = is_fixed_joint and is_body_world
 
         for cn in node.child_nodes:
-            grand_child_body = convert_node(child_body, cn, cn.resolved_pose)
+            grand_child_body = convert_node(child_body, cn, cn.resolved_pose_wrt_parent)
             if should_add_exclusions:
                 body.root.contact.add(
                     "exclude",
@@ -76,7 +76,7 @@ def add_model(mjcf_root, model):
 
     for cn in kin_hierarchy.world_node.child_nodes:
         # Adjust the poses of each of the nodes to account for the model
-        new_link_pose = model_pose * cn.resolved_pose
+        new_link_pose = model_pose * cn.resolved_pose_wrt_parent
 
         convert_node(mjcf_root.worldbody, cn, new_link_pose)
 
