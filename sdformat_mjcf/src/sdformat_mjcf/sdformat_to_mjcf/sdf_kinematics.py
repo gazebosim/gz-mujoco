@@ -49,10 +49,9 @@ class LinkNode:
         self.joint = joint
         self.child_nodes = []
 
-        # Pose computed for all links relative to the model frame. This is stored
-        # to avoid recomputation.
+        # Pose computed for all links relative to the model frame. This is
+        # stored to avoid recomputation.
         self.resolved_pose_wrt_model = Pose3d()
-
 
         # Pose computed for all links. The value would be relative to the
         # parent of the link. If the link has no joints, it is considered to be
@@ -64,8 +63,8 @@ class LinkNode:
 
     def __repr__(self):
         child_repr = " ".join(str(node) for node in self.child_nodes)
-        link_name = self.scoped_name if self.scoped_name else self.link.name()
-        return f"{link_name}->[{self.resolved_pose_wrt_parent}]->({child_repr})"
+        name = self.scoped_name if self.scoped_name else self.link.name()
+        return f"{name}->[{self.resolved_pose_wrt_parent}]->({child_repr})"
 
     def add_child(self, node, joint):
         """
@@ -119,7 +118,9 @@ class KinematicHierarchy:
             child_model_pose = su.graph_resolver.resolve_pose(
                 child_model.semantic_pose())
             for cn in child_kh.world_node.child_nodes:
-                cn.resolved_pose_wrt_model = child_model_pose * cn.resolved_pose_wrt_model
+                cn.resolved_pose_wrt_model = (
+                    child_model_pose * cn.resolved_pose_wrt_model
+                )
                 # Removing the child node from child_kh.world_node is
                 # unnecessary and dangerous since it affects the iterable.
                 self.world_node.add_child(cn, cn.joint)
@@ -163,7 +164,7 @@ class KinematicHierarchy:
             self.world_node.remove_child(child_node)
             self.link_to_node_dict[parent].add_child(child_node, joint)
 
-        # Update the resolved pose of the remaining nodes in world_node since they don't have a parent.
+        # Update the resolved pose of the remaining nodes in world_node since
+        # they don't have a parent.
         for node in self.world_node.child_nodes:
             node.resolved_pose_wrt_parent = node.resolved_pose_wrt_model
-

@@ -341,7 +341,6 @@ class ModelIntegrationTest(unittest.TestCase):
         assert_allclose(
             modelA_linkA_expected_pos, mj_modelA_linkA.pos, atol=1e-10)
 
-
     def test_urdf_kinematics(self):
         model_file = helpers.get_resources_dir() / "arm.urdf"
         root = sdf.Root()
@@ -364,6 +363,7 @@ class ModelIntegrationTest(unittest.TestCase):
             euler = getattr(mj_body, "euler", [0.0, 0, 0])
             assert_allclose(pos, expectations['pos'], atol=1e-10)
             assert_allclose(euler, expectations['euler'], atol=0.2)
+
 
 if __name__ == "__main__":
     unittest.main()
