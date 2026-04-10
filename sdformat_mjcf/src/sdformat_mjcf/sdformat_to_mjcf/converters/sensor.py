@@ -45,7 +45,7 @@ def add_sensor(body, sensor):
         body.add("site",
                  name=site_unique_name,
                  pos=su.vec3d_to_list(pose.pos()),
-                 euler=su.quat_to_euler_list(pose.rot()))
+                 quat=su.quat_to_list(pose.rot()))
 
         if sensor.imu_sensor() is not None:
             return _add_imu(body.root.sensor,
@@ -216,5 +216,5 @@ def _add_camera_sensor(body, camera_sensor, sensor_name, sensor_pose):
     mj_camera = body.add("camera",
                          name=camera_name,
                          pos=su.vec3d_to_list(sensor_pose.pos()),
-                         euler=su.quat_to_euler_list(sensor_pose.rot()))
+                         quat=su.quat_to_list(sensor_pose.rot()))
     return mj_camera

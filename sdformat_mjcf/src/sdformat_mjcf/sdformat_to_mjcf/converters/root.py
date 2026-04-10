@@ -27,7 +27,6 @@ def add_root(root):
     :rtype: mjcf.RootElement
     """
     mjcf_root = mjcf.RootElement()
-    mjcf_root.compiler.eulerseq = 'XYZ'
     if root.model():
         mjcf_root.model = root.model().name()
     elif root.world_count() == 1:
