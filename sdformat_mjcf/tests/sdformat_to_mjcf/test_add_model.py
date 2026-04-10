@@ -78,18 +78,18 @@ class ModelTest(helpers.TestCase):
         self.assertIsNotNone(mj_float_link_2)
 
         float_link_1_expected_pos = su.vec3d_to_list(model_raw_pose.pos())
-        float_link_1_expected_euler = su.quat_to_euler_list(
+        float_link_1_expected_quat = su.quat_to_list(
             model_raw_pose.rot())
         assert_allclose(float_link_1_expected_pos, mj_float_link_1.pos)
-        assert_allclose(float_link_1_expected_euler, mj_float_link_1.euler)
+        assert_allclose(float_link_1_expected_quat, mj_float_link_1.quat)
 
         float_link_2_expected_pose = model_raw_pose * float_link_2_raw_pose
         float_link_2_expected_pos = su.vec3d_to_list(
             float_link_2_expected_pose.pos())
-        float_link_2_expected_euler = su.quat_to_euler_list(
+        float_link_2_expected_quat = su.quat_to_list(
             float_link_2_expected_pose.rot())
         assert_allclose(float_link_2_expected_pos, mj_float_link_2.pos)
-        assert_allclose(float_link_2_expected_euler, mj_float_link_2.euler)
+        assert_allclose(float_link_2_expected_quat, mj_float_link_2.quat)
 
     def test_model_multiple_links_with_joint(self):
         model_raw_pose = self.test_pose
@@ -124,9 +124,9 @@ class ModelTest(helpers.TestCase):
         self.assertIsNotNone(mj_upper_link)
 
         base_link_expected_pos = su.vec3d_to_list(model_raw_pose.pos())
-        base_link_expected_euler = su.quat_to_euler_list(model_raw_pose.rot())
+        base_link_expected_quat = su.quat_to_list(model_raw_pose.rot())
         assert_allclose(base_link_expected_pos, mj_base_link.pos)
-        assert_allclose(base_link_expected_euler, mj_base_link.euler)
+        assert_allclose(base_link_expected_quat, mj_base_link.quat)
 
         # upper_link has a pose `upper_link_raw_pose` relative to the model
         # frame. If it a floating body under worldbody, it's pose would be:
@@ -135,10 +135,10 @@ class ModelTest(helpers.TestCase):
         # `upper_link` relative to `base_link` is just `upper_link_raw_pose`.
         # i.e., `model_raw_pose` does not affect the poser of upper_link
         upper_link_expected_pos = su.vec3d_to_list(upper_link_raw_pose.pos())
-        upper_link_expected_euler = su.quat_to_euler_list(
+        upper_link_expected_quat = su.quat_to_list(
             upper_link_raw_pose.rot())
         assert_allclose(upper_link_expected_pos, mj_upper_link.pos)
-        assert_allclose(upper_link_expected_euler, mj_upper_link.euler)
+        assert_allclose(upper_link_expected_quat, mj_upper_link.quat)
 
     def test_collision_exclusions(self):
         test_model_sdf = """

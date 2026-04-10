@@ -60,7 +60,7 @@ def add_link(body, link, parent_name="world", link_pose=None, link_name=None):
     body = body.add("body",
                     name=su.find_unique_name(body, "body", link_name),
                     pos=su.vec3d_to_list(pose.pos()),
-                    euler=su.quat_to_euler_list(pose.rot()))
+                    quat=su.quat_to_list(pose.rot()))
 
     # SDFormat allows specifying diagonal and off-diagonal terms of the inertia
     # matrix in addition to setting the orientation of the inertia frame.

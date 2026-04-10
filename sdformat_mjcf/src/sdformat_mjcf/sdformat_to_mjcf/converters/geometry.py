@@ -42,7 +42,7 @@ def add_geometry(body, name, pose, sdf_geom):
         "geom",
         name=su.find_unique_name(body, "geom", name),
         pos=su.vec3d_to_list(pose.pos()),
-        euler=su.quat_to_euler_list(pose.rot()),
+        quat=su.quat_to_list(pose.rot()),
     )
 
     if sdf_geom.box_shape():
